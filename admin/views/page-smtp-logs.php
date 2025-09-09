@@ -182,7 +182,7 @@ function initializeSmtpLogsPage() {
             const enabled = this.checked;
 
             jQuery.post(ajaxurl, {
-                action: 'wpdmgr_',
+                action: 'wpdmgr_toggle_smtp_logging',
                 enabled: enabled,
                 nonce: wpdmgrToolkit.nonce
             }, function(response) {
@@ -229,7 +229,7 @@ function initializeSmtpLogsPage() {
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'wpdmgr_',
+            action: 'wpdmgr_clear_smtp_logs',
             nonce: wpdmgrToolkit.nonce
         }, function(response) {
             logsLoading.style.display = 'none';
@@ -255,7 +255,7 @@ function initializeSmtpLogsPage() {
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'wpdmgr_',
+            action: 'wpdmgr_cleanup_smtp_logs',
             keep_days: parseInt(keepDays),
             nonce: wpdmgrToolkit.nonce
         }, function(response) {
@@ -276,7 +276,7 @@ function initializeSmtpLogsPage() {
             return false;
         }
         const selectedDate = document.getElementById('smtp-date-filter').value || '<?php echo date('dmY'); ?>';
-        const downloadUrl = ajaxurl + '?action=wpdmgr_&date=' + selectedDate + '&nonce=' + wpdmgrToolkit.nonce;
+        const downloadUrl = ajaxurl + '?action=wpdmgr_download_smtp_logs&date=' + selectedDate + '&nonce=' + wpdmgrToolkit.nonce;
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = 'smtp-logs-' + selectedDate + '.log';
@@ -319,7 +319,7 @@ function loadSmtpLogs() {
     const selectedDate = document.getElementById('smtp-date-filter').value;
 
     jQuery.post(ajaxurl, {
-        action: 'wpdmgr_',
+        action: 'wpdmgr_get_smtp_logs',
         date: selectedDate,
         nonce: wpdmgrToolkit.nonce
     }, function(response) {
