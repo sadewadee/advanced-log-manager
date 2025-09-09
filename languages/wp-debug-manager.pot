@@ -1,11 +1,11 @@
-# Morden Toolkit POT file
-# Copyright (C) 2024 Morden Pro
-# This file is distributed under the same license as the Morden Toolkit package.
+# WP Debug Manager POT file
+# Copyright (C) 2024 WPDMGR Pro
+# This file is distributed under the same license as the WP Debug Manager package.
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Morden Toolkit 1.1.0\n"
-"Report-Msgid-Bugs-To: https://github.com/morden-pro/morden-toolkit/issues\n"
+"Project-Id-Version: WP Debug Manager 1.2.18\n"
+"Report-Msgid-Bugs-To: https://github.com/sadewadee/wp-debug-manager/issues\n"
 "POT-Creation-Date: 2025-08-17 17:05+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -107,7 +107,7 @@ msgstr ""
 
 #: includes/class-plugin.php:89 includes/class-plugin.php:90
 #: admin/views/page-toolkit.php:39
-msgid "Morden Toolkit"
+msgid "WP Debug Manager"
 msgstr ""
 
 #: includes/class-plugin.php:98 includes/class-plugin.php:99

@@ -2,10 +2,10 @@
 /**
  * Htaccess Service - Safe .htaccess file editing with auto-backup
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 // Prevent direct access
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MT_Htaccess {
+class WPDMGR_Htaccess {
 
     /**
      * Maximum number of backups to keep
@@ -24,7 +24,7 @@ class MT_Htaccess {
      * Get .htaccess file content
      */
     public function get_htaccess_content() {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         if (!file_exists($htaccess_path)) {
             return '';
@@ -37,7 +37,7 @@ class MT_Htaccess {
      * Save .htaccess file with automatic backup
      */
     public function save_htaccess($content) {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         // Check for duplicate snippets before saving
         $content = $this->remove_duplicate_snippets($content);
@@ -53,7 +53,7 @@ class MT_Htaccess {
         }
 
         // Sanitize content
-        $content = mt_sanitize_file_content($content);
+        $content = wpdmgr_sanitize_file_content($content);
         if ($content === false) {
             return false;
         }
@@ -79,14 +79,14 @@ class MT_Htaccess {
      * Create backup of current .htaccess file
      */
     private function create_backup() {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         if (!file_exists($htaccess_path)) {
             return false;
         }
 
         $content = file_get_contents($htaccess_path);
-        $backups = get_option('morden_htaccess_backups', array());
+        $backups = get_option('wpdmgr_htaccess_backups', array());
 
         // Add new backup
         $backup = array(
@@ -102,7 +102,7 @@ class MT_Htaccess {
             $backups = array_slice($backups, 0, self::MAX_BACKUPS);
         }
 
-        update_option('morden_htaccess_backups', $backups);
+        update_option('wpdmgr_htaccess_backups', $backups);
         return true;
     }
 
@@ -110,7 +110,7 @@ class MT_Htaccess {
      * Get all backups
      */
     public function get_backups() {
-        return get_option('morden_htaccess_backups', array());
+        return get_option('wpdmgr_htaccess_backups', array());
     }
 
     /**
@@ -124,7 +124,7 @@ class MT_Htaccess {
         }
 
         $backup = $backups[$backup_index];
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         // Create backup of current state before restoring
         if (file_exists($htaccess_path)) {
@@ -145,7 +145,7 @@ class MT_Htaccess {
         }
 
         $latest_backup = $backups[0];
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         return file_put_contents($htaccess_path, $latest_backup['content']) !== false;
     }
@@ -236,7 +236,7 @@ class MT_Htaccess {
             $response = wp_remote_head($test_url, array(
                 'timeout' => 15,
                 'sslverify' => false,
-                'user-agent' => 'Morden-Toolkit-HTAccess-Validator/1.0'
+                'user-agent' => 'WPDMGR-Toolkit-HTAccess-Validator/1.0'
             ));
 
             if (is_wp_error($response)) {
@@ -288,9 +288,9 @@ class MT_Htaccess {
                 'start' => '# Security Headers',
                 'end' => '</IfModule>'
             ),
-            'morden_toolkit' => array(
-                'start' => '# BEGIN Morden Toolkit',
-                'end' => '# END Morden Toolkit'
+            'wpdmgr_toolkit' => array(
+                'start' => '# BEGIN WP Debug Manager',
+                'end' => '# END WP Debug Manager'
             )
         );
 
@@ -348,7 +348,7 @@ class MT_Htaccess {
         if ($this->snippet_exists($current_content, $snippet_name)) {
             return array(
                 'success' => false,
-                'message' => sprintf(__('Snippet "%s" already exists in .htaccess file.', 'morden-toolkit'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" already exists in .htaccess file.', 'wp-debug-manager'), $snippet_name)
             );
         }
 
@@ -360,12 +360,12 @@ class MT_Htaccess {
         if ($this->save_htaccess($new_content)) {
             return array(
                 'success' => true,
-                'message' => sprintf(__('Snippet "%s" added successfully.', 'morden-toolkit'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" added successfully.', 'wp-debug-manager'), $snippet_name)
             );
         } else {
             return array(
                 'success' => false,
-                'message' => __('Failed to add snippet. .htaccess validation failed or caused 503 error.', 'morden-toolkit')
+                'message' => __('Failed to add snippet. .htaccess validation failed or caused 503 error.', 'wp-debug-manager')
             );
         }
     }
@@ -377,7 +377,7 @@ class MT_Htaccess {
         $snippet_markers = array(
             "# BEGIN {$snippet_name}",
             "# {$snippet_name}",
-            "# BEGIN Morden Toolkit - {$snippet_name}",
+            "# BEGIN WP Debug Manager - {$snippet_name}",
             "# Browser Caching", // for cache_control
             "# GZIP Compression", // for gzip_compression
             "# Security Headers", // for security_headers
@@ -399,10 +399,10 @@ class MT_Htaccess {
     private function format_snippet($snippet_name, $snippet_content) {
         $timestamp = date('Y-m-d H:i:s');
 
-        $formatted = "# BEGIN Morden Toolkit - {$snippet_name}\n";
+        $formatted = "# BEGIN WP Debug Manager - {$snippet_name}\n";
         $formatted .= "# Added on: {$timestamp}\n";
         $formatted .= trim($snippet_content) . "\n";
-        $formatted .= "# END Morden Toolkit - {$snippet_name}";
+        $formatted .= "# END WP Debug Manager - {$snippet_name}";
 
         return $formatted;
     }
@@ -411,7 +411,7 @@ class MT_Htaccess {
      * Get .htaccess file info
      */
     public function get_htaccess_info() {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         $info = array(
             'exists' => false,
@@ -438,7 +438,7 @@ class MT_Htaccess {
      * Clear all backups
      */
     public function clear_backups() {
-        return delete_option('morden_htaccess_backups');
+        return delete_option('wpdmgr_htaccess_backups');
     }
 
     /**
@@ -449,22 +449,22 @@ class MT_Htaccess {
 
         $snippets = array(
             'wordpress_rewrite' => array(
-                'title' => __('WordPress Rewrite Rules', 'morden-toolkit'),
+                'title' => __('WordPress Rewrite Rules', 'wp-debug-manager'),
                 'content' => "# BEGIN WordPress\n<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteRule ^index\\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . /index.php [L]\n</IfModule>\n# END WordPress",
                 'exists' => $this->snippet_exists($current_content, 'wordpress_rewrite')
             ),
             'cache_control' => array(
-                'title' => __('Browser Caching', 'morden-toolkit'),
+                'title' => __('Browser Caching', 'wp-debug-manager'),
                 'content' => "# Browser Caching\n<IfModule mod_expires.c>\nExpiresActive On\nExpiresByType text/css \"access plus 1 year\"\nExpiresByType application/javascript \"access plus 1 year\"\nExpiresByType image/png \"access plus 1 year\"\nExpiresByType image/jpg \"access plus 1 year\"\nExpiresByType image/jpeg \"access plus 1 year\"\nExpiresByType image/gif \"access plus 1 year\"\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'cache_control')
             ),
             'gzip_compression' => array(
-                'title' => __('GZIP Compression', 'morden-toolkit'),
+                'title' => __('GZIP Compression', 'wp-debug-manager'),
                 'content' => "# GZIP Compression\n<IfModule mod_deflate.c>\nAddOutputFilterByType DEFLATE text/plain\nAddOutputFilterByType DEFLATE text/html\nAddOutputFilterByType DEFLATE text/xml\nAddOutputFilterByType DEFLATE text/css\nAddOutputFilterByType DEFLATE application/xml\nAddOutputFilterByType DEFLATE application/xhtml+xml\nAddOutputFilterByType DEFLATE application/rss+xml\nAddOutputFilterByType DEFLATE application/javascript\nAddOutputFilterByType DEFLATE application/x-javascript\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'gzip_compression')
             ),
             'security_headers' => array(
-                'title' => __('Security Headers', 'morden-toolkit'),
+                'title' => __('Security Headers', 'wp-debug-manager'),
                 'content' => "# Security Headers\n<IfModule mod_headers.c>\nHeader always set X-Content-Type-Options nosniff\nHeader always set X-Frame-Options SAMEORIGIN\nHeader always set X-XSS-Protection \"1; mode=block\"\nHeader always set Referrer-Policy \"strict-origin-when-cross-origin\"\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'security_headers')
             )
@@ -482,7 +482,7 @@ class MT_Htaccess {
         if (!$this->snippet_exists($current_content, $snippet_name)) {
             return array(
                 'success' => false,
-                'message' => sprintf(__('Snippet "%s" not found in .htaccess file.', 'morden-toolkit'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" not found in .htaccess file.', 'wp-debug-manager'), $snippet_name)
             );
         }
 
@@ -493,12 +493,12 @@ class MT_Htaccess {
         if ($this->save_htaccess($new_content)) {
             return array(
                 'success' => true,
-                'message' => sprintf(__('Snippet "%s" removed successfully.', 'morden-toolkit'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" removed successfully.', 'wp-debug-manager'), $snippet_name)
             );
         } else {
             return array(
                 'success' => false,
-                'message' => __('Failed to remove snippet. .htaccess validation failed.', 'morden-toolkit')
+                'message' => __('Failed to remove snippet. .htaccess validation failed.', 'wp-debug-manager')
             );
         }
     }
@@ -518,7 +518,7 @@ class MT_Htaccess {
             'security_headers' => array('# Security Headers', '</IfModule>')
         );
 
-        $pattern = $snippet_patterns[$snippet_name] ?? array("# BEGIN Morden Toolkit - {$snippet_name}", "# END Morden Toolkit - {$snippet_name}");
+        $pattern = $snippet_patterns[$snippet_name] ?? array("# BEGIN WP Debug Manager - {$snippet_name}", "# END WP Debug Manager - {$snippet_name}");
 
         foreach ($lines as $line) {
             $line_trimmed = trim($line);

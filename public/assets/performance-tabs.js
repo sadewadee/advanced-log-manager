@@ -4,7 +4,7 @@
  */
 
 // Universal Sortable Functionality
-var MT_Sortable = {
+var WPDMGR_Sortable = {
     init: function() {
         this.bindSortableHeaders();
     },
@@ -14,7 +14,7 @@ var MT_Sortable = {
 
         sortableHeaders.forEach(function(header) {
             header.addEventListener('click', function() {
-                MT_Sortable.sortTable(this);
+                WPDMGR_Sortable.sortTable(this);
             });
 
             // Add visual indicators
@@ -51,10 +51,10 @@ var MT_Sortable = {
 
             if (!aCell || !bCell) return 0;
 
-            var aVal = MT_Sortable.getSortValue(aCell, column);
-            var bVal = MT_Sortable.getSortValue(bCell, column);
+            var aVal = WPDMGR_Sortable.getSortValue(aCell, column);
+            var bVal = WPDMGR_Sortable.getSortValue(bCell, column);
 
-            var result = MT_Sortable.compare(aVal, bVal, column);
+            var result = WPDMGR_Sortable.compare(aVal, bVal, column);
             return isAscending ? result : -result;
         });
 
@@ -64,7 +64,7 @@ var MT_Sortable = {
         });
 
         // Update row numbers if they exist
-        MT_Sortable.updateRowNumbers(tbody);
+        WPDMGR_Sortable.updateRowNumbers(tbody);
     },
 
     getSortValue: function(cell, column) {
@@ -116,16 +116,16 @@ var MT_Sortable = {
 };
 
 // Images Tab Functionality
-var MT_Images = {
+var WPDMGR_Images = {
     init: function() {
         this.bindEvents();
         this.populateFilters();
     },
 
     bindEvents: function() {
-        var sourceFilter = document.getElementById('mt-images-source-filter');
-        var hostnameFilter = document.getElementById('mt-images-hostname-filter');
-        var sortSelect = document.getElementById('mt-images-sort');
+        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
+        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
+        var sortSelect = document.getElementById('wpdmgr-images-sort');
 
         if (sourceFilter) {
             sourceFilter.addEventListener('change', this.filterImages.bind(this));
@@ -139,7 +139,7 @@ var MT_Images = {
     },
 
     populateFilters: function() {
-        var table = document.querySelector('.mt-images-table tbody');
+        var table = document.querySelector('.wpdmgr-images-table tbody');
         if (!table) return;
 
         var sources = new Set();
@@ -155,7 +155,7 @@ var MT_Images = {
         });
 
         // Populate source filter
-        var sourceFilter = document.getElementById('mt-images-source-filter');
+        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
         if (sourceFilter) {
             sources.forEach(function(source) {
                 var option = document.createElement('option');
@@ -166,7 +166,7 @@ var MT_Images = {
         }
 
         // Populate hostname filter
-        var hostnameFilter = document.getElementById('mt-images-hostname-filter');
+        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
         if (hostnameFilter) {
             hostnames.forEach(function(hostname) {
                 var option = document.createElement('option');
@@ -178,9 +178,9 @@ var MT_Images = {
     },
 
     filterImages: function() {
-        var sourceFilter = document.getElementById('mt-images-source-filter');
-        var hostnameFilter = document.getElementById('mt-images-hostname-filter');
-        var table = document.querySelector('.mt-images-table tbody');
+        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
+        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
+        var table = document.querySelector('.wpdmgr-images-table tbody');
 
         if (!table) return;
 
@@ -219,8 +219,8 @@ var MT_Images = {
     },
 
     sortImages: function() {
-        var sortSelect = document.getElementById('mt-images-sort');
-        var table = document.querySelector('.mt-images-table tbody');
+        var sortSelect = document.getElementById('wpdmgr-images-sort');
+        var table = document.querySelector('.wpdmgr-images-table tbody');
 
         if (!table || !sortSelect) return;
 
@@ -261,7 +261,7 @@ var MT_Images = {
     },
 
     updateRowNumbers: function() {
-        var table = document.querySelector('.mt-images-table tbody');
+        var table = document.querySelector('.wpdmgr-images-table tbody');
         if (!table) return;
 
         var visibleRows = table.querySelectorAll('tr:not([style*="display: none"])');
@@ -275,14 +275,14 @@ var MT_Images = {
 };
 
 // Hooks Tab Functionality
-var MT_Hooks = {
+var WPDMGR_Hooks = {
     init: function() {
         this.bindEvents();
     },
 
     bindEvents: function() {
-        var groupFilter = document.getElementById('mt-hooks-group-filter');
-        var sortSelect = document.getElementById('mt-hooks-sort');
+        var groupFilter = document.getElementById('wpdmgr-hooks-group-filter');
+        var sortSelect = document.getElementById('wpdmgr-hooks-sort');
 
         if (groupFilter) {
             groupFilter.addEventListener('change', this.filterHooks.bind(this));
@@ -293,8 +293,8 @@ var MT_Hooks = {
     },
 
     filterHooks: function() {
-        var groupFilter = document.getElementById('mt-hooks-group-filter');
-        var table = document.querySelector('.mt-hooks-table tbody');
+        var groupFilter = document.getElementById('wpdmgr-hooks-group-filter');
+        var table = document.querySelector('.wpdmgr-hooks-table tbody');
 
         if (!table || !groupFilter) return;
 
@@ -327,8 +327,8 @@ var MT_Hooks = {
     },
 
     sortHooks: function() {
-        var sortSelect = document.getElementById('mt-hooks-sort');
-        var table = document.querySelector('.mt-hooks-table tbody');
+        var sortSelect = document.getElementById('wpdmgr-hooks-sort');
+        var table = document.querySelector('.wpdmgr-hooks-table tbody');
 
         if (!table || !sortSelect) return;
 
@@ -364,7 +364,7 @@ var MT_Hooks = {
     },
 
     updateRowNumbers: function() {
-        var table = document.querySelector('.mt-hooks-table tbody');
+        var table = document.querySelector('.wpdmgr-hooks-table tbody');
         if (!table) return;
 
         var visibleRows = table.querySelectorAll('tr:not([style*="display: none"])');
@@ -380,20 +380,20 @@ var MT_Hooks = {
 // Auto-initialize when performance monitor is shown
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize universal sortable functionality
-    MT_Sortable.init();
+    WPDMGR_Sortable.init();
 
     // Wait for performance monitor to be available
     var checkForTabs = setInterval(function() {
         if (document.querySelector('.query-log-table')) {
             // Initialize sortable for all tables
-            MT_Sortable.init();
+            WPDMGR_Sortable.init();
 
             // Initialize specific tab functionality
-            if (document.querySelector('.mt-images-table')) {
-                MT_Images.init();
+            if (document.querySelector('.wpdmgr-images-table')) {
+                WPDMGR_Images.init();
             }
-            if (document.querySelector('.mt-hooks-table')) {
-                MT_Hooks.init();
+            if (document.querySelector('.wpdmgr-hooks-table')) {
+                WPDMGR_Hooks.init();
             }
 
             clearInterval(checkForTabs);
@@ -408,7 +408,7 @@ if (typeof window.mtPerformanceBar !== 'undefined') {
         originalToggle.call(this);
         // Delay to ensure content is loaded
         setTimeout(function() {
-            MT_Sortable.init();
+            WPDMGR_Sortable.init();
         }, 200);
     };
 }

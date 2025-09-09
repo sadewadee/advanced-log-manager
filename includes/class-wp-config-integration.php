@@ -5,10 +5,10 @@
  * Replaces manual wp-config.php editing methods that are prone to errors
  * with safer implementation using WPConfigTransformer
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  * @since 1.0.0
  */
 
@@ -16,9 +16,9 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-require_once MT_PLUGIN_DIR . 'includes/WPConfigTransformer.php';
+require_once WPDMGR_PLUGIN_DIR . 'includes/WPConfigTransformer.php';
 
-class MT_WP_Config_Integration {
+class WPDMGR_WP_Config_Integration {
 
     /**
      * Apply PHP configuration using WPConfigTransformer
@@ -31,16 +31,16 @@ class MT_WP_Config_Integration {
             return false;
         }
 
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if (!$wp_config_path || !file_exists($wp_config_path)) {
-            mt_config_log(' wp-config.php not found');
+            wpdmgr_config_log(' wp-config.php not found');
             return false;
         }
 
         // Create backup
         $backup_path = self::create_backup($wp_config_path);
         if (!$backup_path) {
-            mt_config_log(' Failed to create backup');
+            wpdmgr_config_log(' Failed to create backup');
             return false;
         }
 
@@ -57,19 +57,19 @@ class MT_WP_Config_Integration {
 
             // Validate the changes
             if (self::validate_wp_config($wp_config_path)) {
-                mt_config_log(' Configuration applied successfully');
+                wpdmgr_config_log(' Configuration applied successfully');
                 return true;
             } else {
                 // Restore backup on validation failure
                 copy($backup_path, $wp_config_path);
-                mt_config_log(' Validation failed, backup restored');
+                wpdmgr_config_log(' Validation failed, backup restored');
                 return false;
             }
 
         } catch (Exception $e) {
             // Restore backup on exception
             copy($backup_path, $wp_config_path);
-            mt_config_log(' Exception - ' . $e->getMessage() . ', backup restored');
+            wpdmgr_config_log(' Exception - ' . $e->getMessage() . ', backup restored');
             return false;
         }
     }
@@ -86,7 +86,7 @@ class MT_WP_Config_Integration {
             return false;
         }
 
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if (!$wp_config_path || !file_exists($wp_config_path)) {
             return false;
         }
@@ -110,7 +110,7 @@ class MT_WP_Config_Integration {
                 $custom_path = self::get_or_create_debug_log_path();
                 $debug_settings['WP_DEBUG_LOG'] = $custom_path;
 
-                mt_config_log(' Using custom debug log path: ' . $custom_path);
+                wpdmgr_config_log(' Using custom debug log path: ' . $custom_path);
             }
 
             // Apply remaining debug constants
@@ -150,7 +150,7 @@ class MT_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            mt_config_log(' Enhanced debug constants failed - ' . $e->getMessage());
+            wpdmgr_config_log(' Enhanced debug constants failed - ' . $e->getMessage());
             return false;
         }
     }
@@ -166,7 +166,7 @@ class MT_WP_Config_Integration {
             return false;
         }
 
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if (!$wp_config_path || !file_exists($wp_config_path)) {
             return false;
         }
@@ -208,7 +208,7 @@ class MT_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            mt_config_log(' Debug constants failed - ' . $e->getMessage());
+            wpdmgr_config_log(' Debug constants failed - ' . $e->getMessage());
             return false;
         }
     }
@@ -295,7 +295,7 @@ class MT_WP_Config_Integration {
         // Format value properly for WordPress constants
         $formatted_value = $value;
 
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
 
         if ($transformer->exists('constant', $constant)) {
             $transformer->update('constant', $constant, $formatted_value, [
@@ -344,7 +344,7 @@ class MT_WP_Config_Integration {
         // Sanitize setting name to prevent code injection
         $safe_setting = preg_replace('/[^a-zA-Z0-9_.]/', '', $setting);
         if ($safe_setting !== $setting) {
-            mt_config_log(" Invalid setting name: $setting");
+            wpdmgr_config_log(" Invalid setting name: $setting");
             return;
         }
 
@@ -352,20 +352,20 @@ class MT_WP_Config_Integration {
         $safe_value = self::sanitize_ini_value($value);
 
         // Get current wp-config.php content
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         $content = file_get_contents($wp_config_path);
 
         // Create ini_set statement with proper formatting
         $ini_set_line = "ini_set('$safe_setting', '$safe_value');";
 
         // Find the MT configuration block or create it
-        $mt_start_marker = '/* BEGIN Morden Toolkit PHP Configuration */';
-        $mt_end_marker = '/* END Morden Toolkit PHP Configuration */';
+        $wpdmgr_start_marker = '/* BEGIN WP Debug Manager PHP Configuration */';
+        $wpdmgr_end_marker = '/* END WP Debug Manager PHP Configuration */';
 
         // Check if MT block exists
-        if (strpos($content, $mt_start_marker) !== false) {
+        if (strpos($content, $wpdmgr_start_marker) !== false) {
             // Update existing block
-            $pattern = '/\/\* BEGIN Morden Toolkit PHP Configuration \*\/.*?\/\* END Morden Toolkit PHP Configuration \*\//s';
+            $pattern = '/\/\* BEGIN WP Debug Manager PHP Configuration \*\/.*?\/\* END WP Debug Manager PHP Configuration \*\//s';
 
             // Get existing ini_set statements
             preg_match($pattern, $content, $matches);
@@ -383,17 +383,17 @@ class MT_WP_Config_Integration {
             $existing_statements[$safe_setting] = $ini_set_line;
 
             // Rebuild the block
-            $new_block = $mt_start_marker . "\n";
+            $new_block = $wpdmgr_start_marker . "\n";
             foreach ($existing_statements as $statement) {
                 $new_block .= " $statement\n";
             }
-            $new_block .= " $mt_end_marker";
+            $new_block .= " $wpdmgr_end_marker";
 
             // Replace the block
             $content = preg_replace($pattern, $new_block, $content);
         } else {
             // Create new block
-            $new_block = "\n$mt_start_marker\n $ini_set_line\n $mt_end_marker\n";
+            $new_block = "\n$wpdmgr_start_marker\n $ini_set_line\n $wpdmgr_end_marker\n";
 
             // Insert before "/* That's all, stop editing!" or at the end
             $stop_editing_pos = strpos($content, "/* That's all, stop editing!");
@@ -438,8 +438,8 @@ class MT_WP_Config_Integration {
         $random_string = wp_generate_password(8, false, false);
         $log_filename = 'wp-errors-' . $random_string . '.log';
 
-        // Use wp-content/morden-toolkit directory as specified in requirements
-        $log_directory = ABSPATH . 'wp-content/morden-toolkit/';
+        // Use wp-content/wp-debug-manager directory as specified in requirements
+        $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
 
         // Ensure directory exists
         if (!file_exists($log_directory)) {
@@ -459,8 +459,8 @@ class MT_WP_Config_Integration {
         $random_string = wp_generate_password(8, false, false);
         $log_filename = 'wp-queries-' . $random_string . '.log';
 
-        // Use wp-content/morden-toolkit directory as specified in requirements
-        $log_directory = ABSPATH . 'wp-content/morden-toolkit/';
+        // Use wp-content/wp-debug-manager directory as specified in requirements
+        $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
 
         // Ensure directory exists
         if (!file_exists($log_directory)) {
@@ -477,18 +477,18 @@ class MT_WP_Config_Integration {
      */
     private static function get_or_create_query_log_path() {
         // Check if custom path already exists in wp-config
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if ($wp_config_path && file_exists($wp_config_path)) {
             $content = file_get_contents($wp_config_path);
 
             // Enhanced regex patterns to handle various quote escaping scenarios
             $patterns = [
-                // Standard pattern: define( 'MT_QUERY_LOG', '/path/to/file' )
-                '/define\s*\(\s*[\'"]MT_QUERY_LOG[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
-                // Handle escaped quotes: define( 'MT_QUERY_LOG', '\''/path/to/file'\'' )
-                '/define\s*\(\s*[\'"]MT_QUERY_LOG[\'"]\s*,\s*[\'"]\\\\?[\'"]([^\\\\]+)\\\\?[\'"][\'"] *\)/',
-                // Handle double quotes with single quotes: define( "MT_QUERY_LOG", '/path/to/file' )
-                '/define\s*\(\s*"MT_QUERY_LOG"\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
+                // Standard pattern: define( 'WPDMGR_QUERY_LOG', '/path/to/file' )
+                '/define\s*\(\s*[\'"]WPDMGR_QUERY_LOG[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
+                // Handle escaped quotes: define( 'WPDMGR_QUERY_LOG', '\''/path/to/file'\'' )
+                '/define\s*\(\s*[\'"]WPDMGR_QUERY_LOG[\'"]\s*,\s*[\'"]\\\\?[\'"]([^\\\\]+)\\\\?[\'"][\'"] *\)/',
+                // Handle double quotes with single quotes: define( "WPDMGR_QUERY_LOG", '/path/to/file' )
+                '/define\s*\(\s*"WPDMGR_QUERY_LOG"\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
             ];
 
             foreach ($patterns as $pattern) {
@@ -515,7 +515,7 @@ class MT_WP_Config_Integration {
      * @return bool Success status
      */
     public static function apply_custom_query_log_path($enable_custom_path = true) {
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if (!$wp_config_path || !file_exists($wp_config_path)) {
             return false;
         }
@@ -535,8 +535,8 @@ class MT_WP_Config_Integration {
                 // Apply custom path constant
                 $formatted_value = self::format_debug_value($custom_path);
 
-                if ($transformer->exists('constant', 'MT_QUERY_LOG')) {
-                    $transformer->update('constant', 'MT_QUERY_LOG', $formatted_value, [
+                if ($transformer->exists('constant', 'WPDMGR_QUERY_LOG')) {
+                    $transformer->update('constant', 'WPDMGR_QUERY_LOG', $formatted_value, [
                         'raw' => false, // Force string quoting for file paths
                         'normalize' => true
                     ]);
@@ -547,14 +547,14 @@ class MT_WP_Config_Integration {
                         'normalize' => true
                     ], $anchor_config);
 
-                    $transformer->add('constant', 'MT_QUERY_LOG', $formatted_value, $add_options);
+                    $transformer->add('constant', 'WPDMGR_QUERY_LOG', $formatted_value, $add_options);
                 }
 
-                mt_config_log(' Applied custom query log path: ' . $custom_path);
+                wpdmgr_config_log(' Applied custom query log path: ' . $custom_path);
             } else {
                 // Remove custom path constant
-                if ($transformer->exists('constant', 'MT_QUERY_LOG')) {
-                    $transformer->remove('constant', 'MT_QUERY_LOG');
+                if ($transformer->exists('constant', 'WPDMGR_QUERY_LOG')) {
+                    $transformer->remove('constant', 'WPDMGR_QUERY_LOG');
                 }
             }
 
@@ -567,7 +567,7 @@ class MT_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            mt_config_log(' Custom query log path failed - ' . $e->getMessage());
+            wpdmgr_config_log(' Custom query log path failed - ' . $e->getMessage());
             return false;
         }
     }
@@ -579,7 +579,7 @@ class MT_WP_Config_Integration {
      */
     private static function get_or_create_debug_log_path() {
         // Check if custom path already exists in wp-config
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         if ($wp_config_path && file_exists($wp_config_path)) {
             $content = file_get_contents($wp_config_path);
 
@@ -640,24 +640,24 @@ class MT_WP_Config_Integration {
      */
     private static function remove_existing_mt_config($transformer) {
         // Remove WordPress constants that MT manages
-        $mt_constants = [
+        $wpdmgr_constants = [
             'WP_MEMORY_LIMIT',
             'WP_MAX_MEMORY_LIMIT',
             'WP_MAX_EXECUTION_TIME'
         ];
 
-        foreach ($mt_constants as $constant) {
+        foreach ($wpdmgr_constants as $constant) {
             if ($transformer->exists('constant', $constant)) {
                 $transformer->remove('constant', $constant);
             }
         }
 
         // Remove existing MT PHP Configuration block
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
         $content = file_get_contents($wp_config_path);
 
         // Remove the entire MT block if it exists
-        $pattern = '/\s*\/\* BEGIN Morden Toolkit PHP Configuration \*\/.*?\/\* END Morden Toolkit PHP Configuration \*\/\s*/s';
+        $pattern = '/\s*\/\* BEGIN WP Debug Manager PHP Configuration \*\/.*?\/\* END WP Debug Manager PHP Configuration \*\/\s*/s';
         $cleaned_content = preg_replace($pattern, "\n", $content);
 
         // Write cleaned content if changes were made
@@ -673,7 +673,7 @@ class MT_WP_Config_Integration {
      * @return string|false Backup file path or false on failure
      */
     private static function create_backup($wp_config_path) {
-        $backup_dir = MT_PLUGIN_DIR . 'backups/wp-config/';
+        $backup_dir = WPDMGR_PLUGIN_DIR . 'backups/wp-config/';
 
         // Create backup directory if it doesn't exist
         if (!file_exists($backup_dir)) {
@@ -726,7 +726,7 @@ class MT_WP_Config_Integration {
         if (function_exists('shell_exec') && !empty(shell_exec('which php'))) {
             $output = shell_exec("php -l {$wp_config_path} 2>&1");
             if (strpos($output, 'No syntax errors detected') === false) {
-                mt_config_log(' PHP syntax error detected');
+                wpdmgr_config_log(' PHP syntax error detected');
                 return false;
             }
         }
@@ -736,7 +736,7 @@ class MT_WP_Config_Integration {
 
         // Check for required WordPress elements
         if (strpos($content, '<?php') === false || strpos($content, 'wp-settings.php') === false) {
-            mt_config_log(' wp-config.php structure invalid');
+            wpdmgr_config_log(' wp-config.php structure invalid');
             return false;
         }
 
@@ -748,7 +748,7 @@ class MT_WP_Config_Integration {
 
         foreach ($syntax_issues as $pattern => $description) {
             if (preg_match($pattern, $content)) {
-                mt_config_log(" Syntax issue - $description");
+                wpdmgr_config_log(" Syntax issue - $description");
                 return false;
             }
         }
@@ -817,7 +817,7 @@ class MT_WP_Config_Integration {
      */
     public static function constant_exists($constant_name) {
         try {
-            $wp_config_path = mt_get_wp_config_path();
+            $wp_config_path = wpdmgr_get_wp_config_path();
             if (!$wp_config_path || !file_exists($wp_config_path)) {
                 return false;
             }
@@ -837,7 +837,7 @@ class MT_WP_Config_Integration {
      */
     public static function get_constant_value($constant_name) {
         try {
-            $wp_config_path = mt_get_wp_config_path();
+            $wp_config_path = wpdmgr_get_wp_config_path();
             if (!$wp_config_path || !file_exists($wp_config_path)) {
                 return null;
             }
@@ -847,7 +847,7 @@ class MT_WP_Config_Integration {
                 return $transformer->get_value('constant', $constant_name);
             }
         } catch (Exception $e) {
-            mt_config_log(' Failed to get constant value - ' . $e->getMessage());
+            wpdmgr_config_log(' Failed to get constant value - ' . $e->getMessage());
         }
         return null;
     }

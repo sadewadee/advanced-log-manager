@@ -2,34 +2,34 @@
 /**
  * SMTP Logs Page Template
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$plugin = MT_Plugin::get_instance();
+$plugin = WPDMGR_Plugin::get_instance();
 $smtp_service = $plugin->get_service('smtp_logger');
 $smtp_status = $smtp_service->get_logging_status();
 ?>
 
 <div class="wrap">
-    <h1><?php _e('SMTP Logs', 'morden-toolkit'); ?></h1>
+    <h1><?php _e('SMTP Logs', 'wp-debug-manager'); ?></h1>
     <p class="description">
-        <?php _e('View email logs sent through WordPress. Enable logging to start recording email activity.', 'morden-toolkit'); ?>
+        <?php _e('View email logs sent through WordPress. Enable logging to start recording email activity.', 'wp-debug-manager'); ?>
     </p>
 
     <?php if (!$smtp_status['enabled']): ?>
     <div class="notice notice-warning">
         <p>
-            <strong><?php _e('SMTP logging is not enabled!', 'morden-toolkit'); ?></strong>
-            <?php _e('Email logs are not being recorded. ', 'morden-toolkit'); ?>
+            <strong><?php _e('SMTP logging is not enabled!', 'wp-debug-manager'); ?></strong>
+            <?php _e('Email logs are not being recorded. ', 'wp-debug-manager'); ?>
             <button type="button" id="enable-smtp-logging" class="button button-primary">
-                <?php _e('Enable SMTP Logging', 'morden-toolkit'); ?>
+                <?php _e('Enable SMTP Logging', 'wp-debug-manager'); ?>
             </button>
         </p>
     </div>
@@ -39,19 +39,19 @@ $smtp_status = $smtp_service->get_logging_status();
         <div class="mt-logs-actions">
             <button type="button" id="refresh-smtp-logs" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-update"></span>
-                <?php _e('Refresh', 'morden-toolkit'); ?>
+                <?php _e('Refresh', 'wp-debug-manager'); ?>
             </button>
-            <button type="button" id="clear-smtp-logs" class="button" title="<?php _e('Clear current day logs', 'morden-toolkit'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <button type="button" id="clear-smtp-logs" class="button" title="<?php _e('Clear current day logs', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-trash"></span>
-                <?php _e('Clear', 'morden-toolkit'); ?>
+                <?php _e('Clear', 'wp-debug-manager'); ?>
             </button>
-            <button type="button" id="cleanup-smtp-logs" class="button" title="<?php _e('Remove old log files', 'morden-toolkit'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <button type="button" id="cleanup-smtp-logs" class="button" title="<?php _e('Remove old log files', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-admin-tools"></span>
-                <?php _e('Cleanup', 'morden-toolkit'); ?>
+                <?php _e('Cleanup', 'wp-debug-manager'); ?>
             </button>
             <button type="button" id="download-smtp-logs" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-download"></span>
-                <?php _e('Download', 'morden-toolkit'); ?>
+                <?php _e('Download', 'wp-debug-manager'); ?>
             </button>
         </div>
 
@@ -59,12 +59,12 @@ $smtp_status = $smtp_service->get_logging_status();
             <?php if ($smtp_status['current_log_exists']): ?>
             <span class="mt-log-size">
                 <span class="dashicons dashicons-media-text"></span>
-                <?php _e('Today:', 'morden-toolkit'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
+                <?php _e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
             </span>
             <?php else: ?>
             <span class="mt-no-logs">
                 <span class="dashicons dashicons-info"></span>
-                <?php _e('No log file for today', 'morden-toolkit'); ?>
+                <?php _e('No log file for today', 'wp-debug-manager'); ?>
             </span>
             <?php endif; ?>
         </div>
@@ -72,9 +72,9 @@ $smtp_status = $smtp_service->get_logging_status();
 
     <div class="mt-logs-filters <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
         <div class="mt-filter-group">
-            <label for="smtp-date-filter"><?php _e('Date:', 'morden-toolkit'); ?></label>
+            <label for="smtp-date-filter"><?php _e('Date:', 'wp-debug-manager'); ?></label>
             <select id="smtp-date-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <option value=""><?php _e('Today', 'morden-toolkit'); ?></option>
+                <option value=""><?php _e('Today', 'wp-debug-manager'); ?></option>
                 <?php foreach ($smtp_status['available_files'] as $file): ?>
                 <option value="<?php echo esc_attr($file['date']); ?>">
                     <?php echo esc_html($file['formatted_date']); ?> (<?php echo esc_html($file['size_formatted']); ?>)
@@ -84,23 +84,23 @@ $smtp_status = $smtp_service->get_logging_status();
         </div>
 
         <div class="mt-filter-group">
-            <label for="smtp-status-filter"><?php _e('Status:', 'morden-toolkit'); ?></label>
+            <label for="smtp-status-filter"><?php _e('Status:', 'wp-debug-manager'); ?></label>
             <select id="smtp-status-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <option value=""><?php _e('All Status', 'morden-toolkit'); ?></option>
-                <option value="sent"><?php _e('Sent', 'morden-toolkit'); ?></option>
-                <option value="failed"><?php _e('Failed', 'morden-toolkit'); ?></option>
-                <option value="queued"><?php _e('Queued', 'morden-toolkit'); ?></option>
+                <option value=""><?php _e('All Status', 'wp-debug-manager'); ?></option>
+                <option value="sent"><?php _e('Sent', 'wp-debug-manager'); ?></option>
+                <option value="failed"><?php _e('Failed', 'wp-debug-manager'); ?></option>
+                <option value="queued"><?php _e('Queued', 'wp-debug-manager'); ?></option>
             </select>
         </div>
 
         <div class="mt-filter-group">
-            <label for="smtp-search"><?php _e('Search:', 'morden-toolkit'); ?></label>
-            <input type="text" id="smtp-search" placeholder="<?php _e('Search sender, recipient, or subject...', 'morden-toolkit'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <label for="smtp-search"><?php _e('Search:', 'wp-debug-manager'); ?></label>
+            <input type="text" id="smtp-search" placeholder="<?php _e('Search sender, recipient, or subject...', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
         </div>
 
         <div class="mt-filter-group">
             <button type="button" id="clear-smtp-filters" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <?php _e('Clear Filters', 'morden-toolkit'); ?>
+                <?php _e('Clear Filters', 'wp-debug-manager'); ?>
             </button>
         </div>
     </div>
@@ -108,20 +108,20 @@ $smtp_status = $smtp_service->get_logging_status();
     <div class="mt-smtp-logs-container">
         <div id="mt-smtp-logs-viewer" class="mt-logs-viewer">
             <?php if (!$smtp_status['current_log_exists'] && !$smtp_status['enabled']): ?>
-            <div class="mt-no-logs-message">
+            <div class="wpdmgr-no-logs-message">
                 <div class="dashicons dashicons-info"></div>
-                <h3><?php _e('No SMTP Logs Found', 'morden-toolkit'); ?></h3>
-                <p><?php _e('SMTP logging is not enabled. Email activity is not being recorded.', 'morden-toolkit'); ?></p>
+                <h3><?php _e('No SMTP Logs Found', 'wp-debug-manager'); ?></h3>
+                <p><?php _e('SMTP logging is not enabled. Email activity is not being recorded.', 'wp-debug-manager'); ?></p>
                 <p>
                     <button type="button" id="enable-smtp-logging-2" class="button button-primary">
-                        <?php _e('Enable SMTP Logging', 'morden-toolkit'); ?>
+                        <?php _e('Enable SMTP Logging', 'wp-debug-manager'); ?>
                     </button>
                 </p>
             </div>
             <?php else: ?>
             <div class="mt-logs-loading">
                 <div class="mt-spinner"></div>
-                <p><?php _e('Loading SMTP logs...', 'morden-toolkit'); ?></p>
+                <p><?php _e('Loading SMTP logs...', 'wp-debug-manager'); ?></p>
             </div>
             <div id="mt-smtp-logs-content" style="display: none;"></div>
             <?php endif; ?>
@@ -133,9 +133,9 @@ $smtp_status = $smtp_service->get_logging_status();
 // Helper functions for formatting
 function formatSmtpStatus(status) {
     const statusMap = {
-        'sent': { class: 'success', text: '<?php _e('Sent', 'morden-toolkit'); ?>' },
-        'failed': { class: 'error', text: '<?php _e('Failed', 'morden-toolkit'); ?>' },
-        'queued': { class: 'warning', text: '<?php _e('Queued', 'morden-toolkit'); ?>' }
+        'sent': { class: 'success', text: '<?php _e('Sent', 'wp-debug-manager'); ?>' },
+        'failed': { class: 'error', text: '<?php _e('Failed', 'wp-debug-manager'); ?>' },
+        'queued': { class: 'warning', text: '<?php _e('Queued', 'wp-debug-manager'); ?>' }
     };
 
     return statusMap[status] || { class: 'info', text: status };
@@ -182,15 +182,15 @@ function initializeSmtpLogsPage() {
             const enabled = this.checked;
 
             jQuery.post(ajaxurl, {
-                action: 'mt_toggle_smtp_logging',
+                action: 'wpdmgr_',
                 enabled: enabled,
-                nonce: mtToolkit.nonce
+                nonce: wpdmgrToolkit.nonce
             }, function(response) {
                 if (response.success) {
-                    window.mtShowNotice(response.data.message, 'success');
+                    window.wpdmgrShowNotice(response.data.message, 'success');
                     setTimeout(() => location.reload(), 1000);
                 } else {
-                    window.mtShowNotice(response.data || 'Failed to toggle SMTP logging', 'error');
+                    window.wpdmgrShowNotice(response.data || 'Failed to toggle SMTP logging', 'error');
                 }
             });
         });
@@ -203,7 +203,7 @@ function initializeSmtpLogsPage() {
         if (btn) {
             btn.addEventListener('click', function() {
                 // Redirect to debug management tab to enable SMTP logging
-                window.location.href = 'tools.php?page=mt&tab=debug#smtp-logging';
+                window.location.href = 'tools.php?page=wpdmgr&tab=debug#smtp-logging';
             });
         }
     });
@@ -221,7 +221,7 @@ function initializeSmtpLogsPage() {
         if (this.disabled || !<?php echo json_encode($smtp_status['enabled']); ?>) {
             return false;
         }
-        if (!confirm(<?php echo json_encode(__('Are you sure you want to clear today\'s SMTP logs?', 'morden-toolkit')); ?>)) {
+        if (!confirm(<?php echo json_encode(__('Are you sure you want to clear today\'s SMTP logs?', 'wp-debug-manager')); ?>)) {
             return;
         }
 
@@ -229,16 +229,16 @@ function initializeSmtpLogsPage() {
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'mt_clear_smtp_logs',
-            nonce: mtToolkit.nonce
+            action: 'wpdmgr_',
+            nonce: wpdmgrToolkit.nonce
         }, function(response) {
             logsLoading.style.display = 'none';
 
             if (response.success) {
-                window.mtShowNotice(response.data, 'success');
+                window.wpdmgrShowNotice(response.data, 'success');
                 loadSmtpLogs();
             } else {
-                window.mtShowNotice(response.data || <?php echo json_encode(__('Error occurred', 'morden-toolkit')); ?>, 'error');
+                window.wpdmgrShowNotice(response.data || <?php echo json_encode(__('Error occurred', 'wp-debug-manager')); ?>, 'error');
             }
         });
     });
@@ -248,24 +248,24 @@ function initializeSmtpLogsPage() {
         if (this.disabled || !<?php echo json_encode($smtp_status['enabled']); ?>) {
             return false;
         }
-        const keepDays = prompt('<?php _e('Keep logs for how many days?', 'morden-toolkit'); ?>', '30');
+        const keepDays = prompt('<?php _e('Keep logs for how many days?', 'wp-debug-manager'); ?>', '30');
         if (!keepDays || isNaN(keepDays)) return;
 
         const logsLoading = document.querySelector('.mt-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'mt_cleanup_smtp_logs',
+            action: 'wpdmgr_',
             keep_days: parseInt(keepDays),
-            nonce: mtToolkit.nonce
+            nonce: wpdmgrToolkit.nonce
         }, function(response) {
             logsLoading.style.display = 'none';
 
             if (response.success) {
-                window.mtShowNotice(response.data, 'success');
+                window.wpdmgrShowNotice(response.data, 'success');
                 location.reload();
             } else {
-                window.mtShowNotice(response.data || <?php echo json_encode(__('Error occurred', 'morden-toolkit')); ?>, 'error');
+                window.wpdmgrShowNotice(response.data || <?php echo json_encode(__('Error occurred', 'wp-debug-manager')); ?>, 'error');
             }
         });
     });
@@ -276,7 +276,7 @@ function initializeSmtpLogsPage() {
             return false;
         }
         const selectedDate = document.getElementById('smtp-date-filter').value || '<?php echo date('dmY'); ?>';
-        const downloadUrl = ajaxurl + '?action=mt_download_smtp_logs&date=' + selectedDate + '&nonce=' + mtToolkit.nonce;
+        const downloadUrl = ajaxurl + '?action=wpdmgr_&date=' + selectedDate + '&nonce=' + wpdmgrToolkit.nonce;
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = 'smtp-logs-' + selectedDate + '.log';
@@ -287,7 +287,7 @@ function initializeSmtpLogsPage() {
     if (<?php echo json_encode($smtp_status['enabled']); ?>) {
         document.getElementById('smtp-date-filter').addEventListener('change', loadSmtpLogs);
         document.getElementById('smtp-status-filter').addEventListener('change', filterSmtpLogs);
-        document.getElementById('smtp-search').addEventListener('input', window.mtUtils.debounce(filterSmtpLogs, 300));
+        document.getElementById('smtp-search').addEventListener('input', window.wpdmgrUtils.debounce(filterSmtpLogs, 300));
 
         // Clear filters
         document.getElementById('clear-smtp-filters').addEventListener('click', function() {
@@ -308,7 +308,7 @@ function loadSmtpLogs() {
     // Check if SMTP logging is enabled
     if (!<?php echo json_encode($smtp_status['enabled']); ?>) {
         logsLoading.style.display = 'none';
-        logsContent.innerHTML = '<div class="notice notice-warning"><p><?php _e('SMTP logging is disabled. Enable it in the Debug Management tab to start recording email activity.', 'morden-toolkit'); ?></p></div>';
+        logsContent.innerHTML = '<div class="notice notice-warning"><p><?php _e('SMTP logging is disabled. Enable it in the Debug Management tab to start recording email activity.', 'wp-debug-manager'); ?></p></div>';
         logsContent.style.display = 'block';
         return;
     }
@@ -319,9 +319,9 @@ function loadSmtpLogs() {
     const selectedDate = document.getElementById('smtp-date-filter').value;
 
     jQuery.post(ajaxurl, {
-        action: 'mt_get_smtp_logs',
+        action: 'wpdmgr_',
         date: selectedDate,
-        nonce: mtToolkit.nonce
+        nonce: wpdmgrToolkit.nonce
     }, function(response) {
         logsLoading.style.display = 'none';
 
@@ -329,7 +329,7 @@ function loadSmtpLogs() {
             displaySmtpLogs(response.data);
             logsContent.style.display = 'block';
         } else {
-            logsContent.innerHTML = '<div class="notice notice-error"><p>' + <?php echo json_encode(__('Error occurred', 'morden-toolkit')); ?> + '</p></div>';
+            logsContent.innerHTML = '<div class="notice notice-error"><p>' + <?php echo json_encode(__('Error occurred', 'wp-debug-manager')); ?> + '</p></div>';
             logsContent.style.display = 'block';
         }
     });
@@ -339,7 +339,7 @@ function displaySmtpLogs(logEntries) {
     const logsContent = document.getElementById('mt-smtp-logs-content');
 
     if (!logEntries || logEntries.length === 0) {
-        logsContent.innerHTML = '<div class="mt-no-logs-message"><p>' + <?php echo json_encode(__('No SMTP log entries found.', 'morden-toolkit')); ?> + '</p></div>';
+        logsContent.innerHTML = '<div class="wpdmgr-no-logs-message"><p>' + <?php echo json_encode(__('No SMTP log entries found.', 'wp-debug-manager')); ?> + '</p></div>';
         return;
     }
 
@@ -357,8 +357,8 @@ function displaySmtpLogs(logEntries) {
         html += '<div class="smtp-log-main">';
         html += '<span class="dashicons dashicons-arrow-right-alt2 toggle-icon"></span>';
         html += '<div class="smtp-log-info">';
-        html += '<div class="smtp-sender"><strong>' + window.mtUtils.escapeHtml(entry.from || entry.mailfrom) + '</strong></div>';
-        html += '<div class="smtp-subject">' + window.mtUtils.escapeHtml(entry.subject || 'No Subject') + '</div>';
+        html += '<div class="smtp-sender"><strong>' + window.wpdmgrUtils.escapeHtml(entry.from || entry.mailfrom) + '</strong></div>';
+        html += '<div class="smtp-subject">' + window.wpdmgrUtils.escapeHtml(entry.subject || 'No Subject') + '</div>';
         html += '</div>';
         html += '</div>';
         html += '<div class="smtp-log-meta">';
@@ -372,71 +372,71 @@ function displaySmtpLogs(logEntries) {
         html += '<div class="smtp-details-content">';
 
         // Recipients
-        html += '<div class="detail-row"><strong><?php _e('To:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(formatSmtpRecipients(entry.to || entry.rcptto)) + '</div>';
+        html += '<div class="detail-row"><strong><?php _e('To:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(formatSmtpRecipients(entry.to || entry.rcptto)) + '</div>';
 
         // CC/BCC if present
         if (entry.cc && entry.cc.length > 0) {
-            html += '<div class="detail-row"><strong><?php _e('CC:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(formatSmtpRecipients(entry.cc)) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('CC:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(formatSmtpRecipients(entry.cc)) + '</div>';
         }
         if (entry.bcc && entry.bcc.length > 0) {
-            html += '<div class="detail-row"><strong><?php _e('BCC:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(formatSmtpRecipients(entry.bcc)) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('BCC:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(formatSmtpRecipients(entry.bcc)) + '</div>';
         }
 
         // Message ID and Reply-To
         if (entry.msg_id) {
-            html += '<div class="detail-row"><strong><?php _e('Message ID:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.msg_id) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('Message ID:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.msg_id) + '</div>';
         }
         if (entry.reply_to) {
-            html += '<div class="detail-row"><strong><?php _e('Reply-To:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.reply_to) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('Reply-To:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.reply_to) + '</div>';
         }
 
         // Error message if failed
         if (entry.status === 'failed' && (entry.last_reply || entry.error_message)) {
             const errorMessage = entry.error_message || entry.last_reply;
-            html += '<div class="detail-row error"><strong><?php _e('Error:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(errorMessage) + '</div>';
+            html += '<div class="detail-row error"><strong><?php _e('Error:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(errorMessage) + '</div>';
         }
 
         // Message size
         if (entry.message_size) {
-            html += '<div class="detail-row"><strong><?php _e('Message Size:', 'morden-toolkit'); ?></strong> ' + entry.message_size + ' bytes</div>';
+            html += '<div class="detail-row"><strong><?php _e('Message Size:', 'wp-debug-manager'); ?></strong> ' + entry.message_size + ' bytes</div>';
         }
 
         // Email content type
         if (entry.email_content_type) {
-            html += '<div class="detail-row"><strong><?php _e('Content Type:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_content_type) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('Content Type:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_content_type) + '</div>';
         }
 
         // Originating IP if enabled (updated field names)
         if ((entry.ip_address && entry.ip_address !== 'IP logging disabled') || (entry.x_originating_ip && entry.x_originating_ip !== 'IP logging disabled')) {
             const ipAddress = entry.ip_address || entry.x_originating_ip;
-            html += '<div class="detail-row"><strong><?php _e('Originating IP:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(ipAddress) + '</div>';
+            html += '<div class="detail-row"><strong><?php _e('Originating IP:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(ipAddress) + '</div>';
         }
 
         // Enhanced caller information
         if (entry.caller_info) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Source:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('Email Source:', 'wp-debug-manager'); ?></strong>';
             html += '<div class="caller-details">';
-            html += '<div><strong><?php _e('Type:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.type || 'Unknown') + '</div>';
-            html += '<div><strong><?php _e('Name:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.name || 'Unknown') + '</div>';
+            html += '<div><strong><?php _e('Type:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.type || 'Unknown') + '</div>';
+            html += '<div><strong><?php _e('Name:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.name || 'Unknown') + '</div>';
             if (entry.caller_info.file) {
-                html += '<div><strong><?php _e('File:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.file) + '</div>';
+                html += '<div><strong><?php _e('File:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.file) + '</div>';
             }
             if (entry.caller_info.line) {
-                html += '<div><strong><?php _e('Line:', 'morden-toolkit'); ?></strong> ' + entry.caller_info.line + '</div>';
+                html += '<div><strong><?php _e('Line:', 'wp-debug-manager'); ?></strong> ' + entry.caller_info.line + '</div>';
             }
             if (entry.caller_info.function) {
-                html += '<div><strong><?php _e('Function:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.function) + '</div>';
+                html += '<div><strong><?php _e('Function:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.function) + '</div>';
             }
             if (entry.caller_info.class) {
-                html += '<div><strong><?php _e('Class:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.class) + '</div>';
+                html += '<div><strong><?php _e('Class:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.class) + '</div>';
             }
             // Plugin/Theme specific data
             if (entry.caller_info.plugin_data && entry.caller_info.plugin_data.version) {
-                html += '<div><strong><?php _e('Plugin Version:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.plugin_data.version) + '</div>';
+                html += '<div><strong><?php _e('Plugin Version:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.plugin_data.version) + '</div>';
             }
             if (entry.caller_info.theme_data && entry.caller_info.theme_data.version) {
-                html += '<div><strong><?php _e('Theme Version:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.caller_info.theme_data.version) + '</div>';
+                html += '<div><strong><?php _e('Theme Version:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.caller_info.theme_data.version) + '</div>';
             }
             html += '</div>';
             html += '</div>';
@@ -445,66 +445,66 @@ function displaySmtpLogs(logEntries) {
         // Enhanced WordPress context
         if (entry.wordpress_context) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('WordPress Context:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('WordPress Context:', 'wp-debug-manager'); ?></strong>';
             html += '<div class="context-details">';
             if (entry.wordpress_context.url) {
-                html += '<div><strong><?php _e('URL:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.wordpress_context.url) + '</div>';
+                html += '<div><strong><?php _e('URL:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.wordpress_context.url) + '</div>';
             }
             if (entry.wordpress_context.user_id) {
-                html += '<div><strong><?php _e('User ID:', 'morden-toolkit'); ?></strong> ' + entry.wordpress_context.user_id + '</div>';
+                html += '<div><strong><?php _e('User ID:', 'wp-debug-manager'); ?></strong> ' + entry.wordpress_context.user_id + '</div>';
             }
             if (entry.wordpress_context.request_method) {
-                html += '<div><strong><?php _e('Request Method:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.wordpress_context.request_method) + '</div>';
+                html += '<div><strong><?php _e('Request Method:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.wordpress_context.request_method) + '</div>';
             }
             if (entry.wordpress_context.is_admin !== undefined) {
-                html += '<div><strong><?php _e('Admin Request:', 'morden-toolkit'); ?></strong> ' + (entry.wordpress_context.is_admin ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php _e('Admin Request:', 'wp-debug-manager'); ?></strong> ' + (entry.wordpress_context.is_admin ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.is_ajax !== undefined) {
-                html += '<div><strong><?php _e('AJAX Request:', 'morden-toolkit'); ?></strong> ' + (entry.wordpress_context.is_ajax ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php _e('AJAX Request:', 'wp-debug-manager'); ?></strong> ' + (entry.wordpress_context.is_ajax ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.is_cron !== undefined) {
-                html += '<div><strong><?php _e('Cron Request:', 'morden-toolkit'); ?></strong> ' + (entry.wordpress_context.is_cron ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php _e('Cron Request:', 'wp-debug-manager'); ?></strong> ' + (entry.wordpress_context.is_cron ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.wp_version) {
-                html += '<div><strong><?php _e('WordPress Version:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.wordpress_context.wp_version) + '</div>';
+                html += '<div><strong><?php _e('WordPress Version:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.wordpress_context.wp_version) + '</div>';
             }
             if (entry.wordpress_context.php_version) {
-                html += '<div><strong><?php _e('PHP Version:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.wordpress_context.php_version) + '</div>';
+                html += '<div><strong><?php _e('PHP Version:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.wordpress_context.php_version) + '</div>';
             }
             if (entry.wordpress_context.memory_usage) {
-                html += '<div><strong><?php _e('Memory Usage:', 'morden-toolkit'); ?></strong> ' + formatBytes(entry.wordpress_context.memory_usage) + '</div>';
+                html += '<div><strong><?php _e('Memory Usage:', 'wp-debug-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.memory_usage) + '</div>';
             }
             if (entry.wordpress_context.peak_memory) {
-                html += '<div><strong><?php _e('Peak Memory:', 'morden-toolkit'); ?></strong> ' + formatBytes(entry.wordpress_context.peak_memory) + '</div>';
+                html += '<div><strong><?php _e('Peak Memory:', 'wp-debug-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.peak_memory) + '</div>';
             }
             // Legacy caller for backward compatibility
             if (entry.wordpress_context.caller && !entry.caller_info) {
-                html += '<div><strong><?php _e('Source:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.wordpress_context.caller) + '</div>';
+                html += '<div><strong><?php _e('Source:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.wordpress_context.caller) + '</div>';
             }
             html += '</div>';
             html += '</div>';
         }
         if (entry.email_headers || entry.all_headers) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Headers:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('Email Headers:', 'wp-debug-manager'); ?></strong>';
             html += '<div class="email-headers-details">';
 
             // Enhanced headers from email_headers object
             if (entry.email_headers) {
                 if (entry.email_headers.return_path) {
-                    html += '<div><strong><?php _e('Return-Path:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_headers.return_path) + '</div>';
+                    html += '<div><strong><?php _e('Return-Path:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_headers.return_path) + '</div>';
                 }
                 if (entry.email_headers.message_id) {
-                    html += '<div><strong><?php _e('Message-ID:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_headers.message_id) + '</div>';
+                    html += '<div><strong><?php _e('Message-ID:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_headers.message_id) + '</div>';
                 }
                 if (entry.email_headers.in_reply_to) {
-                    html += '<div><strong><?php _e('In-Reply-To:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_headers.in_reply_to) + '</div>';
+                    html += '<div><strong><?php _e('In-Reply-To:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_headers.in_reply_to) + '</div>';
                 }
                 if (entry.email_headers.references) {
-                    html += '<div><strong><?php _e('References:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_headers.references) + '</div>';
+                    html += '<div><strong><?php _e('References:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_headers.references) + '</div>';
                 }
                 if (entry.email_headers.priority) {
-                    html += '<div><strong><?php _e('Priority:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_headers.priority) + '</div>';
+                    html += '<div><strong><?php _e('Priority:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_headers.priority) + '</div>';
                 }
             }
 
@@ -513,7 +513,7 @@ function displaySmtpLogs(logEntries) {
             if (headers) {
                 for (const [key, value] of Object.entries(headers)) {
                     if (key !== 'all_headers') {  // Avoid recursive display
-                        html += '<div><strong>' + window.mtUtils.escapeHtml(key) + ':</strong> ' + window.mtUtils.escapeHtml(value) + '</div>';
+                        html += '<div><strong>' + window.wpdmgrUtils.escapeHtml(key) + ':</strong> ' + window.wpdmgrUtils.escapeHtml(value) + '</div>';
                     }
                 }
             }
@@ -525,12 +525,12 @@ function displaySmtpLogs(logEntries) {
         if (entry.headers_raw) {
             html += '<div class="detail-section">';
             html += '<div class="headers-toggle-wrapper">';
-            html += '<strong><?php _e('Raw Headers:', 'morden-toolkit'); ?></strong>';
-            html += '<button type="button" class="button button-small toggle-headers" data-target="headers-' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('Show/Hide', 'morden-toolkit'); ?></button>';
-            html += '<button type="button" class="button button-small view-full-headers" data-entry-id="' + index + '" style="margin-left: 5px; font-size: 11px;"><?php _e('View Full', 'morden-toolkit'); ?></button>';
+            html += '<strong><?php _e('Raw Headers:', 'wp-debug-manager'); ?></strong>';
+            html += '<button type="button" class="button button-small toggle-headers" data-target="headers-' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('Show/Hide', 'wp-debug-manager'); ?></button>';
+            html += '<button type="button" class="button button-small view-full-headers" data-entry-id="' + index + '" style="margin-left: 5px; font-size: 11px;"><?php _e('View Full', 'wp-debug-manager'); ?></button>';
             html += '</div>';
             html += '<div class="headers-content" id="headers-' + index + '" style="display: none;">';
-            html += '<pre class="headers-raw">' + window.mtUtils.escapeHtml(entry.headers_raw) + '</pre>';
+            html += '<pre class="headers-raw">' + window.wpdmgrUtils.escapeHtml(entry.headers_raw) + '</pre>';
             html += '</div>';
             html += '</div>';
         }
@@ -540,38 +540,38 @@ function displaySmtpLogs(logEntries) {
         if (emailContent) {
             const contentPreview = emailContent.substring(0, 200) + (emailContent.length > 200 ? '...' : '');
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Content:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('Email Content:', 'wp-debug-manager'); ?></strong>';
             if (emailContent.length > 200) {
-                html += '<button type="button" class="button button-small view-full-content" data-entry-id="' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('View Full Content', 'morden-toolkit'); ?></button>';
+                html += '<button type="button" class="button button-small view-full-content" data-entry-id="' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('View Full Content', 'wp-debug-manager'); ?></button>';
             }
             // Show content type if available
             if (entry.email_content_type) {
-                html += '<div style="margin-top: 5px; font-size: 12px; color: #666;"><strong><?php _e('Type:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(entry.email_content_type) + '</div>';
+                html += '<div style="margin-top: 5px; font-size: 12px; color: #666;"><strong><?php _e('Type:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(entry.email_content_type) + '</div>';
             }
             if (entry.email_content_html !== undefined) {
-                html += '<div style="margin-top: 3px; font-size: 12px; color: #666;"><strong><?php _e('Format:', 'morden-toolkit'); ?></strong> ' + (entry.email_content_html ? 'HTML' : 'Plain Text') + '</div>';
+                html += '<div style="margin-top: 3px; font-size: 12px; color: #666;"><strong><?php _e('Format:', 'wp-debug-manager'); ?></strong> ' + (entry.email_content_html ? 'HTML' : 'Plain Text') + '</div>';
             }
-            html += '<div class="message-preview">' + window.mtUtils.escapeHtml(contentPreview) + '</div>';
+            html += '<div class="message-preview">' + window.wpdmgrUtils.escapeHtml(contentPreview) + '</div>';
             html += '</div>';
         }
 
         // Email attachments (enhanced)
         if (entry.email_attachments && entry.email_attachments.length > 0) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Attachments:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('Attachments:', 'wp-debug-manager'); ?></strong>';
             html += '<div class="attachments-list">';
             entry.email_attachments.forEach(function(attachment) {
                 html += '<div class="attachment-item">';
                 if (typeof attachment === 'object') {
-                    html += '<div><strong><?php _e('File:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(attachment.file_name || 'Unknown') + '</div>';
+                    html += '<div><strong><?php _e('File:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(attachment.file_name || 'Unknown') + '</div>';
                     if (attachment.file_size) {
-                        html += '<div><strong><?php _e('Size:', 'morden-toolkit'); ?></strong> ' + formatBytes(attachment.file_size) + '</div>';
+                        html += '<div><strong><?php _e('Size:', 'wp-debug-manager'); ?></strong> ' + formatBytes(attachment.file_size) + '</div>';
                     }
                     if (attachment.mime_type) {
-                        html += '<div><strong><?php _e('Type:', 'morden-toolkit'); ?></strong> ' + window.mtUtils.escapeHtml(attachment.mime_type) + '</div>';
+                        html += '<div><strong><?php _e('Type:', 'wp-debug-manager'); ?></strong> ' + window.wpdmgrUtils.escapeHtml(attachment.mime_type) + '</div>';
                     }
                 } else {
-                    html += window.mtUtils.escapeHtml(attachment);
+                    html += window.wpdmgrUtils.escapeHtml(attachment);
                 }
                 html += '</div>';
             });
@@ -580,10 +580,10 @@ function displaySmtpLogs(logEntries) {
         } else if (entry.attachments && entry.attachments.length > 0) {
             // Fallback for legacy attachment format
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Attachments:', 'morden-toolkit'); ?></strong>';
+            html += '<strong><?php _e('Attachments:', 'wp-debug-manager'); ?></strong>';
             html += '<div class="attachments-list">';
             entry.attachments.forEach(function(attachment) {
-                html += '<div class="attachment-item">' + window.mtUtils.escapeHtml(attachment) + '</div>';
+                html += '<div class="attachment-item">' + window.wpdmgrUtils.escapeHtml(attachment) + '</div>';
             });
             html += '</div>';
             html += '</div>';
@@ -642,10 +642,10 @@ function displaySmtpLogs(logEntries) {
 
             if (target.style.display === 'none' || target.style.display === '') {
                 target.style.display = 'block';
-                this.textContent = '<?php _e('Hide', 'morden-toolkit'); ?>';
+                this.textContent = '<?php _e('Hide', 'wp-debug-manager'); ?>';
             } else {
                 target.style.display = 'none';
-                this.textContent = '<?php _e('Show', 'morden-toolkit'); ?>';
+                this.textContent = '<?php _e('Show', 'wp-debug-manager'); ?>';
             }
         });
     });
@@ -695,7 +695,7 @@ function showFullContentModal(content, subject, type = 'message') {
         existingModal.remove();
     }
 
-    const title = type === 'headers' ? '<?php _e('Full Email Headers', 'morden-toolkit'); ?>' : '<?php _e('Full Email Content', 'morden-toolkit'); ?>';
+    const title = type === 'headers' ? '<?php _e('Full Email Headers', 'wp-debug-manager'); ?>' : '<?php _e('Full Email Content', 'wp-debug-manager'); ?>';
 
     // Create modal
     const modal = document.createElement('div');
@@ -705,14 +705,14 @@ function showFullContentModal(content, subject, type = 'message') {
     modal.innerHTML = `
         <div class="smtp-modal">
             <div class="smtp-modal-header">
-                <h3>${title}: ${window.mtUtils.escapeHtml(subject)}</h3>
-                <button type="button" class="smtp-modal-close" aria-label="<?php _e('Close', 'morden-toolkit'); ?>">&times;</button>
+                <h3>${title}: ${window.wpdmgrUtils.escapeHtml(subject)}</h3>
+                <button type="button" class="smtp-modal-close" aria-label="<?php _e('Close', 'wp-debug-manager'); ?>">&times;</button>
             </div>
             <div class="smtp-modal-body">
-                <textarea readonly class="smtp-full-content-textarea">${window.mtUtils.escapeHtml(content)}</textarea>
+                <textarea readonly class="smtp-full-content-textarea">${window.wpdmgrUtils.escapeHtml(content)}</textarea>
             </div>
             <div class="smtp-modal-footer">
-                <button type="button" class="button" id="copy-content-btn"><?php _e('Copy to Clipboard', 'morden-toolkit'); ?></button>
+                <button type="button" class="button" id="copy-content-btn"><?php _e('Copy to Clipboard', 'wp-debug-manager'); ?></button>
             </div>
         </div>
     `;
@@ -735,9 +735,9 @@ function showFullContentModal(content, subject, type = 'message') {
 
         try {
             document.execCommand('copy');
-            this.textContent = '<?php _e('Copied!', 'morden-toolkit'); ?>';
+            this.textContent = '<?php _e('Copied!', 'wp-debug-manager'); ?>';
             setTimeout(() => {
-                this.textContent = '<?php _e('Copy to Clipboard', 'morden-toolkit'); ?>';
+                this.textContent = '<?php _e('Copy to Clipboard', 'wp-debug-manager'); ?>';
             }, 2000);
         } catch (err) {
             console.error('Failed to copy content:', err);
@@ -1059,7 +1059,6 @@ function showFullContentModal(content, subject, type = 'message') {
     align-items: center;
     justify-content: center;
     border-radius: 2px;
-    width: ;
 }
 
 .smtp-modal-close:hover {

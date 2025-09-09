@@ -3,17 +3,17 @@
  * SMTP Logger - Email logging with JSON Lines format
  * Enhanced to properly hook into wp_mail() and capture comprehensive email data
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class MT_SMTP_Logger {
+class WPDMGR_SMTP_Logger {
     private $log_directory;
     private $log_enabled;
     private $current_log_file;
@@ -25,9 +25,9 @@ class MT_SMTP_Logger {
     private $current_smtp_config; // Current SMTP configuration
 
     public function __construct() {
-        $this->log_directory = \ABSPATH . 'wp-content/morden-toolkit/';
-        $this->log_enabled = \get_option('mt_smtp_logging_enabled', false);
-        $this->log_ip_address = \get_option('mt_smtp_log_ip_address', false);
+        $this->log_directory = \trailingslashit(\WP_CONTENT_DIR) . 'wp-debug-manager/';
+        $this->log_enabled = (bool) \get_option('wpdmgr_smtp_logging_enabled', \get_option('wpdmgr_smtp_logging_enabled', false));
+        $this->log_ip_address = (bool) \get_option('wpdmgr_smtp_log_ip_address', \get_option('wpdmgr_smtp_log_ip_address', false));
         $this->current_log_file = $this->get_current_log_file();
         $this->pending_emails = array();
         $this->email_counter = 0;
@@ -380,6 +380,15 @@ class MT_SMTP_Logger {
         $timestamp = time();
         $date_iso = date('c', $timestamp);
 
+        // Sanitize server/environment values before logging
+        $server_addr      = isset($_SERVER['SERVER_ADDR']) ? \sanitize_text_field($_SERVER['SERVER_ADDR']) : '127.0.0.1';
+        $server_port      = isset($_SERVER['SERVER_PORT']) ? \absint($_SERVER['SERVER_PORT']) : 80;
+        $server_name      = isset($_SERVER['SERVER_NAME']) ? \sanitize_text_field($_SERVER['SERVER_NAME']) : 'localhost';
+        $request_uri      = isset($_SERVER['REQUEST_URI']) ? \esc_url_raw( \wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+        $remote_addr      = isset($_SERVER['REMOTE_ADDR']) ? \sanitize_text_field($_SERVER['REMOTE_ADDR']) : '127.0.0.1';
+        $http_user_agent  = isset($_SERVER['HTTP_USER_AGENT']) ? \sanitize_text_field( \wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+        $request_method   = isset($_SERVER['REQUEST_METHOD']) ? \sanitize_key($_SERVER['REQUEST_METHOD']) : 'unknown';
+
         // Create comprehensive log entry with all requested fields
         $log_entry = array(
             // Basic Zeek SMTP structure
@@ -387,13 +396,13 @@ class MT_SMTP_Logger {
             'date' => $date_iso,
             'uid' => $uid,
             'id' => array(
-                'orig_h' => $_SERVER['SERVER_ADDR'] ?? '127.0.0.1',
-                'orig_p' => $_SERVER['SERVER_PORT'] ?? 80,
+                'orig_h' => $server_addr,
+                'orig_p' => $server_port,
                 'resp_h' => $this->get_smtp_server(),
                 'resp_p' => 25
             ),
             'trans_depth' => 1,
-            'helo' => $_SERVER['SERVER_NAME'] ?? 'localhost',
+            'helo' => $server_name,
             'mailfrom' => $this->extract_email($mailfrom),
             'rcptto' => $rcptto,
 
@@ -410,14 +419,14 @@ class MT_SMTP_Logger {
                 'cc' => $this->extract_header_addresses($headers, 'Cc'),
                 'bcc' => $this->extract_header_addresses($headers, 'Bcc'),
                 'return_path' => isset($headers['Return-Path']) ? $headers['Return-Path'] : '',
-                'message_id' => isset($headers['Message-ID']) ? $headers['Message-ID'] : '<' . $uid . '@' . ($_SERVER['SERVER_NAME'] ?? 'localhost') . '>',
+                'message_id' => isset($headers['Message-ID']) ? $headers['Message-ID'] : '<' . $uid . '@' . $server_name . '>',
                 'in_reply_to' => isset($headers['In-Reply-To']) ? $headers['In-Reply-To'] : '',
                 'references' => isset($headers['References']) ? $headers['References'] : '',
                 'priority' => isset($headers['X-Priority']) ? $headers['X-Priority'] : 'normal',
                 'all_headers' => $headers
             ),
             'error_message' => '',
-            'ip_address' => $this->log_ip_address ? ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') : 'IP logging disabled',
+            'ip_address' => $this->log_ip_address ? $remote_addr : 'IP logging disabled',
             'date_time' => $date_iso,
             'receiver' => implode(', ', $recipients),
             'caller_info' => $caller, // Detailed caller tracking
@@ -429,14 +438,14 @@ class MT_SMTP_Logger {
             'cc' => $this->extract_header_addresses($headers, 'Cc'),
             'bcc' => $this->extract_header_addresses($headers, 'Bcc'),
             'reply_to' => isset($headers['Reply-To']) ? $headers['Reply-To'] : '',
-            'msg_id' => isset($headers['Message-ID']) ? $headers['Message-ID'] : '<' . $uid . '@' . ($_SERVER['SERVER_NAME'] ?? 'localhost') . '>',
+            'msg_id' => isset($headers['Message-ID']) ? $headers['Message-ID'] : '<' . $uid . '@' . $server_name . '>',
             'in_reply_to' => isset($headers['In-Reply-To']) ? $headers['In-Reply-To'] : '',
             'subject' => $mail_data['subject'] ?? '',
-            'x_originating_ip' => $this->log_ip_address ? ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') : 'IP logging disabled',
+            'x_originating_ip' => $this->log_ip_address ? $remote_addr : 'IP logging disabled',
             'first_received' => date('r', $timestamp),
             'second_received' => '',
             'last_reply' => '',
-            'path' => array($_SERVER['SERVER_NAME'] ?? 'localhost'),
+            'path' => array($server_name),
             'user_agent' => 'WordPress/' . get_bloginfo('version'),
             'tls' => $this->detect_tls_usage(),
             'fuids' => array(),
@@ -451,10 +460,10 @@ class MT_SMTP_Logger {
                 'hook' => \current_action(),
                 'user_id' => \get_current_user_id(),
                 'post_id' => \get_the_ID(),
-                'url' => $_SERVER['REQUEST_URI'] ?? '',
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-                'request_method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown',
+                'url' => $request_uri,
+                'user_agent' => $http_user_agent,
+                'ip' => $remote_addr,
+                'request_method' => $request_method,
                 'is_admin' => \is_admin(),
                 'is_ajax' => \wp_doing_ajax(),
                 'is_cron' => \wp_doing_cron(),
@@ -475,7 +484,7 @@ class MT_SMTP_Logger {
         // Update current log file path in case date changed
         $this->current_log_file = $this->get_current_log_file();
 
-        $json_line = json_encode($log_entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+        $json_line = \wp_json_encode($log_entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
         // Write to file with lock
         file_put_contents($this->current_log_file, $json_line, FILE_APPEND | LOCK_EX);
@@ -977,7 +986,7 @@ class MT_SMTP_Logger {
      */
     public function enable_ip_logging() {
         $this->log_ip_address = true;
-        update_option('mt_smtp_log_ip_address', true);
+        update_option('wpdmgr_smtp_log_ip_address', true);
     }
 
     /**
@@ -985,7 +994,7 @@ class MT_SMTP_Logger {
      */
     public function disable_ip_logging() {
         $this->log_ip_address = false;
-        update_option('mt_smtp_log_ip_address', false);
+        update_option('wpdmgr_smtp_log_ip_address', false);
     }
 
     /**
@@ -993,7 +1002,7 @@ class MT_SMTP_Logger {
      */
     public function enable_logging() {
         $this->log_enabled = true;
-        update_option('mt_smtp_logging_enabled', true);
+        update_option('wpdmgr_smtp_logging_enabled', true);
         $this->init_hooks();
     }
 
@@ -1002,7 +1011,7 @@ class MT_SMTP_Logger {
      */
     public function disable_logging() {
         $this->log_enabled = false;
-        update_option('mt_smtp_logging_enabled', false);
+        update_option('wpdmgr_smtp_logging_enabled', false);
 
         // Remove hooks
         \remove_filter('pre_wp_mail', array($this, 'capture_email_data'));
@@ -1068,7 +1077,7 @@ class MT_SMTP_Logger {
                     'formatted_date' => date('d/m/Y', strtotime($date)),
                     'file' => $file,
                     'size' => filesize($file),
-                    'size_formatted' => mt_format_bytes(filesize($file))
+                    'size_formatted' => wpdmgr_format_bytes(filesize($file))
                 );
             }
         }
@@ -1090,7 +1099,7 @@ class MT_SMTP_Logger {
             'current_log_file' => $this->current_log_file,
             'current_log_exists' => file_exists($this->current_log_file),
             'current_log_size' => file_exists($this->current_log_file) ?
-                mt_format_bytes(filesize($this->current_log_file)) : '0 B',
+                wpdmgr_format_bytes(filesize($this->current_log_file)) : '0 B',
             'available_files' => $this->get_available_log_files()
         );
     }
@@ -1139,7 +1148,7 @@ class MT_SMTP_Logger {
         // Skip internal functions and find the actual caller
         foreach ($trace as $call) {
             // Skip our own methods and WordPress internal functions
-            if (isset($call['class']) && $call['class'] === 'MT_SMTP_Logger') {
+            if (isset($call['class']) && $call['class'] === 'WPDMGR_SMTP_Logger') {
                 continue;
             }
 
@@ -1215,8 +1224,8 @@ class MT_SMTP_Logger {
      * Process email content according to privacy settings
      */
     private function process_email_content($content) {
-        $privacy_mode = \get_option('mt_smtp_privacy_mode', 'full'); // full, truncated, obfuscated, none
-        $max_length = \get_option('mt_smtp_content_max_length', 1000);
+        $privacy_mode = \get_option('wpdmgr_smtp_privacy_mode', 'full'); // full, truncated, obfuscated, none
+        $max_length = \get_option('wpdmgr_smtp_content_max_length', 1000);
 
         switch ($privacy_mode) {
             case 'none':
@@ -1265,7 +1274,7 @@ class MT_SMTP_Logger {
         }
 
         // Truncate if still too long
-        $max_length = \get_option('mt_smtp_content_max_length', 500);
+        $max_length = \get_option('wpdmgr_smtp_content_max_length', 500);
         if (strlen($obfuscated) > $max_length) {
             $obfuscated = substr($obfuscated, 0, $max_length) . ' [TRUNCATED]';
         }
@@ -1277,7 +1286,7 @@ class MT_SMTP_Logger {
      * Check if content should be logged based on privacy settings
      */
     private function should_log_content($content_type = 'email') {
-        $privacy_mode = \get_option('mt_smtp_privacy_mode', 'full');
+        $privacy_mode = \get_option('wpdmgr_smtp_privacy_mode', 'full');
 
         if ($privacy_mode === 'none') {
             return false;

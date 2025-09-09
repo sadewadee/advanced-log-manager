@@ -2,7 +2,7 @@
  * Performance Bar Frontend Styles
  */
 
-.mt-performance-bar {
+.wpdmgr-performance-bar {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -16,7 +16,7 @@
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-.mt-perf-container {
+.wpdmgr-perf-container {
     display: flex !important;
     align-items: center !important;
     padding: 8px 20px !important;
@@ -24,34 +24,34 @@
     margin: 0 auto !important;
 }
 
-.mt-perf-item {
+.wpdmgr-perf-item {
     display: flex !important;
     align-items: center !important;
     margin-right: 20px !important;
     white-space: nowrap !important;
 }
 
-.mt-perf-icon {
+.wpdmgr-perf-icon {
     margin-right: 5px !important;
     font-size: 14px !important;
 }
 
-.mt-perf-value {
+.wpdmgr-perf-value {
     font-weight: 600 !important;
     margin-right: 3px !important;
     color: #ffffff !important;
 }
 
-.mt-perf-label {
+.wpdmgr-perf-label {
     color: #a0a5aa !important;
     font-size: 12px !important;
 }
 
-.mt-perf-toggle {
+.wpdmgr-perf-toggle {
     margin-left: auto !important;
 }
 
-.mt-perf-toggle button {
+.wpdmgr-perf-toggle button {
     background: none !important;
     border: none !important;
     color: #ffffff !important;
@@ -61,30 +61,30 @@
     transition: background 0.3s ease !important;
 }
 
-.mt-perf-toggle button:hover {
+.wpdmgr-perf-toggle button:hover {
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.mt-perf-toggle .dashicons {
+.wpdmgr-perf-toggle .dashicons {
     font-size: 16px !important;
     width: 16px !important;
     height: 16px !important;
 }
 
-.mt-perf-details {
+.wpdmgr-perf-details {
     background: #32373c !important;
     border-top: 1px solid #464b50 !important;
     padding: 0 !important;
 }
 
-.mt-perf-details-content {
+.wpdmgr-perf-details-content {
     margin: 0 auto !important;
     display: flex !important;
     max-height: 50vh !important;
 }
 
 /* Sidebar Tabs */
-.mt-perf-sidebar {
+.wpdmgr-perf-sidebar {
     width: 25% !important;
     background: #23282d !important;
     border-right: 1px solid #464b50 !important;
@@ -93,13 +93,13 @@
     overflow-x: hidden;
 }
 
-.mt-perf-tabs {
+.wpdmgr-perf-tabs {
     list-style: none !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-.mt-perf-tab {
+.wpdmgr-perf-tab {
     display: flex !important;
     align-items: center !important;
     padding: 12px 15px !important;
@@ -110,18 +110,18 @@
     font-size: 13px !important;
 }
 
-.mt-perf-tab:hover {
+.wpdmgr-perf-tab:hover {
     background: #2c3338 !important;
     color: #ffffff !important;
 }
 
-.mt-perf-tab.active {
+.wpdmgr-perf-tab.active {
     background: #0073aa !important;
     color: #ffffff !important;
     border-left: 3px solid #00a0d2 !important;
 }
 
-.mt-perf-tab .dashicons {
+.wpdmgr-perf-tab .dashicons {
     margin-right: 8px !important;
     font-size: 16px !important;
     width: 16px !important;
@@ -129,129 +129,129 @@
 }
 
 /* Content Area */
-.mt-perf-content {
+.wpdmgr-perf-content {
     flex: 1 !important;
     padding: 15px 20px !important;
     overflow-y: auto !important;
 }
 
-.mt-perf-tab-content {
+.wpdmgr-perf-tab-content {
     display: none !important;
 }
 
-.mt-perf-tab-content.active {
+.wpdmgr-perf-tab-content.active {
     display: block !important;
 }
 
-.mt-perf-details h4 {
+.wpdmgr-perf-details h4 {
     margin: 0 0 10px 0 !important;
     color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
 }
 
-.mt-perf-table {
+.wpdmgr-perf-table {
     width: 100% !important;
     max-width: 400px !important;
     border-collapse: collapse !important;
 }
 
-.mt-perf-table td {
+.wpdmgr-perf-table td {
     padding: 3px 0 !important;
     color: #a0a5aa !important;
     font-size: 13px !important;
     border: none !important;
 }
 
-.mt-perf-table td:first-child {
+.wpdmgr-perf-table td:first-child {
     width: 40% !important;
     font-weight: 500 !important;
 }
 
-.mt-perf-table td:last-child {
+.wpdmgr-perf-table td:last-child {
     color: #ffffff !important;
     font-weight: 600 !important;
 }
 
 /* Performance status colors */
-.mt-performance-bar.good {
+.wpdmgr-performance-bar.good {
     border-top-color: #00a32a !important;
 }
 
-.mt-performance-bar.warning {
+.wpdmgr-performance-bar.warning {
     border-top-color: #dba617 !important;
 }
 
-.mt-performance-bar.poor {
+.wpdmgr-performance-bar.poor {
     border-top-color: #d63638 !important;
 }
 
 /* Admin bar adjustment */
-body.admin-bar .mt-performance-bar {
+body.admin-bar .wpdmgr-performance-bar {
     bottom: 32px !important;
 }
 
 /* Mobile responsive */
 @media screen and (max-width: 782px) {
-    body.admin-bar .mt-performance-bar {
+    body.admin-bar .wpdmgr-performance-bar {
         bottom: 46px !important;
     }
 
-    .mt-perf-container {
+    .wpdmgr-perf-container {
         flex-wrap: wrap !important;
         padding: 6px 15px !important;
     }
 
-    .mt-perf-item {
+    .wpdmgr-perf-item {
         margin-right: 15px !important;
         margin-bottom: 2px !important;
     }
 
-    .mt-perf-details {
+    .wpdmgr-perf-details {
         padding: 12px 15px !important;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .mt-perf-container {
+    .wpdmgr-perf-container {
         padding: 6px 10px !important;
     }
 
-    .mt-perf-item {
+    .wpdmgr-perf-item {
         margin-right: 10px !important;
         font-size: 12px !important;
     }
 
-    .mt-perf-icon {
+    .wpdmgr-perf-icon {
         font-size: 12px !important;
     }
 
-    .mt-perf-value {
+    .wpdmgr-perf-value {
         font-size: 12px !important;
     }
 
-    .mt-perf-label {
+    .wpdmgr-perf-label {
         font-size: 11px !important;
     }
 
-    .mt-perf-table {
+    .wpdmgr-perf-table {
         font-size: 12px !important;
     }
 }
 
 /* Ensure performance bar doesn't interfere with other elements */
-body.mt-perf-active {
+body.wpdmgr-perf-active {
     padding-bottom: 42px !important;
 }
 
-body.admin-bar.mt-perf-active {
+body.admin-bar.wpdmgr-perf-active {
     padding-bottom: 0 !important;
 }
 
 /* Tab Content Styling */
-.mt-queries-list,
-.mt-scripts-list,
-.mt-styles-list {
+.wpdmgr-queries-list,
+.wpdmgr-scripts-list,
+.wpdmgr-styles-list {
     max-height: 400px !important;
     overflow-y: auto !important;
     display: flex !important;
@@ -259,9 +259,9 @@ body.admin-bar.mt-perf-active {
     gap: 8px !important;
 }
 
-.mt-query-item,
-.mt-script-item,
-.mt-style-item {
+.wpdmgr-query-item,
+.wpdmgr-script-item,
+.wpdmgr-style-item {
     background: #23282d !important;
     border: 1px solid #464b50 !important;
     border-radius: 4px !important;
@@ -271,16 +271,16 @@ body.admin-bar.mt-perf-active {
     box-shadow: 0 1px 1px rgba(0,0,0,0.04) !important;
 }
 
-.mt-script-item:hover,
-.mt-style-item:hover {
+.wpdmgr-script-item:hover,
+.wpdmgr-style-item:hover {
     background: #2c3338 !important;
     border-color: #5a6066 !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
 }
 
-.mt-query-header,
-.mt-script-header,
-.mt-style-header {
+.wpdmgr-query-header,
+.wpdmgr-script-header,
+.wpdmgr-style-header {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
@@ -288,9 +288,9 @@ body.admin-bar.mt-perf-active {
     gap: 8px !important;
 }
 
-.mt-query-type,
-.mt-script-handle,
-.mt-style-handle {
+.wpdmgr-query-type,
+.wpdmgr-script-handle,
+.wpdmgr-style-handle {
     font-weight: 600 !important;
     color: #ffffff !important;
     font-size: 13px !important;
@@ -301,7 +301,7 @@ body.admin-bar.mt-perf-active {
     border: 1px solid #464b50 !important;
 }
 
-.mt-query-time {
+.wpdmgr-query-time {
     font-size: 11px !important;
     padding: 2px 6px !important;
     border-radius: 3px !important;
@@ -309,20 +309,20 @@ body.admin-bar.mt-perf-active {
     color: #ffffff !important;
 }
 
-.mt-query-item.slow .mt-query-time {
+.wpdmgr-query-item.slow .wpdmgr-query-time {
     background: #d63638 !important;
 }
 
-.mt-query-item.medium .mt-query-time {
+.wpdmgr-query-item.medium .wpdmgr-query-time {
     background: #dba617 !important;
 }
 
-.mt-query-item.fast .mt-query-time {
+.wpdmgr-query-item.fast .wpdmgr-query-time {
     background: #00a32a !important;
 }
 
-.mt-script-version,
-.mt-style-version {
+.wpdmgr-script-version,
+.wpdmgr-style-version {
     background: #2271b1 !important;
     color: white !important;
     padding: 2px 8px !important;
@@ -332,7 +332,7 @@ body.admin-bar.mt-perf-active {
     letter-spacing: 0.3px !important;
 }
 
-.mt-style-media {
+.wpdmgr-style-media {
     background: #646970 !important;
     color: white !important;
     padding: 2px 8px !important;
@@ -342,9 +342,9 @@ body.admin-bar.mt-perf-active {
     letter-spacing: 0.3px !important;
 }
 
-.mt-query-sql,
-.mt-script-src,
-.mt-style-src {
+.wpdmgr-query-sql,
+.wpdmgr-script-src,
+.wpdmgr-style-src {
     font-family: 'SFMono-Regular', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace !important;
     font-size: 12px !important;
     color: #a0a5aa !important;
@@ -357,9 +357,9 @@ body.admin-bar.mt-perf-active {
     line-height: 1.4 !important;
 }
 
-.mt-query-stack,
-.mt-script-deps,
-.mt-style-deps {
+.wpdmgr-query-stack,
+.wpdmgr-script-deps,
+.wpdmgr-style-deps {
     font-size: 11px !important;
     color: #a0a5aa !important;
     margin-top: 4px !important;
@@ -371,8 +371,8 @@ body.admin-bar.mt-perf-active {
 }
 
 /* Scripts and Styles Tab Content */
-.mt-scripts-container,
-.mt-styles-container {
+.wpdmgr-scripts-container,
+.wpdmgr-styles-container {
     padding: 15px !important;
     max-height: 400px !important;
     overflow-y: auto !important;
@@ -384,8 +384,8 @@ body.admin-bar.mt-perf-active {
 }
 
 /* Table styling for Scripts and Styles */
-.mt-scripts-container .query-log-table,
-.mt-styles-container .query-log-table {
+.wpdmgr-scripts-container .query-log-table,
+.wpdmgr-styles-container .query-log-table {
     width: 100% !important;
     border-collapse: collapse !important;
     background: #23282d !important;
@@ -395,8 +395,8 @@ body.admin-bar.mt-perf-active {
     table-layout: fixed !important;
 }
 
-.mt-scripts-container .query-log-table th,
-.mt-styles-container .query-log-table th {
+.wpdmgr-scripts-container .query-log-table th,
+.wpdmgr-styles-container .query-log-table th {
     background: #32373c !important;
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -407,8 +407,8 @@ body.admin-bar.mt-perf-active {
     letter-spacing: 0.5px !important;
 }
 
-.mt-scripts-container .query-log-table td,
-.mt-styles-container .query-log-table td {
+.wpdmgr-scripts-container .query-log-table td,
+.wpdmgr-styles-container .query-log-table td {
     padding: 10px 8px !important;
     border-bottom: 1px solid #464b50 !important;
     font-size: 12px !important;
@@ -417,46 +417,46 @@ body.admin-bar.mt-perf-active {
     word-wrap: break-word !important;
 }
 
-.mt-scripts-container .query-log-table tr:hover,
-.mt-styles-container .query-log-table tr:hover {
+.wpdmgr-scripts-container .query-log-table tr:hover,
+.wpdmgr-styles-container .query-log-table tr:hover {
     background-color: #2c3338 !important;
 }
 
-.mt-scripts-container .query-log-table .query-number,
-.mt-styles-container .query-log-table .query-number {
+.wpdmgr-scripts-container .query-log-table .query-number,
+.wpdmgr-styles-container .query-log-table .query-number {
     width: 40px !important;
     text-align: center !important;
     font-weight: 600 !important;
     color: #ffffff !important;
 }
 
-.mt-scripts-container .query-log-table .mt-script-handle,
-.mt-styles-container .query-log-table .mt-style-handle {
+.wpdmgr-scripts-container .query-log-table .wpdmgr-script-handle,
+.wpdmgr-styles-container .query-log-table .wpdmgr-style-handle {
     color: #0073aa !important;
     font-weight: 600 !important;
     width: 120px !important;
 }
 
-.mt-scripts-container .query-log-table .query-sql,
-.mt-styles-container .query-log-table .query-sql {
+.wpdmgr-scripts-container .query-log-table .query-sql,
+.wpdmgr-styles-container .query-log-table .query-sql {
     max-width: 30% !important;
     min-width: 200px !important;
 }
 
 /* File Size and Load Time columns */
-.mt-scripts-container .query-log-table th:nth-child(8),
-.mt-scripts-container .query-log-table td:nth-child(8),
-.mt-styles-container .query-log-table th:nth-child(8),
-.mt-styles-container .query-log-table td:nth-child(8) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(8),
+.wpdmgr-scripts-container .query-log-table td:nth-child(8),
+.wpdmgr-styles-container .query-log-table th:nth-child(8),
+.wpdmgr-styles-container .query-log-table td:nth-child(8) {
     width: 80px !important;
     text-align: center !important;
     font-size: 11px !important;
 }
 
-.mt-scripts-container .query-log-table th:nth-child(9),
-.mt-scripts-container .query-log-table td:nth-child(9),
-.mt-styles-container .query-log-table th:nth-child(9),
-.mt-styles-container .query-log-table td:nth-child(9) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(9),
+.wpdmgr-scripts-container .query-log-table td:nth-child(9),
+.wpdmgr-styles-container .query-log-table th:nth-child(9),
+.wpdmgr-styles-container .query-log-table td:nth-child(9) {
     width: 90px !important;
     text-align: center !important;
     font-size: 11px !important;
@@ -512,62 +512,62 @@ body.admin-bar.mt-perf-active {
 }
 
 /* File size styling - fallback for non-colored values */
-.mt-scripts-container .query-log-table td:nth-child(8),
-.mt-styles-container .query-log-table td:nth-child(8) {
+.wpdmgr-scripts-container .query-log-table td:nth-child(8),
+.wpdmgr-styles-container .query-log-table td:nth-child(8) {
     color: #00a32a !important;
     font-weight: 500 !important;
 }
 
 /* Load time styling - fallback for non-colored values */
-.mt-scripts-container .query-log-table td:nth-child(9),
-.mt-styles-container .query-log-table td:nth-child(9) {
+.wpdmgr-scripts-container .query-log-table td:nth-child(9),
+.wpdmgr-styles-container .query-log-table td:nth-child(9) {
     color: #dba617 !important;
     font-weight: 500 !important;
 }
 
 /* Position column width */
-.mt-scripts-container .query-log-table th:nth-child(2),
-.mt-scripts-container .query-log-table td:nth-child(2),
-.mt-styles-container .query-log-table th:nth-child(2),
-.mt-styles-container .query-log-table td:nth-child(2) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(2),
+.wpdmgr-scripts-container .query-log-table td:nth-child(2),
+.wpdmgr-styles-container .query-log-table th:nth-child(2),
+.wpdmgr-styles-container .query-log-table td:nth-child(2) {
     width: 70px !important;
     text-align: center !important;
 }
 
 /* Hostname column width */
-.mt-scripts-container .query-log-table th:nth-child(4),
-.mt-scripts-container .query-log-table td:nth-child(4),
-.mt-styles-container .query-log-table th:nth-child(4),
-.mt-styles-container .query-log-table td:nth-child(4) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(4),
+.wpdmgr-scripts-container .query-log-table td:nth-child(4),
+.wpdmgr-styles-container .query-log-table th:nth-child(4),
+.wpdmgr-styles-container .query-log-table td:nth-child(4) {
     width: 120px !important;
 }
 
 /* Component column width */
-.mt-scripts-container .query-log-table th:nth-child(6),
-.mt-scripts-container .query-log-table td:nth-child(6),
-.mt-styles-container .query-log-table th:nth-child(6),
-.mt-styles-container .query-log-table td:nth-child(6) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(6),
+.wpdmgr-scripts-container .query-log-table td:nth-child(6),
+.wpdmgr-styles-container .query-log-table th:nth-child(6),
+.wpdmgr-styles-container .query-log-table td:nth-child(6) {
     width: 150px !important;
     font-size: 11px !important;
 }
 
 /* Version column width */
-.mt-scripts-container .query-log-table th:nth-child(7),
-.mt-scripts-container .query-log-table td:nth-child(7),
-.mt-styles-container .query-log-table th:nth-child(7),
-.mt-styles-container .query-log-table td:nth-child(7) {
+.wpdmgr-scripts-container .query-log-table th:nth-child(7),
+.wpdmgr-scripts-container .query-log-table td:nth-child(7),
+.wpdmgr-styles-container .query-log-table th:nth-child(7),
+.wpdmgr-styles-container .query-log-table td:nth-child(7) {
     width: 80px !important;
     text-align: center !important;
     font-size: 11px !important;
 }
 
-.mt-scripts-container .query-log-table .sql-container,
-.mt-styles-container .query-log-table .sql-container {
+.wpdmgr-scripts-container .query-log-table .sql-container,
+.wpdmgr-styles-container .query-log-table .sql-container {
     word-break: break-all !important;
 }
 
-.mt-scripts-container .query-log-table .sql-container code,
-.mt-styles-container .query-log-table .sql-container code {
+.wpdmgr-scripts-container .query-log-table .sql-container code,
+.wpdmgr-styles-container .query-log-table .sql-container code {
     background: #1e1e1e !important;
     padding: 2px 4px !important;
     border-radius: 3px !important;
@@ -578,7 +578,7 @@ body.admin-bar.mt-perf-active {
 }
 
 /* Query log table styling for Database Queries tab */
-.mt-perf-content .query-log-table {
+.wpdmgr-perf-content .query-log-table {
     width: 100% !important;
     border-collapse: collapse !important;
     background: #23282d !important;
@@ -588,7 +588,7 @@ body.admin-bar.mt-perf-active {
     table-layout: fixed !important;
 }
 
-.mt-perf-content .query-log-table th {
+.wpdmgr-perf-content .query-log-table th {
     background: #32373c !important;
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -599,7 +599,7 @@ body.admin-bar.mt-perf-active {
     letter-spacing: 0.5px !important;
 }
 
-.mt-perf-content .query-log-table td {
+.wpdmgr-perf-content .query-log-table td {
     padding: 10px 8px !important;
     border-bottom: 1px solid #464b50 !important;
     font-size: 12px !important;
@@ -608,33 +608,33 @@ body.admin-bar.mt-perf-active {
     word-wrap: break-word !important;
 }
 
-.mt-perf-content .query-log-table tr:hover {
+.wpdmgr-perf-content .query-log-table tr:hover {
     background-color: #2c3338 !important;
 }
 
-.mt-perf-content .query-log-table .query-number {
+.wpdmgr-perf-content .query-log-table .query-number {
     width: 50px !important;
     text-align: center !important;
     font-weight: 600 !important;
     color: #ffffff !important;
 }
 
-.mt-perf-content .query-log-table .query-time {
+.wpdmgr-perf-content .query-log-table .query-time {
     width: 80px !important;
     text-align: center !important;
     font-weight: 500 !important;
 }
 
-.mt-perf-content .query-log-table .query-sql {
+.wpdmgr-perf-content .query-log-table .query-sql {
     max-width: 50% !important;
     min-width: 300px !important;
 }
 
-.mt-perf-content .query-log-table .sql-container {
+.wpdmgr-perf-content .query-log-table .sql-container {
     word-break: break-all !important;
 }
 
-.mt-perf-content .query-log-table .sql-container code {
+.wpdmgr-perf-content .query-log-table .sql-container code {
     background: #1e1e1e !important;
     padding: 4px 6px !important;
     border-radius: 3px !important;
@@ -647,7 +647,7 @@ body.admin-bar.mt-perf-active {
     overflow-y: auto !important;
 }
 
-.mt-perf-content .query-log-table .query-caller {
+.wpdmgr-perf-content .query-log-table .query-caller {
     width: 200px !important;
     font-size: 11px !important;
     color: #a0a5aa !important;
@@ -714,23 +714,23 @@ body.admin-bar.mt-perf-active {
 }
 
 /* Slow query styling */
-.mt-perf-content .query-log-table .slow-query {
+.wpdmgr-perf-content .query-log-table .slow-query {
     background-color: rgba(214, 54, 56, 0.1) !important;
 }
 
-.mt-perf-content .query-log-table .slow-query .query-time {
+.wpdmgr-perf-content .query-log-table .slow-query .query-time {
     color: #d63638 !important;
     font-weight: 600 !important;
 }
 
-.mt-perf-content .query-log-table .slow-indicator {
+.wpdmgr-perf-content .query-log-table .slow-indicator {
     color: #d63638 !important;
     font-size: 14px !important;
     margin-right: 3px !important;
 }
 
 /* Copy SQL button */
-.mt-perf-content .query-log-table .copy-sql {
+.wpdmgr-perf-content .query-log-table .copy-sql {
     background: none !important;
     border: none !important;
     color: #0073aa !important;
@@ -741,20 +741,20 @@ body.admin-bar.mt-perf-active {
     transition: background 0.2s ease !important;
 }
 
-.mt-perf-content .query-log-table .copy-sql:hover {
+.wpdmgr-perf-content .query-log-table .copy-sql:hover {
     background: rgba(0, 115, 170, 0.1) !important;
 }
 
-.mt-perf-content .query-log-table .copy-sql .dashicons {
+.wpdmgr-perf-content .query-log-table .copy-sql .dashicons {
     font-size: 14px !important;
     width: 14px !important;
     height: 14px !important;
 }
 
 /* Empty state styling */
-.mt-scripts-container p,
-.mt-styles-container p,
-.mt-perf-content p {
+.wpdmgr-scripts-container p,
+.wpdmgr-styles-container p,
+.wpdmgr-perf-content p {
     text-align: center !important;
     color: #a0a5aa !important;
     font-style: italic !important;
@@ -766,24 +766,24 @@ body.admin-bar.mt-perf-active {
 
 /* Mobile responsive for tabs */
 @media screen and (max-width: 782px) {
-    .mt-perf-details-content {
+    .wpdmgr-perf-details-content {
         flex-direction: column !important;
         min-height: auto !important;
         max-height: 50vh !important;
     }
 
-    .mt-perf-sidebar {
+    .wpdmgr-perf-sidebar {
         width: 100% !important;
         border-right: none !important;
         border-bottom: 1px solid #464b50 !important;
     }
 
-    .mt-perf-tabs {
+    .wpdmgr-perf-tabs {
         display: flex !important;
         overflow-x: auto !important;
     }
 
-    .mt-perf-tab {
+    .wpdmgr-perf-tab {
         white-space: nowrap !important;
         border-bottom: none !important;
         border-right: 1px solid #464b50 !important;
@@ -792,33 +792,33 @@ body.admin-bar.mt-perf-active {
         padding: 8px 10px !important;
     }
 
-    .mt-perf-tab:last-child {
+    .wpdmgr-perf-tab:last-child {
         border-right: none !important;
     }
 
-    .mt-perf-content {
+    .wpdmgr-perf-content {
         max-height: 250px !important;
         padding: 10px 15px !important;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .mt-perf-tab {
+    .wpdmgr-perf-tab {
         font-size: 11px !important;
         padding: 6px 8px !important;
     }
 
-    .mt-perf-tab .dashicons {
+    .wpdmgr-perf-tab .dashicons {
         display: none !important;
     }
 
-    .mt-perf-content {
+    .wpdmgr-perf-content {
         padding: 8px 10px !important;
     }
 
-    .mt-query-item,
-    .mt-script-item,
-    .mt-style-item {
+    .wpdmgr-query-item,
+    .wpdmgr-script-item,
+    .wpdmgr-style-item {
         padding: 8px !important;
         margin-bottom: 6px !important;
     }
@@ -826,11 +826,11 @@ body.admin-bar.mt-perf-active {
 
 /* Hide on very small screens if needed */
 @media screen and (max-width: 320px) {
-    .mt-performance-bar {
+    .wpdmgr-performance-bar {
         display: none !important;
     }
 
-    body.mt-perf-active {
+    body.wpdmgr-perf-active {
         padding-bottom: 0 !important;
     }
 }

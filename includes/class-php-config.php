@@ -2,10 +2,10 @@
 /**
  * PHP Configuration Service - Preset-based PHP settings management
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('ABSPATH')) {
@@ -13,9 +13,9 @@ if (!defined('ABSPATH')) {
 }
 
 // Include WP Config Integration for safe wp-config.php editing
-require_once MT_PLUGIN_DIR . 'includes/class-wp-config-integration.php';
+require_once WPDMGR_PLUGIN_DIR . 'includes/class-wp-config-integration.php';
 
-class MT_PHP_Config {
+class WPDMGR_PHP_Config {
     private $presets = array();
 
     public function __construct() {
@@ -24,7 +24,7 @@ class MT_PHP_Config {
 
     private function load_presets() {
         try {
-            $presets_file = MT_PLUGIN_DIR . 'data/presets/php-config.json';
+            $presets_file = WPDMGR_PLUGIN_DIR . 'data/presets/php-config.json';
 
             if (file_exists($presets_file)) {
                 $presets_content = file_get_contents($presets_file);
@@ -121,24 +121,24 @@ class MT_PHP_Config {
             $original_values = $this->get_current_config();
 
             if ($this->try_apply_via_wp_config_with_testing($preset['settings'], $original_values)) {
-                mt_config_log('Successfully applied via wp-config.php');
+                wpdmgr_config_log('Successfully applied via wp-config.php');
                 return true;
             }
 
             $php_ini_path = ABSPATH . 'php.ini';
-            if (mt_is_file_writable($php_ini_path)) {
+            if (wpdmgr_is_file_writable($php_ini_path)) {
                 if ($this->apply_via_php_ini($preset['settings'])) {
-                    mt_config_log('Successfully applied via php.ini');
+                    wpdmgr_config_log('Successfully applied via php.ini');
                     return true;
                 }
             }
 
-            $htaccess_path = mt_get_htaccess_path();
-            if ($htaccess_path && mt_is_file_writable($htaccess_path)) {
+            $htaccess_path = wpdmgr_get_htaccess_path();
+            if ($htaccess_path && wpdmgr_is_file_writable($htaccess_path)) {
                 $server_type = $this->detect_server_type();
                 if ($server_type === 'apache') {
                     if ($this->try_apply_via_htaccess_with_testing($preset['settings'], $original_values)) {
-                        mt_config_log('Successfully applied via .htaccess');
+                        wpdmgr_config_log('Successfully applied via .htaccess');
                         return true;
                     }
                 }
@@ -151,14 +151,14 @@ class MT_PHP_Config {
     }
 
     private function try_apply_via_htaccess_with_testing($settings, $original_values) {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
-        if (!$htaccess_path || !mt_is_file_writable($htaccess_path)) {
+        if (!$htaccess_path || !wpdmgr_is_file_writable($htaccess_path)) {
             return false;
         }
 
         try {
-            $htaccess_service = new MT_Htaccess();
+            $htaccess_service = new WPDMGR_Htaccess();
             $original_content = $htaccess_service->get_htaccess_content();
             if ($original_content === false) {
                 return false;
@@ -188,9 +188,9 @@ class MT_PHP_Config {
     }
 
     private function try_apply_via_wp_config_with_testing($settings, $original_values) {
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
 
-        if (!$wp_config_path || !mt_is_file_writable($wp_config_path)) {
+        if (!$wp_config_path || !wpdmgr_is_file_writable($wp_config_path)) {
             return false;
         }
 
@@ -256,7 +256,7 @@ class MT_PHP_Config {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Morden Toolkit Config Test');
+            curl_setopt($ch, CURLOPT_USERAGENT, 'WP Debug Manager Config Test');
 
             $response = curl_exec($ch);
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -302,7 +302,7 @@ class MT_PHP_Config {
                     $response = wp_remote_get($test_url, [
                         'timeout' => $timeout,
                         'sslverify' => false,
-                        'user-agent' => 'Morden Toolkit Config Test',
+                        'user-agent' => 'WP Debug Manager Config Test',
                         'headers' => [
                             'Cache-Control' => 'no-cache',
                             'Pragma' => 'no-cache'
@@ -317,10 +317,10 @@ class MT_PHP_Config {
                         if ($status_code >= 200 && $status_code < 400) {
                             $success = true;
                             $successful_tests++;
-                            mt_config_log("{$test_url} responded with {$status_code} (attempt " . ($attempts + 1) . ")");
+                            wpdmgr_config_log("{$test_url} responded with {$status_code} (attempt " . ($attempts + 1) . ")");
                             break;
                         } else {
-                            mt_config_log("{$test_url} returned {$status_code} (attempt " . ($attempts + 1) . ")");
+                            wpdmgr_config_log("{$test_url} returned {$status_code} (attempt " . ($attempts + 1) . ")");
                         }
                     } else {
                         $error_msg = 'Unknown error';
@@ -329,7 +329,7 @@ class MT_PHP_Config {
                         } elseif (isset($response['error'])) {
                             $error_msg = isset($response['message']) ? $response['message'] : 'HTTP request failed';
                         }
-                        mt_config_log("{$test_url} failed - " . $error_msg . " (attempt " . ($attempts + 1) . ")");
+                        wpdmgr_config_log("{$test_url} failed - " . $error_msg . " (attempt " . ($attempts + 1) . ")");
                     }
 
                     $attempts++;
@@ -344,9 +344,9 @@ class MT_PHP_Config {
             $is_accessible = $successful_tests >= $required_success;
 
             if ($is_accessible) {
-                mt_config_log("Site accessibility confirmed - {$successful_tests}/{$total_tests} endpoints accessible");
+                wpdmgr_config_log("Site accessibility confirmed - {$successful_tests}/{$total_tests} endpoints accessible");
             } else {
-                mt_config_log("Site accessibility FAILED - only {$successful_tests}/{$total_tests} endpoints accessible (required: {$required_success})");
+                wpdmgr_config_log("Site accessibility FAILED - only {$successful_tests}/{$total_tests} endpoints accessible (required: {$required_success})");
             }
 
             return $is_accessible;
@@ -358,7 +358,7 @@ class MT_PHP_Config {
     private function validate_wp_config_syntax($wp_config_path = null) {
         try {
             if (!$wp_config_path) {
-                $wp_config_path = mt_get_wp_config_path();
+                $wp_config_path = wpdmgr_get_wp_config_path();
             }
 
             if (!$wp_config_path || !file_exists($wp_config_path)) {
@@ -460,7 +460,7 @@ class MT_PHP_Config {
 
     public function apply_wp_config_changes_with_fatal_error_protection($settings) {
         try {
-            $wp_config_path = mt_get_wp_config_path();
+            $wp_config_path = wpdmgr_get_wp_config_path();
             if (!$wp_config_path) {
                 return array(
                     'success' => false,
@@ -488,9 +488,9 @@ class MT_PHP_Config {
       * Simplified version for existing method signature compatibility
      */
     private function apply_fatal_error_handler_changes_safely_simple($settings, $original_values) {
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
 
-        if (!$wp_config_path || !mt_is_file_writable($wp_config_path)) {
+        if (!$wp_config_path || !wpdmgr_is_file_writable($wp_config_path)) {
             return false;
         }
 
@@ -547,7 +547,7 @@ class MT_PHP_Config {
       * Safely apply WP_DISABLE_FATAL_ERROR_HANDLER changes with enhanced protection
      */
     private function apply_fatal_error_handler_changes_safely($settings) {
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
 
         // Create multiple backup points for critical changes
         $backup_path = $this->create_backup($wp_config_path);
@@ -557,12 +557,12 @@ class MT_PHP_Config {
         if (!$backup_path) {
             return array(
                 'success' => false,
-                'message' => function_exists('__') ? __('Failed to create backup for fatal error handler changes.', 'morden-toolkit') : 'Failed to create backup for fatal error handler changes.'
+                'message' => function_exists('__') ? __('Failed to create backup for fatal error handler changes.', 'wp-debug-manager') : 'Failed to create backup for fatal error handler changes.'
             );
         }
 
         // Skip initial accessibility test - using WPConfigTransformer for safe editing
-        mt_config_log(' Fail-safe disabled for fatal error handler changes - using WPConfigTransformer');
+        wpdmgr_config_log(' Fail-safe disabled for fatal error handler changes - using WPConfigTransformer');
 
         // Step 2: Apply changes
         $result = $this->apply_via_wp_config($settings);
@@ -574,26 +574,26 @@ class MT_PHP_Config {
 
         // Step 3: Enhanced validation after fatal error handler changes
         if (!$this->validate_wp_config_syntax($wp_config_path)) {
-            mt_config_log(' Syntax validation failed after fatal error handler changes - reverting');
+            wpdmgr_config_log(' Syntax validation failed after fatal error handler changes - reverting');
             $this->restore_backup($wp_config_path, $backup_path);
             unlink($emergency_backup);
             return array(
                 'success' => false,
-                'message' => function_exists('__') ? __('Fatal error handler changes reverted: syntax validation failed.', 'morden-toolkit') : 'Fatal error handler changes reverted: syntax validation failed.'
+                'message' => function_exists('__') ? __('Fatal error handler changes reverted: syntax validation failed.', 'wp-debug-manager') : 'Fatal error handler changes reverted: syntax validation failed.'
             );
         }
 
         // Skip accessibility tests - using WPConfigTransformer for safe editing
-        mt_config_log(' Accessibility tests disabled - relying on WPConfigTransformer safety');
+        wpdmgr_config_log(' Accessibility tests disabled - relying on WPConfigTransformer safety');
 
         // Step 5: Final validation
         if (!$this->validate_wordpress_constants($settings)) {
-            mt_config_log(' WordPress constants validation failed after fatal error handler changes - reverting');
+            wpdmgr_config_log(' WordPress constants validation failed after fatal error handler changes - reverting');
             $this->restore_backup($wp_config_path, $backup_path);
             unlink($emergency_backup);
             return array(
                 'success' => false,
-                'message' => function_exists('__') ? __('Fatal error handler changes reverted: constants validation failed.', 'morden-toolkit') : 'Fatal error handler changes reverted: constants validation failed.'
+                'message' => function_exists('__') ? __('Fatal error handler changes reverted: constants validation failed.', 'wp-debug-manager') : 'Fatal error handler changes reverted: constants validation failed.'
             );
         }
 
@@ -601,10 +601,10 @@ class MT_PHP_Config {
         $this->cleanup_backup($backup_path);
         unlink($emergency_backup);
 
-        mt_config_log(' Fatal error handler changes applied successfully with enhanced protection');
+        wpdmgr_config_log(' Fatal error handler changes applied successfully with enhanced protection');
         return array(
             'success' => true,
-            'message' => function_exists('__') ? __('Fatal error handler changes applied successfully with enhanced protection.', 'morden-toolkit') : 'Fatal error handler changes applied successfully with enhanced protection.'
+            'message' => function_exists('__') ? __('Fatal error handler changes applied successfully with enhanced protection.', 'wp-debug-manager') : 'Fatal error handler changes applied successfully with enhanced protection.'
         );
     }
 
@@ -644,7 +644,7 @@ class MT_PHP_Config {
      * Apply configuration via Apache .htaccess
      */
     private function apply_via_apache_htaccess($settings) {
-        $htaccess_service = new MT_Htaccess();
+        $htaccess_service = new WPDMGR_Htaccess();
         $current_content = $htaccess_service->get_htaccess_content();
 
         // Remove existing PHP configuration block
@@ -654,7 +654,7 @@ class MT_PHP_Config {
         $php_block = $this->generate_htaccess_php_block($settings);
 
         // Debug: Log what we're writing
-        mt_config_log(" Writing to .htaccess:\n" . $php_block);
+        wpdmgr_config_log(" Writing to .htaccess:\n" . $php_block);
 
         $new_content = $current_content . "\n\n" . $php_block;
 
@@ -667,14 +667,14 @@ class MT_PHP_Config {
      */
     private function apply_via_wp_config_constants_only($settings) {
         // Use safe WPConfigTransformer integration for constants-only approach
-        return MT_WP_Config_Integration::apply_php_config_safe($settings);
+        return WPDMGR_WP_Config_Integration::apply_php_config_safe($settings);
     }
 
     /**
      * Legacy method for backward compatibility - now redirects to safe implementation
      */
     private function apply_via_wp_config_constants_only_legacy($settings) {
-        $wp_config_path = mt_get_wp_config_path();
+        $wp_config_path = wpdmgr_get_wp_config_path();
 
         if (!$wp_config_path || !file_exists($wp_config_path)) {
             return false;
@@ -734,9 +734,9 @@ class MT_PHP_Config {
                 // Check if value changed towards target OR is already at target
                 if ($new === $target || ($new !== $original && $new >= $target * 0.8)) {
                     $changes_detected++;
-                    mt_config_log(" {$setting} changed from {$original} to {$new} (target: {$target})");
+                    wpdmgr_config_log(" {$setting} changed from {$original} to {$new} (target: {$target})");
                 } else {
-                    mt_config_log(" {$setting} unchanged: {$original} -> {$new} (target: {$target})");
+                    wpdmgr_config_log(" {$setting} unchanged: {$original} -> {$new} (target: {$target})");
                 }
             }
         }
@@ -745,10 +745,10 @@ class MT_PHP_Config {
         $success_rate = $total_settings > 0 ? ($changes_detected / $total_settings) : 0;
 
         if ($success_rate >= 0.5) {
-            mt_config_log(" Validation passed - {$changes_detected}/{$total_settings} settings changed");
+            wpdmgr_config_log(" Validation passed - {$changes_detected}/{$total_settings} settings changed");
             return true;
         } else {
-            mt_config_log(" Validation failed - only {$changes_detected}/{$total_settings} settings changed");
+            wpdmgr_config_log(" Validation failed - only {$changes_detected}/{$total_settings} settings changed");
             // For .htaccess, be more lenient since changes might take time to reflect
             return $this->validate_htaccess_configuration_applied($target_settings);
         }
@@ -758,7 +758,7 @@ class MT_PHP_Config {
      * Alternative validation for .htaccess - check if configuration was written correctly
      */
     private function validate_htaccess_configuration_applied($target_settings) {
-        $htaccess_path = mt_get_htaccess_path();
+        $htaccess_path = wpdmgr_get_htaccess_path();
 
         if (!$htaccess_path || !file_exists($htaccess_path)) {
             return false;
@@ -767,7 +767,7 @@ class MT_PHP_Config {
         $htaccess_content = file_get_contents($htaccess_path);
 
         // Check if our PHP configuration block exists
-        if (strpos($htaccess_content, 'BEGIN Morden Toolkit PHP Configuration') === false) {
+        if (strpos($htaccess_content, 'BEGIN WP Debug Manager PHP Configuration') === false) {
             return false;
         }
 
@@ -793,9 +793,9 @@ class MT_PHP_Config {
         $success = $settings_found >= $required_found;
 
         if ($success) {
-            mt_config_log(" .htaccess validation passed - {$settings_found}/{$total_settings} applicable settings found in file");
+            wpdmgr_config_log(" .htaccess validation passed - {$settings_found}/{$total_settings} applicable settings found in file");
         } else {
-            mt_config_log(" .htaccess validation failed - only {$settings_found}/{$total_settings} applicable settings found (needed: {$required_found})");
+            wpdmgr_config_log(" .htaccess validation failed - only {$settings_found}/{$total_settings} applicable settings found (needed: {$required_found})");
         }
 
         return $success;
@@ -830,7 +830,7 @@ class MT_PHP_Config {
      */
     private function revert_htaccess_changes() {
         try {
-            $htaccess_service = new MT_Htaccess();
+            $htaccess_service = new WPDMGR_Htaccess();
             $current_content = $htaccess_service->get_htaccess_content();
 
             // Remove our PHP configuration block
@@ -847,8 +847,8 @@ class MT_PHP_Config {
      */
     public function detect_configuration_method() {
         // Check if .htaccess is writable and mod_php is available
-        $htaccess_path = mt_get_htaccess_path();
-        if (mt_is_file_writable($htaccess_path) && function_exists('apache_get_modules')) {
+        $htaccess_path = wpdmgr_get_htaccess_path();
+        if (wpdmgr_is_file_writable($htaccess_path) && function_exists('apache_get_modules')) {
             $modules = apache_get_modules();
             if (in_array('mod_php5', $modules) || in_array('mod_php7', $modules) || in_array('mod_php8', $modules)) {
                 return 'htaccess';
@@ -856,14 +856,14 @@ class MT_PHP_Config {
         }
 
         // Check if wp-config.php is writable
-        $wp_config_path = mt_get_wp_config_path();
-        if ($wp_config_path && mt_is_file_writable($wp_config_path)) {
+        $wp_config_path = wpdmgr_get_wp_config_path();
+        if ($wp_config_path && wpdmgr_is_file_writable($wp_config_path)) {
             return 'wp_config';
         }
 
         // Check if php.ini can be created
         $php_ini_path = ABSPATH . 'php.ini';
-        if (mt_is_file_writable($php_ini_path)) {
+        if (wpdmgr_is_file_writable($php_ini_path)) {
             return 'php_ini';
         }
 
@@ -874,7 +874,7 @@ class MT_PHP_Config {
      * Apply configuration via .htaccess
      */
     private function apply_via_htaccess($settings) {
-        $htaccess_service = new MT_Htaccess();
+        $htaccess_service = new WPDMGR_Htaccess();
         $current_content = $htaccess_service->get_htaccess_content();
 
         // Remove existing PHP configuration block
@@ -889,7 +889,7 @@ class MT_PHP_Config {
 
     private function apply_via_wp_config($settings) {
         // Use safe WPConfigTransformer integration instead of manual string manipulation
-        $result = MT_WP_Config_Integration::apply_php_config_safe($settings);
+        $result = WPDMGR_WP_Config_Integration::apply_php_config_safe($settings);
 
         if ($result) {
             return array(
@@ -918,7 +918,7 @@ class MT_PHP_Config {
      * Generate .htaccess PHP configuration block with comprehensive fallback strategy
      */
     private function generate_htaccess_php_block($settings) {
-        $block = "# BEGIN Morden Toolkit PHP Config\n";
+        $block = "# BEGIN WP Debug Manager PHP Config\n";
 
         // Try mod_php.c first (most generic)
         $block .= "<IfModule mod_php.c>\n";
@@ -958,7 +958,7 @@ class MT_PHP_Config {
             $block .= "{$directive} {$key} {$value}\n";
         }
 
-        $block .= "# END Morden Toolkit PHP Config";
+        $block .= "# END WP Debug Manager PHP Config";
 
         return $block;
     }
@@ -998,7 +998,7 @@ class MT_PHP_Config {
      * Generate wp-config.php PHP configuration block using WordPress constants + ini_set for custom settings
      */
     private function generate_wp_config_php_block($settings) {
-        $block = "/* BEGIN Morden Toolkit PHP Config */\n";
+        $block = "/* BEGIN WP Debug Manager PHP Config */\n";
 
         foreach ($settings as $key => $value) {
             // Use WordPress constants for supported settings
@@ -1011,7 +1011,7 @@ class MT_PHP_Config {
             }
         }
 
-        $block .= "/* END Morden Toolkit PHP Config */\n";
+        $block .= "/* END WP Debug Manager PHP Config */\n";
 
         return $block;
     }
@@ -1038,7 +1038,7 @@ class MT_PHP_Config {
      * Generate wp-config.php constants-only block - SAFE VERSION with ini_set fallback
      */
     private function generate_wp_config_constants_block($settings) {
-        $php_block = "/* BEGIN Morden Toolkit PHP Configuration */\n";
+        $php_block = "/* BEGIN WP Debug Manager PHP Configuration */\n";
 
         foreach ($settings as $setting => $value) {
             // Use WordPress constants for supported settings
@@ -1051,7 +1051,7 @@ class MT_PHP_Config {
             }
         }
 
-        $php_block .= "/* END Morden Toolkit PHP Configuration */\n";
+        $php_block .= "/* END WP Debug Manager PHP Configuration */\n";
 
         return $php_block;
     }
@@ -1063,10 +1063,10 @@ class MT_PHP_Config {
         $mapping = [
             'memory_limit' => 'WP_MEMORY_LIMIT',
             'max_execution_time' => 'WP_MAX_EXECUTION_TIME',
-            'max_input_time' => 'MT_MAX_INPUT_TIME',
-            'upload_max_filesize' => 'MT_UPLOAD_MAX_FILESIZE',
-            'post_max_size' => 'MT_POST_MAX_SIZE',
-            'max_input_vars' => 'MT_MAX_INPUT_VARS'
+            'max_input_time' => 'WPDMGR_MAX_INPUT_TIME',
+            'upload_max_filesize' => 'WPDMGR_UPLOAD_MAX_FILESIZE',
+            'post_max_size' => 'WPDMGR_POST_MAX_SIZE',
+            'max_input_vars' => 'WPDMGR_MAX_INPUT_VARS'
         ];
 
         return $mapping[$setting] ?? null;
@@ -1109,7 +1109,7 @@ class MT_PHP_Config {
      * Generate php.ini content
      */
     private function generate_php_ini_content($settings) {
-        $content = "; Morden Toolkit PHP Config\n";
+        $content = "; WP Debug Manager PHP Config\n";
 
         foreach ($settings as $key => $value) {
             $content .= "{$key} = {$value}\n";
@@ -1122,7 +1122,7 @@ class MT_PHP_Config {
      * Remove existing PHP config block from .htaccess
      */
     private function remove_php_config_block($content) {
-        $pattern = '/# BEGIN Morden Toolkit PHP Config.*?# END Morden Toolkit PHP Config/s';
+        $pattern = '/# BEGIN WP Debug Manager PHP Config.*?# END WP Debug Manager PHP Config/s';
         return preg_replace($pattern, '', $content);
     }
 
@@ -1134,16 +1134,16 @@ class MT_PHP_Config {
         // Very specific patterns that only match our exact PHP config blocks
         $patterns = [
             // Match exactly our /* style PHP config blocks with defines */
-            '/\/\*\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*-\s*WordPress\s+Constants\s+Only\s*\*\/.*?\/\*\s*END\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
+            '/\/\*\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*-\s*WordPress\s+Constants\s+Only\s*\*\/.*?\/\*\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
             // Match blocks with "Safe WordPress Implementation" string
-            '/\/\*\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*-\s*Safe\s+WordPress\s+Implementation\s*\*\/.*?\/\*\s*END\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
+            '/\/\*\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*-\s*Safe\s+WordPress\s+Implementation\s*\*\/.*?\/\*\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
             // Match exactly our /* style PHP config blocks (short version) */
-            '/\/\*\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Config\s*-\s*WordPress\s+Constants\s+Only\s*\*\/.*?\/\*\s*END\s+Morden\s+Toolkit\s+PHP\s+Config\s*\*\//s',
+            '/\/\*\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Config\s*-\s*WordPress\s+Constants\s+Only\s*\*\/.*?\/\*\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Config\s*\*\//s',
             // Match standard PHP config blocks
-            '/\/\*\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*\*\/.*?\/\*\s*END\s+Morden\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
-            '/\/\*\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Config\s*\*\/.*?\/\*\s*END\s+Morden\s+Toolkit\s+PHP\s+Config\s*\*\//s',
+            '/\/\*\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*\*\/.*?\/\*\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Configuration\s*\*\//s',
+            '/\/\*\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Config\s*\*\/.*?\/\*\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Config\s*\*\//s',
             // Match our // style comments (legacy)
-            '/\/\/\s*BEGIN\s+Morden\s+Toolkit\s+PHP\s+Config.*?define\s*\(.*?\/\/\s*END\s+Morden\s+Toolkit\s+PHP\s+Config/s'
+            '/\/\/\s*BEGIN\s+WPDMGR\s+Toolkit\s+PHP\s+Config.*?define\s*\(.*?\/\/\s*END\s+WPDMGR\s+Toolkit\s+PHP\s+Config/s'
         ];
 
         $original_content = $content;
@@ -1164,9 +1164,9 @@ class MT_PHP_Config {
             // If we found matches and the reduction is reasonable, accept the change
             if ($matches_count > 0 && $reduction_percentage < 50) {
                 $content = $new_content;
-                mt_config_log(" Removed " . $matches_count . " config blocks (reduced by " . round($reduction_percentage, 1) . "%)");
+                wpdmgr_config_log(" Removed " . $matches_count . " config blocks (reduced by " . round($reduction_percentage, 1) . "%)");
             } elseif ($matches_count > 0 && $reduction_percentage >= 50) {
-                mt_config_log(" Regex pattern removed too much content (" . round($reduction_percentage, 1) . "%), reverting");
+                wpdmgr_config_log(" Regex pattern removed too much content (" . round($reduction_percentage, 1) . "%), reverting");
                 break;
             }
         }
@@ -1290,8 +1290,8 @@ class MT_PHP_Config {
         );
 
         // Check .htaccess availability
-        $htaccess_path = mt_get_htaccess_path();
-        if (mt_is_file_writable($htaccess_path)) {
+        $htaccess_path = wpdmgr_get_htaccess_path();
+        if (wpdmgr_is_file_writable($htaccess_path)) {
             $info['available_methods'][] = array(
                 'method' => 'htaccess',
                 'name' => '.htaccess',
@@ -1301,8 +1301,8 @@ class MT_PHP_Config {
         }
 
         // Check wp-config.php availability
-        $wp_config_path = mt_get_wp_config_path();
-        if ($wp_config_path && mt_is_file_writable($wp_config_path)) {
+        $wp_config_path = wpdmgr_get_wp_config_path();
+        if ($wp_config_path && wpdmgr_is_file_writable($wp_config_path)) {
             $info['available_methods'][] = array(
                 'method' => 'wp_config',
                 'name' => 'wp-config.php',
@@ -1313,7 +1313,7 @@ class MT_PHP_Config {
 
         // Check php.ini availability
         $php_ini_path = ABSPATH . 'php.ini';
-        if (mt_is_file_writable($php_ini_path)) {
+        if (wpdmgr_is_file_writable($php_ini_path)) {
             $info['available_methods'][] = array(
                 'method' => 'php_ini',
                 'name' => 'php.ini',
@@ -1673,7 +1673,7 @@ class MT_PHP_Config {
      * Register backup in metadata registry
      */
     private function register_backup($backup_info) {
-        $registry = function_exists('get_option') ? get_option('morden_php_config_backup_registry', array()) : array();
+        $registry = function_exists('get_option') ? get_option('wpdmgr_php_config_backup_registry', array()) : array();
         $registry[$backup_info['unique_id']] = $backup_info;
 
         // Keep only latest 10 backup entries
@@ -1686,7 +1686,7 @@ class MT_PHP_Config {
         }
 
         if (function_exists('update_option')) {
-            update_option('morden_php_config_backup_registry', $registry);
+            update_option('wpdmgr_php_config_backup_registry', $registry);
         }
     }
 
@@ -1694,7 +1694,7 @@ class MT_PHP_Config {
      * Unregister backup from metadata registry
      */
     private function unregister_backup($backup_path) {
-        $registry = function_exists('get_option') ? get_option('morden_php_config_backup_registry', array()) : array();
+        $registry = function_exists('get_option') ? get_option('wpdmgr_php_config_backup_registry', array()) : array();
 
         foreach ($registry as $id => $info) {
             if ($info['path'] === $backup_path) {
@@ -1704,7 +1704,7 @@ class MT_PHP_Config {
         }
 
         if (function_exists('update_option')) {
-            update_option('morden_php_config_backup_registry', $registry);
+            update_option('wpdmgr_php_config_backup_registry', $registry);
         }
     }
 
@@ -1713,7 +1713,7 @@ class MT_PHP_Config {
      */
     private function validate_php_syntax_string($php_code) {
         // Create temporary file for syntax checking
-        $temp_file = tempnam(sys_get_temp_dir(), 'mt_syntax_check_');
+        $temp_file = tempnam(sys_get_temp_dir(), 'wpdmgr_syntax_check_');
         if (!$temp_file) {
             return false;
         }

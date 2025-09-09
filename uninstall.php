@@ -1,11 +1,11 @@
 <?php
 /**
- * Uninstall script for Morden Toolkit
+ * Uninstall script for WP Debug Manager
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('WP_UNINSTALL_PLUGIN')) {
@@ -13,17 +13,17 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 // Include internal logging helper
-require_once __DIR__ . '/includes/mt-internal-log.php';
+require_once __DIR__ . '/includes/class-internal-log.php';
 
-function mt_cleanup_options() {
+function wpdmgr_cleanup_options() {
     $options_to_delete = array(
-        'morden_debug_enabled',
-        'mt_query_monitor_enabled',
-        'morden_htaccess_backups',
-        'mt_php_preset',
-        'morden_wp_config_backups',
-        'morden_php_ini_backups',
-        'mt_version'
+        'wpdmgr_debug_enabled',
+        'wpdmgr_query_monitor_enabled',
+        'wpdmgr_htaccess_backups',
+        'wpdmgr_php_preset',
+        'wpdmgr_wp_config_backups',
+        'wpdmgr_php_ini_backups',
+        'wpdmgr_version'
     );
 
     foreach ($options_to_delete as $option) {
@@ -31,7 +31,7 @@ function mt_cleanup_options() {
     }
 }
 
-function mt_cleanup_wp_config() {
+function wpdmgr_cleanup_wp_config() {
     $wp_config_path = ABSPATH . 'wp-config.php';
     if (!file_exists($wp_config_path)) {
         $wp_config_path = dirname(ABSPATH) . '/wp-config.php';
@@ -44,7 +44,7 @@ function mt_cleanup_wp_config() {
     $config_content = file_get_contents($wp_config_path);
 
 
-    $pattern = '/\/\/ BEGIN Morden Toolkit PHP Config.*?\/\/ END Morden Toolkit PHP Config\s*/s';
+    $pattern = '/\/\/ BEGIN WP Debug Manager PHP Config.*?\/\/ END WP Debug Manager PHP Config\s*/s';
     $config_content = preg_replace($pattern, '', $config_content);
 
     // Disable debug constants
@@ -67,7 +67,7 @@ function mt_cleanup_wp_config() {
     file_put_contents($wp_config_path, $config_content);
 }
 
-function mt_cleanup_htaccess() {
+function wpdmgr_cleanup_htaccess() {
     $htaccess_path = ABSPATH . '.htaccess';
 
     if (!file_exists($htaccess_path) || !is_writable($htaccess_path)) {
@@ -76,7 +76,7 @@ function mt_cleanup_htaccess() {
 
     $htaccess_content = file_get_contents($htaccess_path);
 
-    // Remove Morden Toolkit PHP config block
+    // Remove WP Debug Manager PHP config block
     $pattern = '/# BEGIN MT PHP Config.*?# END MT PHP Config/s';
     $htaccess_content = preg_replace($pattern, '', $htaccess_content);
 
@@ -86,7 +86,7 @@ function mt_cleanup_htaccess() {
     file_put_contents($htaccess_path, $htaccess_content);
 }
 
-function mt_cleanup_php_ini() {
+function wpdmgr_cleanup_php_ini() {
     $php_ini_path = ABSPATH . 'php.ini';
 
     if (!file_exists($php_ini_path)) {
@@ -95,15 +95,15 @@ function mt_cleanup_php_ini() {
 
     $content = file_get_contents($php_ini_path);
 
-    // If the file only contains Morden Toolkit config, delete it
-    if (strpos($content, '; Morden Toolkit PHP Config') !== false) {
+    // If the file only contains WP Debug Manager config, delete it
+    if (strpos($content, '; WP Debug Manager PHP Config') !== false) {
         $lines = explode("\n", $content);
-        $non_morden_lines = array();
+        $non_wpdmgr_lines = array();
 
         foreach ($lines as $line) {
             $line = trim($line);
             if (empty($line) ||
-                strpos($line, '; Morden Toolkit') !== false ||
+                strpos($line, '; WP Debug Manager') !== false ||
                 in_array(explode(' = ', $line)[0] ?? '', array(
                     'memory_limit',
                     'upload_max_filesize',
@@ -114,18 +114,18 @@ function mt_cleanup_php_ini() {
                 ))) {
                 continue;
             }
-            $non_morden_lines[] = $line;
+            $non_wpdmgr_lines[] = $line;
         }
 
-        if (empty($non_morden_lines)) {
+        if (empty($non_wpdmgr_lines)) {
             unlink($php_ini_path);
         } else {
-            file_put_contents($php_ini_path, implode("\n", $non_morden_lines));
+            file_put_contents($php_ini_path, implode("\n", $non_wpdmgr_lines));
         }
     }
 }
 
-function mt_cleanup_temp_files() {
+function wpdmgr_cleanup_temp_files() {
     $temp_pattern = ABSPATH . '*.tmp';
     $temp_files = glob($temp_pattern);
 
@@ -136,7 +136,7 @@ function mt_cleanup_temp_files() {
     }
 }
 
-function mt_cleanup_transients() {
+function wpdmgr_cleanup_transients() {
     global $wpdb;
 
     // Delete performance metrics transients
@@ -144,8 +144,8 @@ function mt_cleanup_transients() {
     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_mt_metrics_%'");
 }
 
-function mt_cleanup_log_files() {
-    $log_directory = WP_CONTENT_DIR . '/morden-toolkit/';
+function wpdmgr_cleanup_log_files() {
+    $log_directory = WP_CONTENT_DIR . '/wp-debug-manager/';
 
     if (!is_dir($log_directory)) {
         return 0;
@@ -184,24 +184,24 @@ function mt_cleanup_log_files() {
     return $removed_count;
 }
 
-function mt_log_uninstall() {
-    mt_debug_log('Plugin uninstalled and cleaned up');
+function wpdmgr_log_uninstall() {
+    wpdmgr_debug_log('Plugin uninstalled and cleaned up');
 }
 
 try {
-    mt_cleanup_options();
-    mt_cleanup_wp_config();
-    mt_cleanup_htaccess();
-    mt_cleanup_php_ini();
-    mt_cleanup_temp_files();
-    mt_cleanup_transients();
+    wpdmgr_cleanup_options();
+    wpdmgr_cleanup_wp_config();
+    wpdmgr_cleanup_htaccess();
+    wpdmgr_cleanup_php_ini();
+    wpdmgr_cleanup_temp_files();
+    wpdmgr_cleanup_transients();
 
-    $removed_logs = mt_cleanup_log_files();
+    $removed_logs = wpdmgr_cleanup_log_files();
     if ($removed_logs > 0) {
-        mt_debug_log("Removed {$removed_logs} log files during uninstall");
+        wpdmgr_debug_log("Removed {$removed_logs} log files during uninstall");
     }
 
-    mt_log_uninstall();
+    wpdmgr_log_uninstall();
 } catch (Exception $e) {
-    mt_error_log('Uninstall error: ' . $e->getMessage());
+    wpdmgr_error_log('Uninstall error: ' . $e->getMessage());
 }

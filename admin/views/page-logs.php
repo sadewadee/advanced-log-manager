@@ -2,10 +2,10 @@
 /**
  * Debug Logs Page Template
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('ABSPATH')) {
@@ -13,112 +13,112 @@ if (!defined('ABSPATH')) {
 }
 
 
-$plugin = MT_Plugin::get_instance();
+$plugin = WPDMGR_Plugin::get_instance();
 $debug_service = $plugin->get_service('debug');
 $debug_status = $debug_service->get_debug_status();
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Debug Logs', 'morden-toolkit'); ?></h1>
+    <h1><?php esc_html_e('Debug Logs', 'wp-debug-manager'); ?></h1>
     <p class="description">
-        <?php _e('View dan manage WordPress debug logs.', 'morden-toolkit'); ?>
+        <?php esc_html_e('View dan manage WordPress debug logs.', 'wp-debug-manager'); ?>
     </p>
 
-    <div class="mt-logs-header">
-        <div class="mt-logs-actions">
+    <div class="wpdmgr-logs-header">
+        <div class="wpdmgr-logs-actions">
             <button type="button" id="refresh-logs" class="button">
                 <span class="dashicons dashicons-update"></span>
-                <?php _e('Refresh', 'morden-toolkit'); ?>
+                <?php esc_html_e('Refresh', 'wp-debug-manager'); ?>
             </button>
             <button type="button" id="clear-logs" class="button">
                 <span class="dashicons dashicons-trash"></span>
-                <?php _e('Clear', 'morden-toolkit'); ?>
+                <?php esc_html_e('Clear', 'wp-debug-manager'); ?>
             </button>
             <button type="button" id="download-logs" class="button">
                 <span class="dashicons dashicons-download"></span>
-                <?php _e('Download', 'morden-toolkit'); ?>
+                <?php esc_html_e('Download', 'wp-debug-manager'); ?>
             </button>
         </div>
 
-        <div class="mt-logs-info">
+        <div class="wpdmgr-logs-info">
             <?php if ($debug_status['log_file_exists']): ?>
-            <span class="mt-log-size">
+            <span class="wpdmgr-log-size">
                 <span class="dashicons dashicons-media-text"></span>
-                <?php _e('File Size:', 'morden-toolkit'); ?> <?php echo esc_html($debug_status['log_file_size']); ?>
+                <?php esc_html_e('File Size:', 'wp-debug-manager'); ?> <?php echo esc_html($debug_status['log_file_size']); ?>
             </span>
             <?php else: ?>
-            <span class="mt-no-logs">
+            <span class="wpdmgr-no-logs">
                 <span class="dashicons dashicons-info"></span>
-                <?php _e('No log file found', 'morden-toolkit'); ?>
+                <?php esc_html_e('No log file found', 'wp-debug-manager'); ?>
             </span>
             <?php endif; ?>
         </div>
     </div>
 
-    <div class="mt-logs-filters">
-        <div class="mt-filter-group">
-            <label for="log-level-filter"><?php _e('Level:', 'morden-toolkit'); ?></label>
+    <div class="wpdmgr-logs-filters">
+        <div class="wpdmgr-filter-group">
+            <label for="log-level-filter"><?php esc_html_e('Level:', 'wp-debug-manager'); ?></label>
             <select id="log-level-filter">
-                <option value=""><?php _e('All Levels', 'morden-toolkit'); ?></option>
-                <option value="ERROR"><?php _e('Error', 'morden-toolkit'); ?></option>
-                <option value="WARNING"><?php _e('Warning', 'morden-toolkit'); ?></option>
-                <option value="NOTICE"><?php _e('Notice', 'morden-toolkit'); ?></option>
-                <option value="DEPRECATED"><?php _e('Deprecated', 'morden-toolkit'); ?></option>
+                <option value=""><?php esc_html_e('All Levels', 'wp-debug-manager'); ?></option>
+                <option value="ERROR"><?php esc_html_e('Error', 'wp-debug-manager'); ?></option>
+                <option value="WARNING"><?php esc_html_e('Warning', 'wp-debug-manager'); ?></option>
+                <option value="NOTICE"><?php esc_html_e('Notice', 'wp-debug-manager'); ?></option>
+                <option value="DEPRECATED"><?php esc_html_e('Deprecated', 'wp-debug-manager'); ?></option>
             </select>
         </div>
 
-        <div class="mt-filter-group">
-            <label for="log-time-filter"><?php _e('Time:', 'morden-toolkit'); ?></label>
+        <div class="wpdmgr-filter-group">
+            <label for="log-time-filter"><?php esc_html_e('Time:', 'wp-debug-manager'); ?></label>
             <select id="log-time-filter">
-                <option value=""><?php _e('All Time', 'morden-toolkit'); ?></option>
-                <option value="1h"><?php _e('Last Hour', 'morden-toolkit'); ?></option>
-                <option value="24h" selected><?php _e('Last 24 Hours', 'morden-toolkit'); ?></option>
-                <option value="7d"><?php _e('Last 7 Days', 'morden-toolkit'); ?></option>
+                <option value=""><?php esc_html_e('All Time', 'wp-debug-manager'); ?></option>
+                <option value="1h"><?php esc_html_e('Last Hour', 'wp-debug-manager'); ?></option>
+                <option value="24h" selected><?php esc_html_e('Last 24 Hours', 'wp-debug-manager'); ?></option>
+                <option value="7d"><?php esc_html_e('Last 7 Days', 'wp-debug-manager'); ?></option>
             </select>
         </div>
 
-        <div class="mt-filter-group">
-            <label for="log-search"><?php _e('Search:', 'morden-toolkit'); ?></label>
-            <input type="text" id="log-search" placeholder="<?php _e('Search logs...', 'morden-toolkit'); ?>">
+        <div class="wpdmgr-filter-group">
+            <label for="log-search"><?php esc_html_e('Search:', 'wp-debug-manager'); ?></label>
+            <input type="text" id="log-search" placeholder="<?php esc_attr_e('Search logs...', 'wp-debug-manager'); ?>">
         </div>
     </div>
 
-    <div class="mt-logs-container">
-        <div id="mt-logs-viewer" class="mt-logs-viewer">
+    <div class="wpdmgr-logs-container">
+        <div id="wpdmgr-logs-viewer" class="wpdmgr-logs-viewer">
             <?php if (!$debug_status['log_file_exists']): ?>
-            <div class="mt-no-logs-message">
+            <div class="wpdmgr-no-logs-message">
                 <div class="dashicons dashicons-info"></div>
-                <h3><?php _e('No Debug Logs Found', 'morden-toolkit'); ?></h3>
-                <p><?php _e('Debug logging is not enabled or no errors have been logged yet.', 'morden-toolkit'); ?></p>
+                <h3><?php esc_html_e('No Debug Logs Found', 'wp-debug-manager'); ?></h3>
+                <p><?php esc_html_e('Debug logging is not enabled or no errors have been logged yet.', 'wp-debug-manager'); ?></p>
                 <?php if (!$debug_status['enabled']): ?>
                 <p>
-                    <a href="<?php echo admin_url('tools.php?page=mt-toolkit'); ?>" class="button button-primary">
-                        <?php _e('Enable Debug Mode', 'morden-toolkit'); ?>
+                    <a href="<?php echo admin_url('tools.php?page=wpdmgr-toolkit'); ?>" class="button button-primary">
+                        <?php esc_html_e('Enable Debug Mode', 'wp-debug-manager'); ?>
                     </a>
                 </p>
                 <?php endif; ?>
             </div>
             <?php else: ?>
-            <div class="mt-logs-loading">
-                <div class="mt-spinner"></div>
-                <p><?php _e('Loading logs...', 'morden-toolkit'); ?></p>
+            <div class="wpdmgr-logs-loading">
+                <div class="wpdmgr-spinner"></div>
+                <p><?php esc_html_e('Loading logs...', 'wp-debug-manager'); ?></p>
             </div>
-            <div id="mt-logs-content" style="display: none;"></div>
+            <div id="wpdmgr-logs-content" style="display: none;"></div>
             <?php endif; ?>
         </div>
 
-        <div id="mt-logs-pagination" class="mt-logs-pagination" style="display: none;">
-            <div class="mt-pagination-info">
+        <div id="wpdmgr-logs-pagination" class="wpdmgr-logs-pagination" style="display: none;">
+            <div class="wpdmgr-pagination-info">
                 <span id="logs-showing-info"></span>
             </div>
-            <div class="mt-pagination-controls">
+            <div class="wpdmgr-pagination-controls">
                 <button type="button" id="logs-prev-page" class="button" disabled>
                     <span class="dashicons dashicons-arrow-left-alt2"></span>
-                    <?php _e('Previous', 'morden-toolkit'); ?>
+                    <?php esc_html_e('Previous', 'wp-debug-manager'); ?>
                 </button>
                 <span id="logs-page-info"></span>
                 <button type="button" id="logs-next-page" class="button">
-                    <?php _e('Next', 'morden-toolkit'); ?>
+                    <?php esc_html_e('Next', 'wp-debug-manager'); ?>
                     <span class="dashicons dashicons-arrow-right-alt2"></span>
                 </button>
             </div>
@@ -129,14 +129,14 @@ $debug_status = $debug_service->get_debug_status();
 <script>
 // Auto-load logs when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('mt-logs-content')) {
+    if (document.getElementById('wpdmgr-logs-content')) {
         loadDebugLogs();
     }
 });
 
 function loadDebugLogs() {
-    const logsContent = document.getElementById('mt-logs-content');
-    const logsLoading = document.querySelector('.mt-logs-loading');
+    const logsContent = document.getElementById('wpdmgr-logs-content');
+    const logsLoading = document.querySelector('.wpdmgr-logs-loading');
 
     if (!logsContent) return;
 
@@ -144,8 +144,8 @@ function loadDebugLogs() {
     logsContent.style.display = 'none';
 
     jQuery.post(ajaxurl, {
-        action: 'mt_get_debug_log',
-        nonce: mtToolkit.nonce
+        action: 'wpdmgr_get_debug_log',
+        nonce: wpdmgrToolkit.nonce
     }, function(response) {
         logsLoading.style.display = 'none';
 
@@ -153,27 +153,27 @@ function loadDebugLogs() {
             displayLogs(response.data);
             logsContent.style.display = 'block';
         } else {
-            logsContent.innerHTML = '<div class="notice notice-error"><p>' + mtToolkit.strings.error_occurred + '</p></div>';
+            logsContent.innerHTML = '<div class="notice notice-error"><p>' + wpdmgrToolkit.strings.error_occurred + '</p></div>';
             logsContent.style.display = 'block';
         }
     });
 }
 
 function displayLogs(logs) {
-    const logsContent = document.getElementById('mt-logs-content');
+    const logsContent = document.getElementById('wpdmgr-logs-content');
 
     if (!logs || logs.length === 0) {
-        logsContent.innerHTML = '<div class="mt-no-logs-message"><p>' + <?php echo json_encode(__('No log entries found.', 'morden-toolkit')); ?> + '</p></div>';
+        logsContent.innerHTML = '<div class="wpdmgr-no-logs-message"><p>' + <?php echo wp_json_encode(__('No log entries found.', 'wp-debug-manager')); ?> + '</p></div>';
         return;
     }
 
-    let html = '<div class="mt-logs-list">';
+    let html = '<div class="wpdmgr-logs-list">';
 
     logs.forEach(function(log) {
         const levelClass = 'log-level-' + log.level.toLowerCase();
         const timeFormatted = new Date(log.timestamp).toLocaleString();
 
-        html += '<div class="mt-log-entry ' + levelClass + '">';
+        html += '<div class="wpdmgr-log-entry ' + levelClass + '">';
         html += '<div class="log-header">';
         html += '<span class="log-level">' + log.level + '</span>';
         html += '<span class="log-time">' + timeFormatted + '</span>';

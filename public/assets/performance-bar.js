@@ -20,8 +20,8 @@
      * Initialize performance bar functionality
      */
     function initializePerformanceBar() {
-        const detailsBtn = document.getElementById('mt-perf-details-btn');
-        const detailsPanel = document.getElementById('mt-perf-details');
+        const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
+        const detailsPanel = document.getElementById('wpdmgr-perf-details');
 
         if (detailsBtn && detailsPanel) {
             detailsBtn.addEventListener('click', function(e) {
@@ -31,7 +31,7 @@
 
             // Close on outside click
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.mt-performance-bar')) {
+                if (!e.target.closest('.wpdmgr-performance-bar')) {
                     closeDetails();
                 }
             });
@@ -48,15 +48,15 @@
         initializeTabs();
 
         // Add class to body for styling adjustments
-        document.body.classList.add('mt-perf-active');
+        document.body.classList.add('wpdmgr-perf-active');
     }
 
     /**
      * Toggle details panel
      */
     function toggleDetails() {
-        const detailsPanel = document.getElementById('mt-perf-details');
-        const detailsBtn = document.getElementById('mt-perf-details-btn');
+        const detailsPanel = document.getElementById('wpdmgr-perf-details');
+        const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
         if (detailsPanel && detailsBtn) {
             const isVisible = detailsPanel.style.display !== 'none';
@@ -73,8 +73,8 @@
      * Open details panel
      */
     function openDetails() {
-        const detailsPanel = document.getElementById('mt-perf-details');
-        const detailsBtn = document.getElementById('mt-perf-details-btn');
+        const detailsPanel = document.getElementById('wpdmgr-perf-details');
+        const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
         if (detailsPanel && detailsBtn) {
             detailsPanel.style.display = 'block';
@@ -97,8 +97,8 @@
      * Close details panel
      */
     function closeDetails() {
-        const detailsPanel = document.getElementById('mt-perf-details');
-        const detailsBtn = document.getElementById('mt-perf-details-btn');
+        const detailsPanel = document.getElementById('wpdmgr-perf-details');
+        const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
         if (detailsPanel && detailsBtn) {
             detailsPanel.style.opacity = '0';
@@ -116,7 +116,7 @@
      * Adjust body padding to accommodate performance bar
      */
     function adjustBodyPadding() {
-        const perfBar = document.getElementById('mt-performance-bar');
+        const perfBar = document.getElementById('wpdmgr-performance-bar');
 
         if (!perfBar) return;
 
@@ -139,13 +139,13 @@
         // Update when details panel opens/closes
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
-                if (mutation.target.id === 'mt-perf-details') {
+                if (mutation.target.id === 'wpdmgr-perf-details') {
                     setTimeout(updatePadding, 50);
                 }
             });
         });
 
-        const detailsPanel = document.getElementById('mt-perf-details');
+        const detailsPanel = document.getElementById('wpdmgr-perf-details');
         if (detailsPanel) {
             observer.observe(detailsPanel, {
                 attributes: true,
@@ -201,8 +201,8 @@
      * Initialize tab functionality
      */
     function initializeTabs() {
-        const tabs = document.querySelectorAll('.mt-perf-tab');
-        const tabContents = document.querySelectorAll('.mt-perf-tab-content');
+        const tabs = document.querySelectorAll('.wpdmgr-perf-tab');
+        const tabContents = document.querySelectorAll('.wpdmgr-perf-tab-content');
 
         tabs.forEach(function(tab) {
             tab.addEventListener('click', function(e) {
@@ -217,8 +217,8 @@
      */
     function switchTab(tabName) {
         // Remove active class from all tabs
-        const tabs = document.querySelectorAll('.mt-perf-tab');
-        const tabContents = document.querySelectorAll('.mt-perf-tab-content');
+        const tabs = document.querySelectorAll('.wpdmgr-perf-tab');
+        const tabContents = document.querySelectorAll('.wpdmgr-perf-tab-content');
 
         tabs.forEach(function(tab) {
             tab.classList.remove('active');
@@ -229,8 +229,8 @@
         });
 
         // Add active class to selected tab and content
-        const selectedTab = document.querySelector('.mt-perf-tab[data-tab="' + tabName + '"]');
-        const selectedContent = document.getElementById('mt-perf-tab-' + tabName);
+        const selectedTab = document.querySelector('.wpdmgr-perf-tab[data-tab="' + tabName + '"]');
+        const selectedContent = document.getElementById('wpdmgr-perf-tab-' + tabName);
 
         if (selectedTab) {
             selectedTab.classList.add('active');
@@ -242,7 +242,7 @@
     }
 
     // Make functions available globally if needed
-    window.MordenPerformanceBar = {
+    window.WPDMGRPerformanceBar = {
         toggleDetails: toggleDetails,
         openDetails: openDetails,
         closeDetails: closeDetails,

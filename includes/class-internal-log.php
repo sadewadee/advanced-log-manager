@@ -3,12 +3,12 @@
  * Internal Logging Helper
  *
  * Provides controlled internal logging that can be enabled/disabled
- * via wp-config.php constant: MT_INTERNAL_LOGGING
+ * via wp-config.php constant: WPDMGR_INTERNAL_LOGGING
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 if (!defined('ABSPATH')) {
@@ -21,8 +21,8 @@ if (!defined('ABSPATH')) {
  * @param string $message Log message
  * @param string $context Context prefix (optional)
  */
-function mt_internal_log($message, $context = 'MT') {
-    if (!defined('MT_INTERNAL_LOGGING') || !MT_INTERNAL_LOGGING) {
+function wpdmgr_internal_log($message, $context = 'MT') {
+    if (!defined('WPDMGR_INTERNAL_LOGGING') || !WPDMGR_INTERNAL_LOGGING) {
         return;
     }
 
@@ -34,20 +34,20 @@ function mt_internal_log($message, $context = 'MT') {
 /**
  * Debug-level internal logging
  */
-function mt_debug_log($message) {
-    mt_internal_log($message, 'MT Debug');
+function wpdmgr_debug_log($message) {
+    wpdmgr_internal_log($message, 'MT Debug');
 }
 
 /**
  * Error-level internal logging
  */
-function mt_error_log($message) {
-    mt_internal_log($message, 'MT Error');
+function wpdmgr_error_log($message) {
+    wpdmgr_internal_log($message, 'MT Error');
 }
 
 /**
  * Config-level internal logging
  */
-function mt_config_log($message) {
-    mt_internal_log($message, 'MT Config');
+function wpdmgr_config_log($message) {
+    wpdmgr_internal_log($message, 'MT Config');
 }

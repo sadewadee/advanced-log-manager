@@ -1,4 +1,4 @@
-# Morden Toolkit
+# WP Debug Manager
 
 Contributors: sadewadee
 Tags: debug, performance, monitoring, htaccess, php-config, developer-tools
@@ -13,7 +13,7 @@ Lightweight developer tools for WordPress: Debug Manager, Query Monitor, Htacces
 
 == Description ==
 
-Morden Toolkit is a WordPress plugin that provides essential developer tools with a simple UI and safety-first approach. This plugin is designed to provide easy access to debugging, performance monitoring, configuration file editing, and PHP settings management with automatic backup systems.
+WP Debug Manager is a WordPress plugin that provides essential developer tools with a simple UI and safety-first approach. This plugin is designed to provide easy access to debugging, performance monitoring, configuration file editing, and PHP settings management with automatic backup systems.
 
 ### Features
 
@@ -68,22 +68,22 @@ Morden Toolkit is a WordPress plugin that provides essential developer tools wit
 1. Download plugin zip file
 2. Upload via Plugins → Add New → Upload Plugin
 3. Activate plugin
-4. Access via Tools → Morden Toolkit
+4. Access via Tools → WP Debug Manager
 
 ### Via FTP
 1. Extract plugin files
-2. Upload `morden-toolkit` folder to `/wp-content/plugins/`
+2. Upload `wp-debug-manager` folder to `/wp-content/plugins/`
 3. Activate via WordPress admin
 
 ### Via WP-CLI
 ```bash
-wp plugin install morden-toolkit.zip --activate
+wp plugin install wp-debug-manager.zip --activate
 ```
 
 ## Usage
 
 ### Debug Management
-1. Go to **Tools → Morden Toolkit**
+1. Go to **Tools → WP Debug Manager**
 2. Click **Debug Management** tab
 3. Toggle debug mode ON/OFF
 4. View current debug settings status
@@ -137,7 +137,7 @@ The plugin includes comprehensive fail-safe mechanisms:
 - Emergency recovery procedures
 
 = Can I use this with other debugging plugins? =
-Yes, Morden Toolkit is designed to work alongside other debugging tools. It focuses on providing essential developer tools in one lightweight package.
+Yes, WP Debug Manager is designed to work alongside other debugging tools. It focuses on providing essential developer tools in one lightweight package.
 
 = Does this plugin modify my theme files? =
 No, this plugin only modifies configuration files (wp-config.php, .htaccess) and creates its own database tables for logging. Your theme files remain untouched.
@@ -177,7 +177,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 ## Credits
 
-Developed by [Mordenhost Team](https://mordenhost.com) with focus on simplicity, safety, and developer experience.
+Developed by [WPDMGR Team](https://wpdmgr.com) with focus on simplicity, safety, and developer experience.
 
 ---
 

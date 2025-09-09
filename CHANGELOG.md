@@ -1,15 +1,55 @@
 # Changelog
 
-All notable changes to Morden Toolkit will be documented in this file.
+All notable changes to WP Debug Manager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.21] - 2025-09-09
+
+### Changed
+- Rebranded admin views (SMTP Logs, Query Logs) from mt* to wpdmgr* for consistency across the codebase
+  - JS globals: window.mtShowNotice → window.wpdmgrShowNotice; window.mtUtils → window.wpdmgrUtils
+  - Toolkit object: mtToolkit → wpdmgrToolkit
+  - Admin slug: tools.php?page=mt → tools.php?page=wpdmgr
+  - AJAX action names: mt_* → wpdmgr_*
+  - Updated docblock metadata and text domain to 'wp-debug-manager' where applicable
+- Normalized "Enable SAVEQUERIES" links in Query Logs to use the new admin slug
+
+### Fixed
+- Removed invalid CSS declaration `width: ;` and restored `width: 30px;` on `.smtp-modal-close` button in SMTP Logs view to resolve linter error and ensure proper dimensions
+
+## [1.2.20] - 2025-09-08
+
+### Security
+- Hardened admin UI i18n by replacing unsafe _e() with esc_html_e/esc_attr_e where appropriate in admin/views
+- Used wp_json_encode() for all PHP-to-JS string embedding to prevent injection and ensure proper escaping
+- Standardized on wp_json_encode() instead of json_encode() in admin views
+
+### Fixed
+- Corrected JS string embedding in SMTP Logs to avoid broken HTML when using translated strings (concatenation with wp_json_encode results)
+- Localized and safely escaped modal labels and copy-to-clipboard messages in SMTP full content modal
+- Fixed Show/Hide toggle text assignment to remove extra quotes around wp_json_encode output
+
+### Changed
+- Improved i18n consistency across SMTP Logs, Query Logs, and Debug Logs admin pages
+
+## [1.2.19] - 2025-01-18
+
+### Changed
+- **Plugin Rename**: Plugin name changed from "WP Debug Manager" to "WP Debug Manager"
+- **Text Domain**: Updated text domain from 'wpdmgr-toolkit' to 'wp-debug-manager'
+- **File Structure**: Main plugin file renamed from wpdmgr-toolkit.php to wp-debug-manager.php
+- **Language Files**: Language file renamed from wpdmgr-toolkit.pot to wp-debug-manager.pot
+- **Directory References**: Updated log directory references from 'wp-content/wpdmgr-toolkit/' to 'wp-content/wp-debug-manager/'
+- **GitHub URLs**: Updated repository URLs to reflect new plugin name
+- **Documentation**: Updated README.md and all documentation to reflect new plugin name
 
 ## [1.2.16] - 2025-01-18
 
 ### Added
 - **SMTP Logger**: Fitur baru untuk mencatat (log) semua email yang dikirim melalui `wp_mail`. Berguna untuk men-debug masalah pengiriman email.
-- **Internal Logging**: Mekanisme logging internal untuk Morden Toolkit, dapat diaktifkan melalui `wp-config.php` untuk membantu proses debug plugin.
+- **Internal Logging**: Mekanisme logging internal untuk WP Debug Manager, dapat diaktifkan melalui `wp-config.php` untuk membantu proses debug plugin.
 
 ### Changed
 - Cleaned up unnecessary comments throughout the codebase for better code readability
@@ -31,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.14] - 2024-12-19
 
 ### Fixed
-- Fixed debug settings toggle buttons not clickable - toggle buttons with id ending in '-toggle' inside mt-debug-settings can now be clicked to enable/disable debug constants
+- Fixed debug settings toggle buttons not clickable - toggle buttons with id ending in '-toggle' inside wpdmgr-debug-settings can now be clicked to enable/disable debug constants
 - Added proper click event handlers for debug constant toggle buttons (WP_DEBUG_LOG, WP_DEBUG_DISPLAY, SCRIPT_DEBUG, SAVEQUERIES, display_errors)
 - Improved visual feedback for toggle state changes with immediate UI updates
 - Added proper error handling and state reversion for failed toggle operations
@@ -75,16 +115,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added item count display next to tab titles (e.g., "Styles (26)", "Scripts (15)")
 - Implemented external source classification for fonts.googleapis.com as WordPress Core Component
 - Enhanced Query tab caller stack display with improved formatting showing function name above and file:line below
-- Reverted caller stack format to default simple text display for mt-query-logs compatibility
+- Reverted caller stack format to default simple text display for wpdmgr-query-logs compatibility
 - Fixed PHP syntax error in class-query-monitor.php line 328 caused by malformed HTML structure
 - Fixed PHP Fatal error: Cannot declare class WPConfigTransformer due to missing class_exists() check
 - Fixed query count inconsistency between WordPress admin bar and performance monitor tabs by unifying counting logic
 - Fixed Scripts (%d) and Styles (%d) tab labels showing placeholder instead of actual counts
 
 ### Changed
-- Mengubah format tampilan tab "Scripts" dan "Styles" dari list menjadi tabel yang mengikuti format `mt-query-logs`
+- Mengubah format tampilan tab "Scripts" dan "Styles" dari list menjadi tabel yang mengikuti format `wpdmgr-query-logs`
 - Menambahkan kolom tabel: No, Position, Handle, Hostname, Source, Komponen, Version untuk tab Scripts dan Styles
-- Updated Database Queries layout in mt-perf-details-content to match mt-query-logs table structure
+- Updated Database Queries layout in wpdmgr-perf-details-content to match wpdmgr-query-logs table structure
 - Enhanced Scripts and Styles tabs with File Size and Load Time columns for better performance analysis
 - Improved component classification to identify external sources like Google Fonts as WordPress Core Components loaded by Herald theme
 - Implementasi parsing komponen untuk mendeteksi apakah script/style berasal dari Plugin, Theme, atau WordPress Core
@@ -107,7 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed performance metrics calculation inconsistency between admin bar and details panel by implementing unified calculation logic
 - Added accurate query count method that prioritizes SAVEQUERIES data for better precision
 - Enhanced performance metrics with database query time tracking for comprehensive performance analysis
-- Improved consistency between wp-admin-bar-mt-performance-monitor and mt-perf-details displays
+- Improved consistency between wp-admin-bar-wpdmgr-performance-monitor and wpdmgr-perf-details displays
 - Added safe HTML escaping fallback when window.mtUtils is not available
 - Enhanced error handling in parseUrlSource and formatCaller functions
 - Improved timestamp parsing with multiple format support
@@ -148,7 +188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implementasi tab sidebar di Performance Bar dengan 4 tab: Overview, Queries, Scripts, Styles
 - Tab "Scripts" menampilkan daftar script yang di-load dalam format tabel (berdasarkan SCRIPT_DEBUG)
 - Tab "Styles" menampilkan daftar CSS yang di-load dalam format tabel (berdasarkan SCRIPT_DEBUG)
-- Format tabel yang sama dengan mt-query-logs untuk konsistensi UI
+- Format tabel yang sama dengan wpdmgr-query-logs untuk konsistensi UI
 - Kolom tabel baru: No, Position, Handle, Hostname, Source, Komponen, Version
 - Implementasi parsing komponen untuk mendeteksi sumber script/style (Plugin, Theme, WordPress Core)
 - Styling tabel dengan tema gelap yang konsisten
@@ -183,7 +223,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.11] - 2024-01-17
 
 ### Fixed
-- **CRITICAL:** Fixed double execution bug in toggle functions (mt_toggle_debug, mt_toggle_query_monitor)
+- **CRITICAL:** Fixed double execution bug in toggle functions (wpdmgr_toggle_debug, wpdmgr_toggle_query_monitor)
 - Resolved conflicting event handlers causing duplicate notifications
 - Modified initializeToggles() to exclude toggles with specific handlers
 - Removed duplicate toggleDebugSettings() function definition
@@ -242,15 +282,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **STRATEGY PRIORITY CHANGE**: Modified configuration priority from `.htaccess` → `wp-config.php` → `php.ini` to `wp-config.php` → `php.ini` → `.htaccess` (as last resort) to prevent 500 errors
   - Enhanced logging for debugging configuration issues and improved error handling
 - **PHP Configuration Constants Implementation**
-  - Fixed MT_UPLOAD_MAX_FILESIZE, MT_POST_MAX_SIZE, MT_MAX_INPUT_VARS, and MT_MAX_INPUT_TIME constants not taking effect
+  - Fixed WPDMGR_UPLOAD_MAX_FILESIZE, WPDMGR_POST_MAX_SIZE, WPDMGR_MAX_INPUT_VARS, and WPDMGR_MAX_INPUT_TIME constants not taking effect
   - Removed ini_set() approach which doesn't work on many hosting providers
   - Constants now properly applied through robust methods: .htaccess (Apache), php.ini (CGI/FastCGI), or wp-config.php constants
-  - MT_PHP_Config class automatically detects best available method for each hosting environment
+  - WPDMGR_PHP_Config class automatically detects best available method for each hosting environment
   - Added comprehensive fallback system with validation and rollback capabilities
   - Enhanced hosting compatibility by avoiding ini_set() restrictions
 - **PHP Configuration Method Improvement**
   - Replaced .user.ini with php.ini for better compatibility and universal support
-  - Updated MT_PHP_Config class to use php.ini instead of .user.ini for CGI/FastCGI environments
+  - Updated WPDMGR_PHP_Config class to use php.ini instead of .user.ini for CGI/FastCGI environments
   - Enhanced configuration detection to prioritize php.ini as more standard approach
   - Updated cleanup procedures to handle php.ini files instead of .user.ini
 
@@ -270,7 +310,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implemented PHP syntax validation to prevent broken configurations
   - Added site accessibility testing after modifications
   - Enhanced rollback mechanism with automatic restoration on errors
-  - Added filter hook `mt_debug_constants` for extensibility
+  - Added filter hook `wpdmgr_debug_constants` for extensibility
   - Improved logging with detailed error messages and success confirmations
   - Added backup management system (keeps last 5 backups automatically)
   - Added manual backup restoration functionality
@@ -285,9 +325,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Code Cleanup and Internationalization**
   - Removed unnecessary comments from PHP files
   - Translated remaining comments to English
-  - Updated text domain from 'mt' to 'morden-toolkit' across all files
-  - Regenerated morden-toolkit.pot file according to WordPress standards
-  - Added Indonesian language support (morden-toolkit-id_ID.po)
+  - Updated text domain from 'mt' to 'wpdmgr-toolkit' across all files
+  - Regenerated wpdmgr-toolkit.pot file according to WordPress standards
+  - Added Indonesian language support (wpdmgr-toolkit-id_ID.po)
   - Improved plugin internationalization structure
 - **Code Comment Cleanup**
   - Removed redundant and unnecessary comments from all PHP files
@@ -313,7 +353,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Htaccess Editor Escape Characters Bug**
   - Fixed excessive escape characters (\\\\) being added every time .htaccess file is saved
   - Replaced inappropriate `sanitize_textarea_field()` with proper `wp_unslash()` + `wp_kses()` sanitization
-  - Updated `mt_sanitize_file_content()` to validate without modifying .htaccess content
+  - Updated `wpdmgr_sanitize_file_content()` to validate without modifying .htaccess content
   - Improved pattern matching to only block actual malicious code, not legitimate .htaccess directives
   - Prevents corruption of Apache directives like RewriteRule, ExpiresByType, and other configurations
 - **Custom PHP Configuration Preset**
@@ -326,7 +366,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added reset functionality to restore custom preset to default values
   - Enhanced UI with proper styling and user feedback for custom preset management
 - **wp-config.php Analysis Documentation**
-  - Created comprehensive analysis comparing Morden Toolkit with WP Debugging plugin
+  - Created comprehensive analysis comparing WP Debug Manager with WP Debugging plugin
   - Documented implementation differences and recommendations
   - Added risk assessment and WordPress.org submission guidelines
   - Provided roadmap for potential wp-cli/wp-config-transformer adoption

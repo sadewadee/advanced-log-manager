@@ -2,10 +2,10 @@
 /**
  * Query Monitor Service - Performance metrics display
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  * @since 1.2.18
  */
 
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  *
  * @since 1.2.18
  */
-class MT_Query_Monitor {
+class WPDMGR_Query_Monitor {
 
     private $metrics = array();
     private $hook_collectors = array();
@@ -36,7 +36,7 @@ class MT_Query_Monitor {
 	 * Sets up the performance monitoring if enabled and user is logged in.
 	 */
 	public function __construct() {
-		if (get_option('mt_query_monitor_enabled') && is_user_logged_in()) {
+		if (get_option('wpdmgr_query_monitor_enabled') && is_user_logged_in()) {
 			$this->init_domain_collectors();
 
 			add_action('init', array($this, 'start_performance_tracking'));
@@ -59,45 +59,45 @@ class MT_Query_Monitor {
 		$plugin_url = plugin_dir_url(dirname(__FILE__));
 
 		wp_enqueue_style(
-			'mt-query-monitor',
+			'wpdmgr-query-monitor',
 			$plugin_url . 'admin/assets/css/query-monitor.css',
 			array(),
 			'1.2.18'
 		);
 		wp_enqueue_style(
-			'mt-performance-bar',
+			'wpdmgr-performance-bar',
 			$plugin_url . 'public/assets/performance-bar.css',
 			array(),
 			'1.2.18'
 		);
 
 		wp_enqueue_script(
-			'mt-query-monitor',
+			'wpdmgr-query-monitor',
 			$plugin_url . 'admin/assets/js/query-monitor.js',
 			array('jquery'),
 			'1.2.18',
 			true
 		);
 
-		wp_localize_script('mt-query-monitor', 'mtQueryMonitorL10n', array(
-			'enableRealTimeUpdates' => __('Enable Real-time Updates', 'morden-toolkit'),
-			'stopRealTimeUpdates' => __('Stop Real-time Updates', 'morden-toolkit'),
-			'statusActive' => __('Active', 'morden-toolkit'),
-			'statusStatic' => __('Static View', 'morden-toolkit'),
-			'statusRefreshing' => __('Refreshing...', 'morden-toolkit'),
-			'statusUpdated' => __('Updated', 'morden-toolkit'),
-			'statusError' => __('Error', 'morden-toolkit'),
-			'viewDetails' => __('View Details', 'morden-toolkit'),
-			'hideDetails' => __('Hide Details', 'morden-toolkit'),
-			'toggle' => __('Toggle', 'morden-toolkit'),
-			'hide' => __('Hide', 'morden-toolkit'),
+		wp_localize_script('wpdmgr-query-monitor', 'mtQueryMonitorL10n', array(
+			'enableRealTimeUpdates' => __('Enable Real-time Updates', 'wp-debug-manager'),
+			'stopRealTimeUpdates' => __('Stop Real-time Updates', 'wp-debug-manager'),
+			'statusActive' => __('Active', 'wp-debug-manager'),
+			'statusStatic' => __('Static View', 'wp-debug-manager'),
+			'statusRefreshing' => __('Refreshing...', 'wp-debug-manager'),
+			'statusUpdated' => __('Updated', 'wp-debug-manager'),
+			'statusError' => __('Error', 'wp-debug-manager'),
+			'viewDetails' => __('View Details', 'wp-debug-manager'),
+			'hideDetails' => __('Hide Details', 'wp-debug-manager'),
+			'toggle' => __('Toggle', 'wp-debug-manager'),
+			'hide' => __('Hide', 'wp-debug-manager'),
 		));
 
 		// Pass AJAX data
 		if (function_exists('wp_create_nonce')) {
-			wp_localize_script('mt-query-monitor', 'mtHookMonitor', array(
+			wp_localize_script('wpdmgr-query-monitor', 'mtHookMonitor', array(
 				'ajaxUrl' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('mt_monitor_hooks_nonce'),
+				'nonce' => wp_create_nonce('wpdmgr_monitor_hooks_nonce'),
 				'isActive' => false,
 				'interval' => null
 			));
@@ -268,7 +268,7 @@ class MT_Query_Monitor {
     public function ajax_monitor_hooks() {
         // Verify nonce for security
         $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-        if (!wp_verify_nonce($nonce, 'mt_monitor_hooks_nonce')) {
+        if (!wp_verify_nonce($nonce, 'wpdmgr_monitor_hooks_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -516,14 +516,14 @@ class MT_Query_Monitor {
         }
 
         // Store metrics in transient for display
-        set_transient('mt_metrics_' . get_current_user_id(), $this->metrics, 30);
+        set_transient('wpdmgr_metrics_' . get_current_user_id(), $this->metrics, 30);
     }
 
     /**
      * Get current metrics
      */
     public function get_metrics() {
-        $cached_metrics = get_transient('mt_metrics_' . get_current_user_id());
+        $cached_metrics = get_transient('wpdmgr_metrics_' . get_current_user_id());
         if ($cached_metrics) {
             return $cached_metrics;
         }
@@ -565,7 +565,7 @@ class MT_Query_Monitor {
         $query_time = isset($metrics['query_time']) ? $metrics['query_time'] : 0;
 
         $time_formatted = number_format($execution_time, 3) . 's';
-        $memory_formatted = $this->mt_format_bytes($peak_memory);
+        $memory_formatted = $this->wpdmgr_format_bytes($peak_memory);
         $db_time_formatted = number_format($query_time * 1000, 1) . 'ms';
 
         // Format like Query Monitor: time, memory, database time, queries
@@ -579,11 +579,11 @@ class MT_Query_Monitor {
 
         // Add single admin bar item with all metrics
         $wp_admin_bar->add_node(array(
-            'id'    => 'mt-performance-monitor',
+            'id'    => 'wpdmgr-performance-monitor',
             'title' => '<span class="ab-icon">MT</span><span class="ab-label">' . $label_content . '</span>',
             'href'  => '#',
             'meta'  => array(
-                'class' => 'menupop mt-admin-perf-toggle',
+                'class' => 'menupop wpdmgr-admin-perf-toggle',
                 'onclick' => 'return false;'
             )
         ));
@@ -624,7 +624,7 @@ class MT_Query_Monitor {
         $query_time = isset($metrics['query_time']) ? $metrics['query_time'] : 0;
 
         $time_formatted = number_format($execution_time, 3) . 's';
-        $memory_formatted = $this->mt_format_bytes($peak_memory);
+        $memory_formatted = $this->wpdmgr_format_bytes($peak_memory);
         $db_time_formatted = number_format($query_time * 1000, 1) . 'ms';
 
         // Get counts for tab titles - use same logic as admin bar
@@ -635,107 +635,107 @@ class MT_Query_Monitor {
         // Styles count: jumlah stylesheet yang sudah di-load oleh WordPress
         $styles_count = !empty($wp_styles->done) ? count($wp_styles->done) : 0;
         ?>
-        <div id="mt-perf-details" class="mt-perf-details" style="display: none;">
-            <div class="mt-perf-details-content">
-                <div class="mt-perf-sidebar">
-                    <ul class="mt-perf-tabs">
-                        <li class="mt-perf-tab active" data-tab="overview">
+        <div id="wpdmgr-perf-details" class="wpdmgr-perf-details" style="display: none;">
+            <div class="wpdmgr-perf-details-content">
+                <div class="wpdmgr-perf-sidebar">
+                    <ul class="wpdmgr-perf-tabs">
+                        <li class="wpdmgr-perf-tab active" data-tab="overview">
                             <span class="dashicons dashicons-dashboard"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Overview', 'morden-toolkit');
+                                _e('Overview', 'wp-debug-manager');
                             } else {
                                 echo 'Overview';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="queries">
+                        <li class="wpdmgr-perf-tab" data-tab="queries">
                             <span class="dashicons dashicons-database"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Queries (%d)', 'morden-toolkit'), $tab_query_count);
+                                printf(__('Queries (%d)', 'wp-debug-manager'), $tab_query_count);
                             } else {
                                 echo 'Queries';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="scripts">
+                        <li class="wpdmgr-perf-tab" data-tab="scripts">
                             <span class="dashicons dashicons-media-code"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Scripts (%d)', 'morden-toolkit'), $scripts_count);
+                                printf(__('Scripts (%d)', 'wp-debug-manager'), $scripts_count);
                             } else {
                                 echo 'Scripts';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="styles">
+                        <li class="wpdmgr-perf-tab" data-tab="styles">
                             <span class="dashicons dashicons-admin-appearance"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Styles (%d)', 'morden-toolkit'), $styles_count);
+                                printf(__('Styles (%d)', 'wp-debug-manager'), $styles_count);
                             } else {
                                 echo 'Styles';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="images">
+                        <li class="wpdmgr-perf-tab" data-tab="images">
                             <span class="dashicons dashicons-format-image"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Images', 'morden-toolkit');
+                                _e('Images', 'wp-debug-manager');
                             } else {
                                 echo 'Images';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="hooks">
+                        <li class="wpdmgr-perf-tab" data-tab="hooks">
                             <span class="dashicons dashicons-admin-tools"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Hooks & Actions', 'morden-toolkit');
+                                _e('Hooks & Actions', 'wp-debug-manager');
                             } else {
                                 echo 'Hooks & Actions';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab hide" data-tab="realtime-hooks">
+                        <li class="wpdmgr-perf-tab hide" data-tab="realtime-hooks">
                             <span class="dashicons dashicons-clock"></span>
                             <?php
                             $realtime_count = count($this->real_time_hooks);
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Real-time Hooks (%d)', 'morden-toolkit'), $realtime_count);
+                                printf(__('Real-time Hooks (%d)', 'wp-debug-manager'), $realtime_count);
                             } else {
                                 echo 'Real-time Hooks (' . $realtime_count . ')';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab hide" data-tab="bootstrap">
+                        <li class="wpdmgr-perf-tab hide" data-tab="bootstrap">
                             <span class="dashicons dashicons-update"></span>
                             <?php
                             $bootstrap_count = count($this->bootstrap_snapshots);
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Bootstrap Phases (%d)', 'morden-toolkit'), $bootstrap_count);
+                                printf(__('Bootstrap Phases (%d)', 'wp-debug-manager'), $bootstrap_count);
                             } else {
                                 echo 'Bootstrap Phases (' . $bootstrap_count . ')';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab hide" data-tab="domains">
+                        <li class="wpdmgr-perf-tab hide" data-tab="domains">
                             <span class="dashicons dashicons-networking"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Domain Panels', 'morden-toolkit');
+                                _e('Domain Panels', 'wp-debug-manager');
                             } else {
                                 echo 'Domain Panels';
                             }
                             ?>
                         </li>
-                        <li class="mt-perf-tab" data-tab="env">
+                        <li class="wpdmgr-perf-tab" data-tab="env">
                             <span class="dashicons dashicons-admin-settings"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('ENV', 'morden-toolkit');
+                                _e('ENV', 'wp-debug-manager');
                             } else {
                                 echo 'ENV';
                             }
@@ -743,21 +743,21 @@ class MT_Query_Monitor {
                         </li>
                     </ul>
                 </div>
-                <div class="mt-perf-content">
+                <div class="wpdmgr-perf-content">
                     <!-- Overview Tab -->
-                    <div id="mt-perf-tab-overview" class="mt-perf-tab-content active">
+                    <div id="wpdmgr-perf-tab-overview" class="wpdmgr-perf-tab-content active">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Performance Details', 'morden-toolkit');
+                            _e('Performance Details', 'wp-debug-manager');
                         } else {
                             echo 'Performance Details';
                         }
                         ?></h4>
-                        <table class="mt-perf-table">
+                        <table class="wpdmgr-perf-table">
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Database Queries:', 'morden-toolkit');
+                                    _e('Database Queries:', 'wp-debug-manager');
                                 } else {
                                     echo 'Database Queries:';
                                 }
@@ -767,7 +767,7 @@ class MT_Query_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Execution Time:', 'morden-toolkit');
+                                    _e('Execution Time:', 'wp-debug-manager');
                                 } else {
                                     echo 'Execution Time:';
                                 }
@@ -777,7 +777,7 @@ class MT_Query_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Database Time:', 'morden-toolkit');
+                                    _e('Database Time:', 'wp-debug-manager');
                                 } else {
                                     echo 'Database Time:';
                                 }
@@ -787,7 +787,7 @@ class MT_Query_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Peak Memory:', 'morden-toolkit');
+                                    _e('Peak Memory:', 'wp-debug-manager');
                                 } else {
                                     echo 'Peak Memory:';
                                 }
@@ -797,17 +797,17 @@ class MT_Query_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Memory Used:', 'morden-toolkit');
+                                    _e('Memory Used:', 'wp-debug-manager');
                                 } else {
                                     echo 'Memory Used:';
                                 }
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html(function_exists('mt_format_bytes') ? mt_format_bytes($metrics['memory_usage'] ?? 0) : $this->mt_format_bytes($metrics['memory_usage'] ?? 0)) : htmlspecialchars($this->mt_format_bytes($metrics['memory_usage'] ?? 0)); ?></td>
+                                <td><?php echo function_exists('esc_html') ? esc_html(function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes($metrics['memory_usage'] ?? 0) : $this->wpdmgr_format_bytes($metrics['memory_usage'] ?? 0)) : htmlspecialchars($this->wpdmgr_format_bytes($metrics['memory_usage'] ?? 0)); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('PHP Version:', 'morden-toolkit');
+                                    _e('PHP Version:', 'wp-debug-manager');
                                 } else {
                                     echo 'PHP Version:';
                                 }
@@ -817,7 +817,7 @@ class MT_Query_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('WordPress Version:', 'morden-toolkit');
+                                    _e('WordPress Version:', 'wp-debug-manager');
                                 } else {
                                     echo 'WordPress Version:';
                                 }
@@ -827,121 +827,121 @@ class MT_Query_Monitor {
                         </table>
                     </div>
                     <!-- Queries Tab -->
-                    <div id="mt-perf-tab-queries" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-queries" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('printf') && function_exists('__')) {
-                             printf(__('Database Queries (%d)', 'morden-toolkit'), $tab_query_count);
+                             printf(__('Database Queries (%d)', 'wp-debug-manager'), $tab_query_count);
                          } else {
                              echo 'Database Queries (' . $tab_query_count . ')';
                          }
                         ?></h4>
-                        <div class="mt-queries-container">
+                        <div class="wpdmgr-queries-container">
                             <?php $this->render_queries_tab(); ?>
                         </div>
                     </div>
                     <!-- Scripts Tab -->
-                    <div id="mt-perf-tab-scripts" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-scripts" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Scripts', 'morden-toolkit');
+                            _e('Loaded Scripts', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Scripts';
                         }
                         ?></h4>
-                        <div class="mt-scripts-container">
+                        <div class="wpdmgr-scripts-container">
                             <?php $this->render_scripts_tab(); ?>
                         </div>
                     </div>
                     <!-- Styles Tab -->
-                    <div id="mt-perf-tab-styles" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-styles" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Styles', 'morden-toolkit');
+                            _e('Loaded Styles', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Styles';
                         }
                         ?></h4>
-                        <div class="mt-styles-container">
+                        <div class="wpdmgr-styles-container">
                             <?php $this->render_styles_tab(); ?>
                         </div>
                     </div>
                     <!-- Images Tab -->
-                    <div id="mt-perf-tab-images" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-images" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Images', 'morden-toolkit');
+                            _e('Loaded Images', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Images';
                         }
                         ?></h4>
-                        <div class="mt-images-container">
+                        <div class="wpdmgr-images-container">
                             <?php $this->render_images_tab(); ?>
                         </div>
                     </div>
                     <!-- Hooks & Actions Tab -->
-                    <div id="mt-perf-tab-hooks" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-hooks" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('WordPress Hooks & Actions', 'morden-toolkit');
+                            _e('WordPress Hooks & Actions', 'wp-debug-manager');
                         } else {
                             echo 'WordPress Hooks & Actions';
                         }
                         ?></h4>
-                        <div class="mt-hooks-container">
+                        <div class="wpdmgr-hooks-container">
                             <?php $this->render_hooks_tab(); ?>
                         </div>
                     </div>
                     <!-- Real-time Hooks Tab -->
-                    <div id="mt-perf-tab-realtime-hooks" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-realtime-hooks" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         $realtime_count = count($this->real_time_hooks);
                         if (function_exists('printf') && function_exists('__')) {
-                            printf(__('Real-time Hook Execution (%d hooks captured)', 'morden-toolkit'), $realtime_count);
+                            printf(__('Real-time Hook Execution (%d hooks captured)', 'wp-debug-manager'), $realtime_count);
                         } else {
                             echo 'Real-time Hook Execution (' . $realtime_count . ' hooks captured)';
                         }
                         ?></h4>
-                        <div class="mt-realtime-hooks-container">
+                        <div class="wpdmgr-realtime-hooks-container">
                             <?php $this->render_realtime_hooks_tab(); ?>
                         </div>
                     </div>
                     <!-- Bootstrap Phases Tab -->
-                    <div id="mt-perf-tab-bootstrap" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-bootstrap" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         $bootstrap_count = count($this->bootstrap_snapshots);
                         if (function_exists('printf') && function_exists('__')) {
-                            printf(__('Bootstrap Hook Snapshots (%d phases)', 'morden-toolkit'), $bootstrap_count);
+                            printf(__('Bootstrap Hook Snapshots (%d phases)', 'wp-debug-manager'), $bootstrap_count);
                         } else {
                             echo 'Bootstrap Hook Snapshots (' . $bootstrap_count . ' phases)';
                         }
                         ?></h4>
-                        <div class="mt-bootstrap-container">
+                        <div class="wpdmgr-bootstrap-container">
                             <?php $this->render_bootstrap_tab(); ?>
                         </div>
                     </div>
                     <!-- Domain Panels Tab -->
-                    <div id="mt-perf-tab-domains" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-domains" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Domain-Specific Hook Analysis', 'morden-toolkit');
+                            _e('Domain-Specific Hook Analysis', 'wp-debug-manager');
                         } else {
                             echo 'Domain-Specific Hook Analysis';
                         }
                         ?></h4>
-                        <div class="mt-domains-container">
+                        <div class="wpdmgr-domains-container">
                             <?php $this->render_domains_tab(); ?>
                         </div>
                     </div>
                     <!-- ENV Tab -->
-                    <div id="mt-perf-tab-env" class="mt-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-env" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Environment Configuration', 'morden-toolkit');
+                            _e('Environment Configuration', 'wp-debug-manager');
                         } else {
                             echo 'Environment Configuration';
                         }
                         ?></h4>
-                        <div class="mt-env-container">
+                        <div class="wpdmgr-env-container">
                             <?php $this->render_env_tab(); ?>
                         </div>
                     </div>
@@ -1012,7 +1012,7 @@ class MT_Query_Monitor {
 			// Try to get local file size
 			$local_path = ABSPATH . ltrim($src, '/');
 			if (file_exists($local_path)) {
-				$file_size = function_exists('mt_format_bytes') ? mt_format_bytes(filesize($local_path)) : $this->mt_format_bytes(filesize($local_path));
+				$file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
 				$load_time = $this->get_estimated_load_time($src, filesize($local_path));
 			}
 		}
@@ -1098,12 +1098,12 @@ class MT_Query_Monitor {
         global $wpdb;
 
         if (!defined('SAVEQUERIES') || !SAVEQUERIES) {
-            echo '<p>' . (function_exists('__') ? __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'morden-toolkit') : 'Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.') . '</p>';
+            echo '<p>' . (function_exists('__') ? __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'wp-debug-manager') : 'Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.') . '</p>';
             return;
         }
 
         if (empty($wpdb->queries)) {
-            echo '<p>' . (function_exists('__') ? __('No queries recorded for this page.', 'morden-toolkit') : 'No queries recorded for this page.') . '</p>';
+            echo '<p>' . (function_exists('__') ? __('No queries recorded for this page.', 'wp-debug-manager') : 'No queries recorded for this page.') . '</p>';
             return;
         }
 
@@ -1142,7 +1142,7 @@ class MT_Query_Monitor {
             echo '</button>';
             echo '</div>';
             echo '</td>';
-            // Format caller stack using enhanced formatting from MT_Debug
+            // Format caller stack using enhanced formatting from WPDMGR_Debug
             $formatted_stack = $this->format_enhanced_caller_stack($stack);
             echo '<td class="query-caller">' . $formatted_stack . '</td>';
             echo '</tr>';
@@ -1164,7 +1164,7 @@ class MT_Query_Monitor {
 	 */
 	private function get_remote_file_size($url) {
 		// Use cached result if available
-		$cache_key = 'mt_file_size_' . md5($url);
+		$cache_key = 'wpdmgr_file_size_' . md5($url);
 		$cached_size = get_transient($cache_key);
 		if ($cached_size !== false) {
 			return $cached_size;
@@ -1174,7 +1174,7 @@ class MT_Query_Monitor {
 		$response = wp_remote_head($url, array(
 			'timeout' => 3,
 			'redirection' => 3,
-			'user-agent' => 'Morden Toolkit Performance Monitor/1.0',
+			'user-agent' => 'WP Debug Manager Performance Monitor/1.0',
 			'sslverify' => false,
 		));
 
@@ -1182,7 +1182,7 @@ class MT_Query_Monitor {
 			$headers = wp_remote_retrieve_headers($response);
 			if (isset($headers['content-length'])) {
 				$size_bytes = intval($headers['content-length']);
-				$formatted_size = $this->mt_format_bytes($size_bytes);
+				$formatted_size = $this->wpdmgr_format_bytes($size_bytes);
 				// Cache for 1 hour
 				set_transient($cache_key, $formatted_size, 3600);
 				return $formatted_size;
@@ -1191,7 +1191,7 @@ class MT_Query_Monitor {
 
 		// Fallback to domain-based estimates
 		$domain = parse_url($url, PHP_URL_HOST);
-		$fallback_size = __('Unknown', 'morden-toolkit');
+		$fallback_size = __('Unknown', 'wp-debug-manager');
 
 		if (strpos($domain, 'fonts.googleapis.com') !== false) {
 			$fallback_size = '~3KB';
@@ -1216,7 +1216,7 @@ class MT_Query_Monitor {
 	 */
 	private function get_estimated_load_time($url, $file_size = null) {
 		// Use cached result if available
-		$cache_key = 'mt_load_time_' . md5($url);
+		$cache_key = 'wpdmgr_load_time_' . md5($url);
 		$cached_time = get_transient($cache_key);
 		if ($cached_time !== false) {
 			return $cached_time;
@@ -1238,7 +1238,7 @@ class MT_Query_Monitor {
 			$response = wp_remote_head($url, array(
 				'timeout' => 5,
 				'redirection' => 3,
-				'user-agent' => 'Morden Toolkit Performance Monitor/1.0',
+				'user-agent' => 'WP Debug Manager Performance Monitor/1.0',
 				'sslverify' => false,
 			));
 
@@ -1258,7 +1258,7 @@ class MT_Query_Monitor {
 			return $this->format_load_time_with_color(120, 'warning'); // Default external estimate
 		}
 
-		return __('N/A', 'morden-toolkit');
+		return __('N/A', 'wp-debug-manager');
 	}
 
     /**
@@ -1321,7 +1321,7 @@ class MT_Query_Monitor {
     /**
      * Format bytes to human readable format
      */
-    private function mt_format_bytes($bytes) {
+    private function wpdmgr_format_bytes($bytes) {
         if ($bytes >= 1073741824) {
             return number_format($bytes / 1073741824, 2) . 'GB';
         } elseif ($bytes >= 1048576) {
@@ -1340,7 +1340,7 @@ class MT_Query_Monitor {
         global $wp_scripts;
 
         if (!$wp_scripts || empty($wp_scripts->done)) {
-            echo '<p>' . __('No scripts loaded on this page.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No scripts loaded on this page.', 'wp-debug-manager') . '</p>';
             return;
         }
 
@@ -1410,7 +1410,7 @@ class MT_Query_Monitor {
                     // Try to get local file size
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
-                        $file_size = function_exists('mt_format_bytes') ? mt_format_bytes(filesize($local_path)) : $this->mt_format_bytes(filesize($local_path));
+                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
                         $load_time = $this->get_estimated_load_time($src, filesize($local_path));
                     }
                 }
@@ -1435,7 +1435,7 @@ class MT_Query_Monitor {
             echo '<tr>';
             echo '<td class="query-number">' . $counter . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($position) : htmlspecialchars($position)) . '</td>';
-            echo '<td class="mt-script-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
+            echo '<td class="wpdmgr-script-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($component_type) : htmlspecialchars($component_type)) . '</td>';
@@ -1458,7 +1458,7 @@ class MT_Query_Monitor {
         global $wp_styles;
 
         if (!$wp_styles || empty($wp_styles->done)) {
-            echo '<p>' . __('No styles loaded on this page.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No styles loaded on this page.', 'wp-debug-manager') . '</p>';
             return;
         }
 
@@ -1526,7 +1526,7 @@ class MT_Query_Monitor {
                     // Try to get local file size
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
-                        $file_size = function_exists('mt_format_bytes') ? mt_format_bytes(filesize($local_path)) : $this->mt_format_bytes(filesize($local_path));
+                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
                         $load_time = $this->get_estimated_load_time($src, filesize($local_path));
                     }
                 }
@@ -1551,7 +1551,7 @@ class MT_Query_Monitor {
             echo '<tr>';
             echo '<td class="query-number">' . $counter . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($position) : htmlspecialchars($position)) . '</td>';
-            echo '<td class="mt-style-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
+            echo '<td class="wpdmgr-style-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($component_type) : htmlspecialchars($component_type)) . '</td>';
@@ -1584,18 +1584,18 @@ class MT_Query_Monitor {
     }
 
     /**
-     * Format enhanced caller stack using MT_Debug functionality
+     * Format enhanced caller stack using WPDMGR_Debug functionality
      */
     private function format_enhanced_caller_stack($stack) {
         if (empty($stack)) {
             return '<span style="color: #999; font-style: italic;">No stack trace available</span>';
         }
 
-        // Get or create MT_Debug instance to use enhanced formatting
-        if (class_exists('MT_Debug')) {
+        // Get or create WPDMGR_Debug instance to use enhanced formatting
+        if (class_exists('WPDMGR_Debug')) {
             static $debug_instance = null;
             if ($debug_instance === null) {
-                $debug_instance = new MT_Debug();
+                $debug_instance = new WPDMGR_Debug();
             }
 
             // Use reflection to access the private format_caller_stack method
@@ -1616,7 +1616,7 @@ class MT_Query_Monitor {
             }
         }
 
-        // Fallback to simple display if MT_Debug is not available
+        // Fallback to simple display if WPDMGR_Debug is not available
         return (function_exists('esc_html') ? esc_html($stack) : htmlspecialchars($stack));
     }
 
@@ -1668,17 +1668,17 @@ class MT_Query_Monitor {
         $images = $this->get_page_images();
 
         if (empty($images)) {
-            echo '<p>' . __('No images found on this page.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No images found on this page.', 'wp-debug-manager') . '</p>';
             return;
         }
 
-        echo '<div class="mt-tab-filters">';
-        echo '<label>Filter by Source: <select id="mt-images-source-filter"><option value="">All Sources</option></select></label>';
-        echo '<label>Filter by Hostname: <select id="mt-images-hostname-filter"><option value="">All Hostnames</option></select></label>';
-        echo '<label>Sort by: <select id="mt-images-sort"><option value="size">File Size</option><option value="load_time">Load Time</option><option value="source">Source</option></select></label>';
+        echo '<div class="wpdmgr-tab-filters">';
+        echo '<label>Filter by Source: <select id="wpdmgr-images-source-filter"><option value="">All Sources</option></select></label>';
+        echo '<label>Filter by Hostname: <select id="wpdmgr-images-hostname-filter"><option value="">All Hostnames</option></select></label>';
+        echo '<label>Sort by: <select id="wpdmgr-images-sort"><option value="size">File Size</option><option value="load_time">Load Time</option><option value="source">Source</option></select></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table mt-images-table">';
+        echo '<table class="query-log-table wpdmgr-images-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1759,7 +1759,7 @@ class MT_Query_Monitor {
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
                         $file_size_bytes = filesize($local_path);
-                        $file_size = function_exists('mt_format_bytes') ? mt_format_bytes($file_size_bytes) : $this->mt_format_bytes($file_size_bytes);
+                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes($file_size_bytes) : $this->wpdmgr_format_bytes($file_size_bytes);
                         $load_time = $this->get_estimated_load_time($src, $file_size_bytes);
                     }
                 }
@@ -1767,7 +1767,7 @@ class MT_Query_Monitor {
 
             echo '<tr data-source="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '" data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '" data-size="' . $file_size_bytes . '" data-load-time="' . $load_time_ms . '">';
             echo '<td class="query-number">' . $counter . '</td>';
-            echo '<td class="mt-image-handle">' . (function_exists('esc_html') ? esc_html($alt) : htmlspecialchars($alt)) . '</td>';
+            echo '<td class="wpdmgr-image-handle">' . (function_exists('esc_html') ? esc_html($alt) : htmlspecialchars($alt)) . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
             echo '<td>' . $this->format_file_size_with_color($file_size) . '</td>';
@@ -1788,16 +1788,16 @@ class MT_Query_Monitor {
         global $wp_filter;
 
         if (empty($wp_filter)) {
-            echo '<p>' . __('No hooks registered.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No hooks registered.', 'wp-debug-manager') . '</p>';
             return;
         }
 
-        echo '<div class="mt-tab-filters">';
-        echo '<label>Group by: <select id="mt-hooks-group-filter"><option value="all">All</option><option value="hook">Hook</option><option value="filter">Filter</option></select></label>';
-        echo '<label>Sort by: <select id="mt-hooks-sort"><option value="hook">Hook Name</option><option value="priority">Priority</option></select></label>';
+        echo '<div class="wpdmgr-tab-filters">';
+        echo '<label>Group by: <select id="wpdmgr-hooks-group-filter"><option value="all">All</option><option value="hook">Hook</option><option value="filter">Filter</option></select></label>';
+        echo '<label>Sort by: <select id="wpdmgr-hooks-sort"><option value="hook">Hook Name</option><option value="priority">Priority</option></select></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table mt-hooks-table">';
+        echo '<table class="query-log-table wpdmgr-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No.</th>';
@@ -1905,7 +1905,7 @@ class MT_Query_Monitor {
             // Show hook name cell only for the first occurrence of this hook
             if ($show_hook_cell) {
                 $rowspan = $hook_counts[$hook_name];
-                echo '<td class="mt-hook-handle" rowspan="' . $rowspan . '">';
+                echo '<td class="wpdmgr-hook-handle" rowspan="' . $rowspan . '">';
                 echo '<span class="hook-type hook-type-' . $group['hook_type'] . '">' . strtoupper($group['hook_type']) . '</span> ';
                 echo (function_exists('esc_html') ? esc_html($hook_name) : htmlspecialchars($hook_name));
                 echo '</td>';
@@ -1936,35 +1936,35 @@ class MT_Query_Monitor {
      */
     private function render_realtime_hooks_tab() {
         if (empty($this->real_time_hooks)) {
-            echo '<p>' . __('No strategic hooks captured. This indicates the monitoring has not detected any significant WordPress activity.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No strategic hooks captured. This indicates the monitoring has not detected any significant WordPress activity.', 'wp-debug-manager') . '</p>';
             echo '<p>Only Monitor ' . count($this->get_strategic_hooks()) . ' strategic hooks for better performance.</p>';
             return;
         }
 
-        echo '<div class="mt-realtime-controls">';
-        echo '<div class="mt-tab-filters">';
-        echo '<label>Filter by Phase: <select id="mt-realtime-phase-filter"><option value="">All Phases</option></select></label>';
-        echo '<label>Filter by Domain: <select id="mt-realtime-domain-filter"><option value="">All Domains</option></select></label>';
-        echo '<label>Show: <select id="mt-realtime-limit"><option value="20">Last 20</option><option value="50" selected>Last 50</option><option value="100">Last 100</option></select></label>';
+        echo '<div class="wpdmgr-realtime-controls">';
+        echo '<div class="wpdmgr-tab-filters">';
+        echo '<label>Filter by Phase: <select id="wpdmgr-realtime-phase-filter"><option value="">All Phases</option></select></label>';
+        echo '<label>Filter by Domain: <select id="wpdmgr-realtime-domain-filter"><option value="">All Domains</option></select></label>';
+        echo '<label>Show: <select id="wpdmgr-realtime-limit"><option value="20">Last 20</option><option value="50" selected>Last 50</option><option value="100">Last 100</option></select></label>';
         echo '</div>';
-        echo '<div class="mt-realtime-actions">';
-        echo '<button id="mt-toggle-realtime" class="button button-primary">Enable Real-time Updates</button>';
-        echo '<button id="mt-refresh-hooks" class="button">Refresh Now</button>';
-        echo '<span class="mt-realtime-status">Status: <span id="mt-status-text">Static View</span></span>';
+        echo '<div class="wpdmgr-realtime-actions">';
+        echo '<button id="wpdmgr-toggle-realtime" class="button button-primary">Enable Real-time Updates</button>';
+        echo '<button id="wpdmgr-refresh-hooks" class="button">Refresh Now</button>';
+        echo '<span class="wpdmgr-realtime-status">Status: <span id="wpdmgr-status-text">Static View</span></span>';
         echo '</div>';
         echo '</div>';
 
-        echo '<div id="mt-realtime-summary" class="mt-realtime-summary">';
+        echo '<div id="wpdmgr-realtime-summary" class="wpdmgr-realtime-summary">';
         echo '<h5>Strategic Hook Monitoring Summary</h5>';
         echo '<ul>';
         echo '<li>Strategic hooks captured: <span id="hooks-count">' . count($this->real_time_hooks) . '</span> (vs. 21,000+ with "all" hook)</li>';
         echo '<li>Monitoring approach: <span class="status-good">Selective strategic hooks</span> (Performance optimized)</li>';
-        echo '<li>Memory usage: <span id="memory-usage">' . $this->mt_format_bytes(memory_get_usage()) . '</span></li>';
+        echo '<li>Memory usage: <span id="memory-usage">' . $this->wpdmgr_format_bytes(memory_get_usage()) . '</span></li>';
         echo '<li>Resource impact: <span class="status-good">Minimal</span> (No "all action" warning)</li>';
         echo '</ul>';
         echo '</div>';
 
-        echo '<table class="query-log-table mt-realtime-hooks-table" id="realtime-hooks-table">';
+        echo '<table class="query-log-table wpdmgr-realtime-hooks-table" id="realtime-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="order">Order</th>';
@@ -1994,7 +1994,7 @@ class MT_Query_Monitor {
      */
     private function render_hook_row($hook_data, $start_time) {
         $relative_time = $start_time ? ($hook_data['time'] - $start_time) * 1000 : 0;
-        $memory_formatted = $this->mt_format_bytes($hook_data['memory']);
+        $memory_formatted = $this->wpdmgr_format_bytes($hook_data['memory']);
         $domain = $this->categorize_hook_by_domain($hook_data['hook']);
 
         echo '<tr data-phase="' . esc_attr($hook_data['phase']) . '" data-domain="' . esc_attr($domain ?: 'uncategorized') . '">';
@@ -2002,7 +2002,7 @@ class MT_Query_Monitor {
         echo '<td>' . number_format($relative_time, 2) . 'ms</td>';
         echo '<td>' . esc_html($memory_formatted) . '</td>';
         echo '<td><span class="phase-badge phase-' . esc_attr($hook_data['phase']) . '">' . esc_html($hook_data['phase']) . '</span></td>';
-        echo '<td class="mt-hook-name">';
+        echo '<td class="wpdmgr-hook-name">';
         if ($domain) {
             echo '<span class="domain-badge domain-' . esc_attr($domain) . '">' . esc_html(strtoupper($domain)) . '</span> ';
         }
@@ -2031,11 +2031,11 @@ class MT_Query_Monitor {
      */
     private function render_bootstrap_tab() {
         if (empty($this->bootstrap_snapshots)) {
-            echo '<p>' . __('No bootstrap snapshots captured. This indicates monitoring was not active during early WordPress loading.', 'morden-toolkit') . '</p>';
+            echo '<p>' . __('No bootstrap snapshots captured. This indicates monitoring was not active during early WordPress loading.', 'wp-debug-manager') . '</p>';
             return;
         }
 
-        echo '<table class="query-log-table mt-bootstrap-table">';
+        echo '<table class="query-log-table wpdmgr-bootstrap-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="phase">Bootstrap Phase</th>';
@@ -2057,7 +2057,7 @@ class MT_Query_Monitor {
             }
 
             $relative_time = ($snapshot['time'] - $first_time) * 1000;
-            $memory_formatted = $this->mt_format_bytes($snapshot['memory']);
+            $memory_formatted = $this->wpdmgr_format_bytes($snapshot['memory']);
             $hook_growth = $snapshot['hook_count'] - $previous_hook_count;
             $previous_hook_count = $snapshot['hook_count'];
 
@@ -2102,7 +2102,7 @@ class MT_Query_Monitor {
         echo '</tbody>';
         echo '</table>';
 
-        echo '<div class="mt-bootstrap-summary">';
+        echo '<div class="wpdmgr-bootstrap-summary">';
         echo '<h5>Bootstrap Analysis</h5>';
         echo '<p>This shows how WordPress hook registration evolves during the loading process. Each phase adds new hooks and callbacks.</p>';
         echo '</div>';
@@ -2112,13 +2112,13 @@ class MT_Query_Monitor {
      * Render domain-specific panels similar to Query Monitor
      */
     private function render_domains_tab() {
-        echo '<div class="mt-domain-panels">';
+        echo '<div class="wpdmgr-domain-panels">';
 
         foreach ($this->domain_collectors as $domain => $data) {
             $hook_count = count($data['hooks']);
             if ($hook_count === 0) continue;
 
-            echo '<div class="mt-domain-panel" id="domain-panel-' . esc_attr($domain) . '">';
+            echo '<div class="wpdmgr-domain-panel" id="domain-panel-' . esc_attr($domain) . '">';
             echo '<h5 class="domain-panel-title">';
             echo '<span class="domain-icon domain-icon-' . esc_attr($domain) . '"></span>';
             echo esc_html(ucwords($domain)) . ' Domain';
@@ -2235,7 +2235,7 @@ class MT_Query_Monitor {
 
             foreach ($categories[$category_key] as $env_item) {
                 echo '<tr>';
-                echo '<td class="mt-env-handle">' . (function_exists('esc_html') ? esc_html($env_item['name']) : htmlspecialchars($env_item['name'])) . '</td>';
+                echo '<td class="wpdmgr-env-handle">' . (function_exists('esc_html') ? esc_html($env_item['name']) : htmlspecialchars($env_item['name'])) . '</td>';
                 echo '<td class="query-sql"><div class="sql-container"><code>' . (function_exists('esc_html') ? esc_html($env_item['value']) : htmlspecialchars($env_item['value'])) . '</code></div></td>';
                 echo '</tr>';
             }

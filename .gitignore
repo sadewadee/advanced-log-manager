@@ -1,1 +1,10 @@
 /BUGFOUND.md
+/Error
+/Docs
+/docs
+/.vscode
+*.zip
+test-*.php
+*test.php
+/wp-content/
+.trae/

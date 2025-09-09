@@ -2,10 +2,10 @@
 /**
  * File Manager Service - Backup and restore functionality
  *
- * @package Morden Toolkit
- * @author Morden Team
+ * @package WP Debug Manager
+ * @author WPDMGR Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/morden-toolkit
+ * @link https://github.com/sadewadee/wp-debug-manager
  */
 
 // Prevent direct access
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MT_File_Manager {
+class WPDMGR_File_Manager {
 
     /**
      * Create backup of any file
@@ -24,7 +24,7 @@ class MT_File_Manager {
         }
 
         $content = file_get_contents($file_path);
-        $backups = get_option("morden_{$backup_key}_backups", array());
+        $backups = get_option("wpdmgr_{$backup_key}_backups", array());
 
         $backup = array(
             'timestamp' => current_time('timestamp'),
@@ -40,14 +40,14 @@ class MT_File_Manager {
             $backups = array_slice($backups, 0, 3);
         }
 
-        return update_option("morden_{$backup_key}_backups", $backups);
+        return update_option("wpdmgr_{$backup_key}_backups", $backups);
     }
 
     /**
      * Get backups for a specific key
      */
     public function get_backups($backup_key) {
-        return get_option("morden_{$backup_key}_backups", array());
+        return get_option("wpdmgr_{$backup_key}_backups", array());
     }
 
     /**
@@ -85,14 +85,14 @@ class MT_File_Manager {
         unset($backups[$backup_index]);
         $backups = array_values($backups); // Re-index array
 
-        return update_option("morden_{$backup_key}_backups", $backups);
+        return update_option("wpdmgr_{$backup_key}_backups", $backups);
     }
 
     /**
      * Clear all backups for a specific key
      */
     public function clear_backups($backup_key) {
-        return delete_option("morden_{$backup_key}_backups");
+        return delete_option("wpdmgr_{$backup_key}_backups");
     }
 
     /**
@@ -160,7 +160,7 @@ class MT_File_Manager {
             return false;
         }
 
-        $backups = get_option("morden_{$backup_key}_backups", array());
+        $backups = get_option("wpdmgr_{$backup_key}_backups", array());
 
         $backup = array(
             'timestamp' => current_time('timestamp'),
@@ -177,7 +177,7 @@ class MT_File_Manager {
             $backups = array_slice($backups, 0, 3);
         }
 
-        return update_option("morden_{$backup_key}_backups", $backups);
+        return update_option("wpdmgr_{$backup_key}_backups", $backups);
     }
 
     /**
