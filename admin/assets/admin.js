@@ -31,7 +31,7 @@
         initializeTabs();
         initializeToggles();
         initializeDebugActions();
-        initializeQueryMonitor();
+        initializePerfMonitor();
         initializeSmtpLogging();
         initializeHtaccessEditor();
         initializePHPConfig();
@@ -116,26 +116,14 @@
                 } else {
                     $toggle.removeClass('active');
                 }
-            }).fail(function() {
-                hideLoading();
-                showNotice(wpdmgrToolkit.strings.error_occurred, 'error');
-                // Revert toggle state
-                $('#query-monitor-toggle').prop('checked', !enabled);
-                // Revert visual toggle state
-                const $toggle = $('#query-monitor-toggle').siblings('.wpdmgr-toggle');
-                if (!enabled) {
-                    $toggle.addClass('active');
-                } else {
-                    $toggle.removeClass('active');
-                }
             });
         });
-
-        // Add click handler for debug-mode-toggle button
-        $('#debug-mode-toggle').siblings('.wpdmgr-toggle').on('click', function() {
-            const $checkbox = $(this).siblings('input[type="checkbox"]');
-            $checkbox.prop('checked', !$checkbox.is(':checked')).trigger('change');
-        });
+ 
+         // Add click handler for debug-mode-toggle button
+         $('#debug-mode-toggle').siblings('.wpdmgr-toggle').on('click', function() {
+             const $checkbox = $(this).siblings('input[type="checkbox"]');
+             $checkbox.prop('checked', !$checkbox.is(':checked')).trigger('change');
+         });
 
         // Individual debug constants
         $('#wp-debug-log-toggle, #wp-debug-display-toggle, #script-debug-toggle, #savequeries-toggle, #display-errors-toggle').on('change', function() {
@@ -346,7 +334,7 @@
      */
     function initializeToggles() {
         // Exclude toggles that have specific handlers to prevent double execution
-        const excludeSelectors = '#debug-mode-toggle, #wp-debug-log-toggle, #wp-debug-display-toggle, #script-debug-toggle, #savequeries-toggle, #display-errors-toggle, #query-monitor-toggle, #smtp-logging-toggle, #smtp-ip-logging-toggle';
+        const excludeSelectors = '#debug-mode-toggle, #wp-debug-log-toggle, #wp-debug-display-toggle, #script-debug-toggle, #savequeries-toggle, #display-errors-toggle, #perf-monitor-toggle, #smtp-logging-toggle, #smtp-ip-logging-toggle';
 
         $('.wpdmgr-toggle-wrapper input[type="checkbox"]').not(excludeSelectors).on('change', function() {
             const $toggle = $(this).siblings('.wpdmgr-toggle');
@@ -499,14 +487,14 @@
     /**
      * Initialize query monitor actions
      */
-    function initializeQueryMonitor() {
-        $('#query-monitor-toggle').off('change').on('change', function() {
+    function initializePerfMonitor() {
+        $('#perf-monitor-toggle').off('change').on('change', function() {
             const enabled = $(this).is(':checked');
 
             showLoading();
 
             $.post(wpdmgrToolkit.ajaxurl, {
-                action: 'wpdmgr_toggle_query_monitor',
+                action: 'wpdmgr_toggle_perf_monitor',
                 enabled: enabled,
                 nonce: wpdmgrToolkit.nonce
             }, function(response) {
@@ -515,7 +503,7 @@
                 if (response.success) {
                     showNotice(response.data.message, 'success');
                     // Update visual toggle state
-                    const $toggle = $('#query-monitor-toggle').siblings('.wpdmgr-toggle');
+                    const $toggle = $('#perf-monitor-toggle').siblings('.wpdmgr-toggle');
                     if (enabled) {
                         $toggle.addClass('active');
                     } else {
@@ -523,9 +511,9 @@
                     }
                 } else {
                     showNotice(response.data || wpdmgrToolkit.strings.error_occurred, 'error');
-                    $('#query-monitor-toggle').prop('checked', !enabled);
+                    $('#perf-monitor-toggle').prop('checked', !enabled);
                     // Revert visual toggle state
-                    const $toggle = $('#query-monitor-toggle').siblings('.wpdmgr-toggle');
+                    const $toggle = $('#perf-monitor-toggle').siblings('.wpdmgr-toggle');
                     if (!enabled) {
                         $toggle.addClass('active');
                     } else {
@@ -533,6 +521,14 @@
                     }
                 }
             });
+        });
+
+        // Add click handler for perf-monitor visual toggle (prevent double toggle under label)
+        $('#perf-monitor-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Delegate to native checkbox click to ensure a single change event
+            $(this).siblings('input[type="checkbox"]').trigger('click');
         });
     }
 
@@ -806,7 +802,7 @@
      */
     function loadDebugLogs() {
         const $logsContent = $('#wpdmgr-logs-content');
-        const $logsLoading = $('.wpdmgr-logs-loading');
+        const $logsLoading = $('#wpdmgr-logs-viewer .wpdmgr-logs-loading');
 
         if (!$logsContent.length) return;
 

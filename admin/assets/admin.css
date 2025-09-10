@@ -863,6 +863,15 @@
     color: #646970;
 }
 
+/* Generic badge style for log size info used across logs pages */
+.wpdmgr-log-size {
+    background: #f0f0f1;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 .wpdmgr-logs-filters {
     display: flex;
     align-items: center;

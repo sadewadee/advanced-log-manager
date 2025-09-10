@@ -18,7 +18,7 @@ require_once __DIR__ . '/includes/class-internal-log.php';
 function wpdmgr_cleanup_options() {
     $options_to_delete = array(
         'wpdmgr_debug_enabled',
-        'wpdmgr_query_monitor_enabled',
+        'wpdmgr_perf_monitor_enabled',
         'wpdmgr_htaccess_backups',
         'wpdmgr_php_preset',
         'wpdmgr_wp_config_backups',

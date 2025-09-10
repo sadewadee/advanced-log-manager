@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadDebugLogs() {
     const logsContent = document.getElementById('wpdmgr-logs-content');
-    const logsLoading = document.querySelector('.wpdmgr-logs-loading');
+const logsLoading = document.querySelector('#wpdmgr-logs-viewer .wpdmgr-logs-loading');
 
     if (!logsContent) return;
 

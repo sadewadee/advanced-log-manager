@@ -303,7 +303,7 @@ function initializeQueryLogsPage() {
             return;
         }
 
-        const logsLoading = document.querySelector('.wpdmgr-logs-loading');
+        const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
@@ -336,7 +336,7 @@ function initializeQueryLogsPage() {
             return;
         }
 
-        const logsLoading = document.querySelector('.wpdmgr-logs-loading');
+        const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
@@ -384,7 +384,7 @@ function initializeQueryLogsPage() {
 
 function loadQueryLogs() {
     const logsContent = document.getElementById('wpdmgr-query-logs-content');
-    const logsLoading = document.querySelector('.wpdmgr-logs-loading');
+    const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
 
     if (!logsContent) return;
 

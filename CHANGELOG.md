@@ -5,6 +5,25 @@ All notable changes to WP Debug Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.22] - 2025-09-10
+
+### Added
+- Menambahkan style badge generik `.wpdmgr-log-size` di admin.css untuk menampilkan ukuran log "Today: <size>" secara konsisten di semua halaman logs
+
+### Changed
+- SMTP Logs: Layout dan desain dimodernisasi mengikuti gaya Debug Logs (header, filter cards, spacing, dan spinner konsisten)
+  - Migrasi kelas HTML spesifik halaman (mt-logs-*) ke kelas bersama wpdmgr-logs-* (header, filters, actions, loading/spinner)
+  - Menyamakan container utama menjadi `wpdmgr-logs-container` agar mewarisi style global admin.css
+  - Mengganti selector JS/CSS ke kelas bersama untuk perilaku UI yang konsisten, termasuk state disabled dan responsive
+  - Menyamakan responsive behavior pada breakpoint kecil agar susunan elemen bertumpuk rapi seperti Debug Logs
+  - Menyatukan kelas badge header menjadi `.wpdmgr-log-size` dan pesan tidak ada log menjadi `.wpdmgr-no-logs` pada SMTP Logs
+
+### Fixed
+- Konsolidasi loading indicator di SMTP Logs untuk menggunakan `.wpdmgr-logs-loading` + `.wpdmgr-spinner` (menghapus sisa referensi mt-*)
+- Perapihan minor style agar tidak ada duplikasi/konflik dengan admin.css ketika filter/aksi dinonaktifkan
+- Memperbaiki PHP syntax error pada header info SMTP Logs akibat duplikasi blok `if/else` di `admin/views/page-smtp-logs.php`
+- Memperbaiki tombol Performance Monitor (id="perf-monitor-toggle") tidak berfungsi: menambahkan handler klik visual, memperbaiki chain AJAX dan state revert di admin/assets/admin.js
+
 ## [1.2.21] - 2025-09-09
 
 ### Changed

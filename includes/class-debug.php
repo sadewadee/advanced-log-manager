@@ -17,7 +17,7 @@ class WPDMGR_Debug {
     public function __construct() {
         $this->sync_debug_status();
 
-        if (defined('SAVEQUERIES') && SAVEQUERIES && function_exists('add_action')) {
+        if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && function_exists('add_action')) {
             add_action('wp_footer', array($this, 'write_queries_to_log'), 999);
             add_action('admin_footer', array($this, 'write_queries_to_log'), 999);
             add_action('shutdown', array($this, 'write_queries_to_log'), 1);
@@ -638,7 +638,7 @@ class WPDMGR_Debug {
             'wp_debug_log_custom' => $wp_debug_log_custom,
             'wp_debug_display' => defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY,
             'script_debug' => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG,
-            'savequeries' => defined('SAVEQUERIES') && SAVEQUERIES,
+            'savequeries' => defined('SAVEQUERIES') && constant('SAVEQUERIES'),
             'display_errors' => $display_errors,
             'log_file_exists' => file_exists(wpdmgr_get_debug_log_path()),
             'log_file_size' => file_exists(wpdmgr_get_debug_log_path()) ?
@@ -657,7 +657,7 @@ class WPDMGR_Debug {
     public function get_query_logs() {
         global $wpdb;
 
-        if (!defined('SAVEQUERIES') || !SAVEQUERIES || empty($wpdb->queries)) {
+        if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES') || empty($wpdb->queries)) {
             return array(
                 'queries' => array(),
                 'total_queries' => 0,
@@ -742,7 +742,7 @@ class WPDMGR_Debug {
             return false;
         }
 
-        if (!defined('SAVEQUERIES') || !SAVEQUERIES || empty($wpdb->queries)) {
+        if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES') || empty($wpdb->queries)) {
             return false;
         }
 
@@ -1235,7 +1235,7 @@ class WPDMGR_Debug {
             // Plugin namespace aliases
             'WPDMGR_Plugin' => 'Plugin',
             'WPDMGR_Debug' => 'Debug',
-            'WPDMGR_Query_Monitor' => 'QueryMonitor',
+            'WPDMGR_Perf_Monitor' => 'PerfMonitor',
             'WPDMGR_Htaccess' => 'Htaccess',
             'WPDMGR_PHP_Config' => 'PhpConfig',
             'WPDMGR_SMTP_Logger' => 'SmtpLogger',
@@ -1390,7 +1390,7 @@ class WPDMGR_Debug {
             'WPDMGR_Plugin->__construct' => array('file' => 'includes/class-plugin.php', 'line' => 35),
             'WPDMGR_Plugin->init_services' => array('file' => 'includes/class-plugin.php', 'line' => 72),
             'WPDMGR_Debug->__construct' => array('file' => 'includes/class-debug.php', 'line' => 23),
-            'WPDMGR_Query_Monitor->__construct' => array('file' => 'includes/class-query-monitor.php', 'line' => 23),
+            'WPDMGR_Perf_Monitor->__construct' => array('file' => 'includes/class-query-monitor.php', 'line' => 23),
 
             // WordPress core functions
             'update_meta_cache' => array('file' => 'wp-includes/meta.php', 'line' => 1189),
@@ -1559,7 +1559,7 @@ class WPDMGR_Debug {
             'WPDMGR_Plugin::get_instance' => 'wp-debug-manager/includes/class-plugin.php:26',
             'WPDMGR_Plugin->__construct' => 'wp-debug-manager/includes/class-plugin.php:35',
             'WPDMGR_Plugin->init_services' => 'wp-debug-manager/includes/class-plugin.php:72',
-            'WPDMGR_Query_Monitor->__construct' => 'wp-debug-manager/includes/class-query-monitor.php:23',
+            'WPDMGR_Perf_Monitor->__construct' => 'wp-debug-manager/includes/class-query-monitor.php:23',
         );
 
         // Exact match first
@@ -1765,7 +1765,7 @@ class WPDMGR_Debug {
             'wp_version' => function_exists('get_bloginfo') ? get_bloginfo('version') : 'unknown'
         );
 
-        if (defined('SAVEQUERIES') && SAVEQUERIES && !empty($wpdb->queries)) {
+        if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
             $total_time = 0;
             foreach ($wpdb->queries as $query) {
                 $total_time += $query[1];

@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 
 $plugin = WPDMGR_Plugin::get_instance();
 $debug_service = $plugin->get_service('debug');
-$query_monitor_service = $plugin->get_service('query_monitor');
+$perf_monitor_service = $plugin->get_service('perf_monitor');
 $htaccess_service = $plugin->get_service('htaccess');
 $php_config_service = $plugin->get_service('php_config');
 
@@ -28,7 +28,7 @@ try {
     wpdmgr_error_log('Debug Status Error: ' . $e->getMessage());
 }
 
-$query_monitor_enabled = get_option('wpdmgr_query_monitor_enabled', false);
+$perf_monitor_enabled = get_option('wpdmgr_perf_monitor_enabled', false);
 $display_errors_on = ini_get('display_errors') == '1' || ini_get('display_errors') === 'On';
 $htaccess_info = $htaccess_service->get_htaccess_info();
 $htaccess_backups = $htaccess_service->get_backups();
@@ -62,7 +62,7 @@ $setting_units = array(
 <div class="wrap">
     <h1><?php esc_html_e('WP Debug Manager', 'wp-debug-manager'); ?></h1>
     <p class="description">
-        <?php esc_html_e('Developer tools untuk WordPress: Debug Manager, Query Monitor, Htaccess Editor, PHP Config presets.', 'wp-debug-manager'); ?>
+        <?php esc_html_e('Developer tools untuk WordPress: Debug Manager, Performance Monitor, Htaccess Editor, PHP Config presets.', 'wp-debug-manager'); ?>
     </p>
 
     <!-- Tab Navigation -->
@@ -71,9 +71,9 @@ $setting_units = array(
             <span class="dashicons dashicons-admin-tools"></span>
             <?php esc_html_e('Debug Management', 'wp-debug-manager'); ?>
         </button>
-        <button class="wpdmgr-tab-btn" data-tab="query-monitor">
+        <button class="wpdmgr-tab-btn" data-tab="perf-monitor">
             <span class="dashicons dashicons-performance"></span>
-            <?php esc_html_e('Query Monitor', 'wp-debug-manager'); ?>
+            <?php esc_html_e('Performance Monitor', 'wp-debug-manager'); ?>
         </button>
         <button class="wpdmgr-tab-btn" data-tab="file-editor">
             <span class="dashicons dashicons-edit"></span>
@@ -212,7 +212,7 @@ $setting_units = array(
                     <div class="wpdmgr-status-item">
                         <span class="dashicons dashicons-media-text"></span>
                         <span><?php esc_html_e('Debug Log Size:', 'wp-debug-manager'); ?> <?php echo wpdmgr_format_bytes(filesize(wpdmgr_get_debug_log_path())); ?></span>
-                        <a href="<?php echo esc_url( admin_url('tools.php?page=wpdmgr-logs') ); ?>" class="button button-small" style="margin-left: 10px;">
+                        <a href="<?php echo esc_url( admin_url('tools.php?page=wpdmgr-all-logs-activity&tab=debug') ); ?>" class="button button-small" style="margin-left: 10px;">
                             <?php esc_html_e('View Debug Logs', 'wp-debug-manager'); ?>
                         </a>
                         <button type="button" id="clear-all-debug-logs" class="button button-small" style="margin-left: 5px;" title="<?php esc_attr_e('Clear all wp-errors-* log files except the currently active one', 'wp-debug-manager'); ?>">
@@ -235,7 +235,7 @@ $setting_units = array(
                             </small>
                         </span>
                         <?php endif; ?>
-                        <a href="<?php echo esc_url( admin_url('tools.php?page=wpdmgr-query-logs') ); ?>" class="button button-small" style="margin-left: 10px;">
+                        <a href="<?php echo esc_url( admin_url('tools.php?page=wpdmgr-all-logs-activity&tab=query') ); ?>" class="button button-small" style="margin-left: 10px;">
                             <?php esc_html_e('View Query Logs', 'wp-debug-manager'); ?>
                         </a>
                     </div>
@@ -256,7 +256,7 @@ $setting_units = array(
                             <?php endif; ?>
                         </span>
                         <?php endif; ?>
-                        <a href="<?php echo admin_url('tools.php?page=wpdmgr-smtp-logs'); ?>" class="button button-small" style="margin-left: 10px;">
+                        <a href="<?php echo esc_url( admin_url('tools.php?page=wpdmgr-all-logs-activity&tab=smtp') ); ?>" class="button button-small" style="margin-left: 10px;">
                             <?php esc_html_e('View SMTP Logs', 'wp-debug-manager'); ?>
                         </a>
                     </div>
@@ -324,17 +324,17 @@ $setting_units = array(
             </div>
         </div>
 
-        <!-- Query Monitor Tab -->
-        <div id="tab-query-monitor" class="wpdmgr-tab-content">
+        <!-- Performance Monitor Tab -->
+        <div id="tab-perf-monitor" class="wpdmgr-tab-content">
             <div class="wpdmgr-card">
-                <h2><?php esc_html_e('Performance Monitoring', 'wp-debug-manager'); ?></h2>
+                <h2><?php esc_html_e('Performance Monitor', 'wp-debug-manager'); ?></h2>
 
                 <div class="wpdmgr-form-section">
                     <label class="wpdmgr-toggle-label">
                         <span><?php esc_html_e('Enable Performance Bar', 'wp-debug-manager'); ?></span>
                         <div class="wpdmgr-toggle-wrapper">
-                            <input type="checkbox" id="query-monitor-toggle" <?php checked($query_monitor_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo $query_monitor_enabled ? 'active' : ''; ?>">
+                            <input type="checkbox" id="perf-monitor-toggle" <?php checked($perf_monitor_enabled); ?>>
+                            <div class="wpdmgr-toggle <?php echo $perf_monitor_enabled ? 'active' : ''; ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         </div>
@@ -369,7 +369,7 @@ $setting_units = array(
 
                 <div class="wpdmgr-form-section">
                     <label>
-                        <input type="checkbox" id="query-monitor-logged-only" checked disabled>
+                        <input type="checkbox" id="perf-monitor-logged-only" checked disabled>
                         <?php esc_html_e('Show for logged-in users only', 'wp-debug-manager'); ?>
                     </label>
                 </div>

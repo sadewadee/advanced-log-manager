@@ -35,8 +35,8 @@ $smtp_status = $smtp_service->get_logging_status();
     </div>
     <?php endif; ?>
 
-    <div class="mt-logs-header <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
-        <div class="mt-logs-actions">
+    <div class="wpdmgr-logs-header <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
+        <div class="wpdmgr-logs-actions">
             <button type="button" id="refresh-smtp-logs" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-update"></span>
                 <?php _e('Refresh', 'wp-debug-manager'); ?>
@@ -55,23 +55,23 @@ $smtp_status = $smtp_service->get_logging_status();
             </button>
         </div>
 
-        <div class="mt-logs-info">
+        <div class="wpdmgr-logs-info">
             <?php if ($smtp_status['current_log_exists']): ?>
-            <span class="mt-log-size">
-                <span class="dashicons dashicons-media-text"></span>
-                <?php _e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
-            </span>
+                <span class="wpdmgr-log-size">
+                    <span class="dashicons dashicons-media-text"></span>
+                    <?php _e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
+                </span>
             <?php else: ?>
-            <span class="mt-no-logs">
-                <span class="dashicons dashicons-info"></span>
-                <?php _e('No log file for today', 'wp-debug-manager'); ?>
-            </span>
+                <span class="wpdmgr-no-logs">
+                    <span class="dashicons dashicons-info"></span>
+                    <?php _e('No log file for today', 'wp-debug-manager'); ?>
+                </span>
             <?php endif; ?>
         </div>
     </div>
 
-    <div class="mt-logs-filters <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
-        <div class="mt-filter-group">
+    <div class="wpdmgr-logs-filters <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
+        <div class="wpdmgr-filter-group">
             <label for="smtp-date-filter"><?php _e('Date:', 'wp-debug-manager'); ?></label>
             <select id="smtp-date-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <option value=""><?php _e('Today', 'wp-debug-manager'); ?></option>
@@ -83,7 +83,7 @@ $smtp_status = $smtp_service->get_logging_status();
             </select>
         </div>
 
-        <div class="mt-filter-group">
+        <div class="wpdmgr-filter-group">
             <label for="smtp-status-filter"><?php _e('Status:', 'wp-debug-manager'); ?></label>
             <select id="smtp-status-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <option value=""><?php _e('All Status', 'wp-debug-manager'); ?></option>
@@ -93,20 +93,20 @@ $smtp_status = $smtp_service->get_logging_status();
             </select>
         </div>
 
-        <div class="mt-filter-group">
+        <div class="wpdmgr-filter-group">
             <label for="smtp-search"><?php _e('Search:', 'wp-debug-manager'); ?></label>
             <input type="text" id="smtp-search" placeholder="<?php _e('Search sender, recipient, or subject...', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
         </div>
 
-        <div class="mt-filter-group">
+        <div class="wpdmgr-filter-group">
             <button type="button" id="clear-smtp-filters" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <?php _e('Clear Filters', 'wp-debug-manager'); ?>
             </button>
         </div>
     </div>
 
-    <div class="mt-smtp-logs-container">
-        <div id="mt-smtp-logs-viewer" class="mt-logs-viewer">
+    <div class="wpdmgr-logs-container">
+        <div id="mt-smtp-logs-viewer" class="wpdmgr-logs-viewer">
             <?php if (!$smtp_status['current_log_exists'] && !$smtp_status['enabled']): ?>
             <div class="wpdmgr-no-logs-message">
                 <div class="dashicons dashicons-info"></div>
@@ -119,8 +119,8 @@ $smtp_status = $smtp_service->get_logging_status();
                 </p>
             </div>
             <?php else: ?>
-            <div class="mt-logs-loading">
-                <div class="mt-spinner"></div>
+            <div class="wpdmgr-logs-loading">
+                <div class="wpdmgr-spinner"></div>
                 <p><?php _e('Loading SMTP logs...', 'wp-debug-manager'); ?></p>
             </div>
             <div id="mt-smtp-logs-content" style="display: none;"></div>
@@ -225,7 +225,7 @@ function initializeSmtpLogsPage() {
             return;
         }
 
-        const logsLoading = document.querySelector('.mt-logs-loading');
+        const logsLoading = document.querySelector('#mt-smtp-logs-viewer .wpdmgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
@@ -251,7 +251,7 @@ function initializeSmtpLogsPage() {
         const keepDays = prompt('<?php _e('Keep logs for how many days?', 'wp-debug-manager'); ?>', '30');
         if (!keepDays || isNaN(keepDays)) return;
 
-        const logsLoading = document.querySelector('.mt-logs-loading');
+        const logsLoading = document.querySelector('#mt-smtp-logs-viewer .wpdmgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
@@ -301,7 +301,7 @@ function initializeSmtpLogsPage() {
 
 function loadSmtpLogs() {
     const logsContent = document.getElementById('mt-smtp-logs-content');
-    const logsLoading = document.querySelector('.mt-logs-loading');
+    const logsLoading = document.querySelector('#mt-smtp-logs-viewer .wpdmgr-logs-loading');
 
     if (!logsContent) return;
 
@@ -343,7 +343,7 @@ function displaySmtpLogs(logEntries) {
         return;
     }
 
-    let html = '<div class="mt-logs-list">';
+    let html = '<div class="wpdmgr-logs-list">';
 
     logEntries.forEach(function(entry, index) {
         const entryId = 'smtp-entry-' + index;
@@ -991,17 +991,17 @@ function showFullContentModal(content, subject, type = 'message') {
     margin-right: 16px;
 }
 
-/* Disabled state styling when SMTP logging is off */
-.mt-logs-header.disabled,
-.mt-logs-filters.disabled {
+/* Keep backward compatibility for old class names, but prefer wpdmgr-* */
+.wpdmgr-logs-header.disabled,
+.wpdmgr-logs-filters.disabled {
     opacity: 0.5;
     pointer-events: none;
 }
 
-.mt-logs-header.disabled .button,
-.mt-logs-filters.disabled input,
-.mt-logs-filters.disabled select,
-.mt-logs-filters.disabled .button {
+.wpdmgr-logs-header.disabled .button,
+.wpdmgr-logs-filters.disabled input,
+.wpdmgr-logs-filters.disabled select,
+.wpdmgr-logs-filters.disabled .button {
     cursor: not-allowed;
 }
 

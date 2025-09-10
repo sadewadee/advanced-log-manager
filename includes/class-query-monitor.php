@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  *
  * @since 1.2.18
  */
-class WPDMGR_Query_Monitor {
+class WPDMGR_Perf_Monitor {
 
     private $metrics = array();
     private $hook_collectors = array();
@@ -36,13 +36,15 @@ class WPDMGR_Query_Monitor {
 	 * Sets up the performance monitoring if enabled and user is logged in.
 	 */
 	public function __construct() {
-		if (get_option('wpdmgr_query_monitor_enabled') && is_user_logged_in()) {
+		if (get_option('wpdmgr_perf_monitor_enabled') && is_user_logged_in()) {
 			$this->init_domain_collectors();
 
 			add_action('init', array($this, 'start_performance_tracking'));
 			add_action('admin_bar_menu', array($this, 'add_admin_bar_metrics'), 999);
 			add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
 			add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+            add_action('wp_ajax_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
+            add_action('wp_ajax_nopriv_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
 		}
 	}
 
@@ -59,7 +61,7 @@ class WPDMGR_Query_Monitor {
 		$plugin_url = plugin_dir_url(dirname(__FILE__));
 
 		wp_enqueue_style(
-			'wpdmgr-query-monitor',
+			'wpdmgr-perf-monitor',
 			$plugin_url . 'admin/assets/css/query-monitor.css',
 			array(),
 			'1.2.18'
@@ -72,14 +74,14 @@ class WPDMGR_Query_Monitor {
 		);
 
 		wp_enqueue_script(
-			'wpdmgr-query-monitor',
+			'wpdmgr-perf-monitor',
 			$plugin_url . 'admin/assets/js/query-monitor.js',
 			array('jquery'),
 			'1.2.18',
 			true
 		);
 
-		wp_localize_script('wpdmgr-query-monitor', 'mtQueryMonitorL10n', array(
+		wp_localize_script('wpdmgr-perf-monitor', 'mtQueryMonitorL10n', array(
 			'enableRealTimeUpdates' => __('Enable Real-time Updates', 'wp-debug-manager'),
 			'stopRealTimeUpdates' => __('Stop Real-time Updates', 'wp-debug-manager'),
 			'statusActive' => __('Active', 'wp-debug-manager'),
@@ -95,7 +97,7 @@ class WPDMGR_Query_Monitor {
 
 		// Pass AJAX data
 		if (function_exists('wp_create_nonce')) {
-			wp_localize_script('wpdmgr-query-monitor', 'mtHookMonitor', array(
+			wp_localize_script('wpdmgr-perf-monitor', 'mtHookMonitor', array(
 				'ajaxUrl' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('wpdmgr_monitor_hooks_nonce'),
 				'isActive' => false,
@@ -502,7 +504,7 @@ class WPDMGR_Query_Monitor {
         $this->metrics['peak_memory'] = memory_get_peak_usage();
 
         // Use more accurate query count calculation
-        if (defined('SAVEQUERIES') && SAVEQUERIES && !empty($wpdb->queries)) {
+        if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
             $this->metrics['query_count'] = count($wpdb->queries);
             // Calculate total query time for more accurate performance measurement
             $total_query_time = 0;
@@ -537,7 +539,7 @@ class WPDMGR_Query_Monitor {
         global $wpdb;
 
         // Prioritize SAVEQUERIES data for accuracy
-        if (defined('SAVEQUERIES') && SAVEQUERIES && !empty($wpdb->queries)) {
+        if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
             return count($wpdb->queries);
         }
 
@@ -1074,7 +1076,7 @@ class WPDMGR_Query_Monitor {
     public function get_query_details() {
         global $wpdb;
 
-        if (!defined('SAVEQUERIES') || !SAVEQUERIES) {
+        if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES')) {
             return array();
         }
 
@@ -1097,7 +1099,7 @@ class WPDMGR_Query_Monitor {
     private function render_queries_tab() {
         global $wpdb;
 
-        if (!defined('SAVEQUERIES') || !SAVEQUERIES) {
+        if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES')) {
             echo '<p>' . (function_exists('__') ? __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'wp-debug-manager') : 'Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.') . '</p>';
             return;
         }

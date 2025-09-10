@@ -52,7 +52,7 @@ class WPDMGR_Plugin {
         add_action('wp_ajax_wpdmgr_cleanup_query_rotation_logs', array($this, 'ajax_cleanup_query_rotation_logs'));
         add_action('wp_ajax_wpdmgr_get_log_info', array($this, 'ajax_get_log_info'));
         add_action('wp_ajax_wpdmgr_download_query_logs', array($this, 'ajax_download_query_logs'));
-        add_action('wp_ajax_wpdmgr_toggle_query_monitor', array($this, 'ajax_toggle_query_monitor'));
+        add_action('wp_ajax_wpdmgr_toggle_perf_monitor', array($this, 'ajax_toggle_perf_monitor'));
         add_action('wp_ajax_wpdmgr_save_htaccess', array($this, 'ajax_save_htaccess'));
         add_action('wp_ajax_wpdmgr_restore_htaccess', array($this, 'ajax_restore_htaccess'));
         add_action('wp_ajax_wpdmgr_apply_php_preset', array($this, 'ajax_apply_php_preset'));
@@ -71,7 +71,7 @@ class WPDMGR_Plugin {
 
     private function init_services() {
         $this->services['debug'] = new WPDMGR_Debug();
-        $this->services['query_monitor'] = new WPDMGR_Query_Monitor();
+        $this->services['perf_monitor'] = new WPDMGR_Perf_Monitor();
         $this->services['htaccess'] = new WPDMGR_Htaccess();
         $this->services['php_config'] = new WPDMGR_PHP_Config();
         $this->services['file_manager'] = new WPDMGR_File_Manager();
@@ -91,36 +91,48 @@ class WPDMGR_Plugin {
             array($this, 'render_admin_page')
         );
 
-        add_submenu_page(
-            'tools.php',
-            __('Debug Logs', 'wp-debug-manager'),
-            __('Debug Logs', 'wp-debug-manager'),
-            'manage_options',
-            'wpdmgr-logs',
-            array($this, 'render_logs_page')
-        );
+        // Conditionally add unified All Log Activity page when WP_DEBUG_LOG is active
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            add_submenu_page(
+                'tools.php',
+                __('All Log Activity', 'wp-debug-manager'),
+                __('All Log Activity', 'wp-debug-manager'),
+                'manage_options',
+                'wpdmgr-all-logs-activity',
+                array($this, 'render_all_logs_activity_page')
+            );
+        }
 
-        add_submenu_page(
-            'tools.php',
-            __('Query Logs', 'wp-debug-manager'),
-            __('Query Logs', 'wp-debug-manager'),
-            'manage_options',
-            'wpdmgr-query-logs',
-            array($this, 'render_query_logs_page')
-        );
+        // add_submenu_page(
+        //     'tools.php',
+        //     __('Debug Logs', 'wp-debug-manager'),
+        //     __('Debug Logs', 'wp-debug-manager'),
+        //     'manage_options',
+        //     'wpdmgr-logs',
+        //     array($this, 'render_logs_page')
+        // );
 
-        add_submenu_page(
-            'tools.php',
-            __('SMTP Logs', 'wp-debug-manager'),
-            __('SMTP Logs', 'wp-debug-manager'),
-            'manage_options',
-            'wpdmgr-smtp-logs',
-            array($this, 'render_smtp_logs_page')
-        );
+        // add_submenu_page(
+        //     'tools.php',
+        //     __('Query Logs', 'wp-debug-manager'),
+        //     __('Query Logs', 'wp-debug-manager'),
+        //     'manage_options',
+        //     'wpdmgr-query-logs',
+        //     array($this, 'render_query_logs_page')
+        // );
+
+        // add_submenu_page(
+        //     'tools.php',
+        //     __('SMTP Logs', 'wp-debug-manager'),
+        //     __('SMTP Logs', 'wp-debug-manager'),
+        //     'manage_options',
+        //     'wpdmgr-smtp-logs',
+        //     array($this, 'render_smtp_logs_page')
+        // );
     }
 
     public function enqueue_admin_scripts($hook) {
-        if (!in_array($hook, array('tools_page_wpdmgr', 'tools_page_wpdmgr-logs', 'tools_page_wpdmgr-query-logs', 'tools_page_wpdmgr-smtp-logs'))) {
+        if (!in_array($hook, array('tools_page_wpdmgr', 'tools_page_wpdmgr-all-logs-activity'))) {
             return;
         }
 
@@ -131,7 +143,7 @@ class WPDMGR_Plugin {
             WPDMGR_VERSION
         );
 
-        if ($hook === 'tools_page_wpdmgr-query-logs') {
+        if ($hook === 'tools_page_wpdmgr-all-logs-activity') {
             wp_enqueue_style(
                 'wpdmgr-query-logs',
                 WPDMGR_PLUGIN_URL . 'admin/assets/css/query-logs.css',
@@ -161,7 +173,7 @@ class WPDMGR_Plugin {
     }
 
     public function enqueue_frontend_scripts() {
-        $enabled = get_option('wpdmgr_query_monitor_enabled') &&
+        $enabled = get_option('wpdmgr_perf_monitor_enabled') &&
                    is_user_logged_in() &&
                    current_user_can('manage_options');
 
@@ -237,6 +249,12 @@ class WPDMGR_Plugin {
         include WPDMGR_PLUGIN_DIR . 'admin/views/page-smtp-logs.php';
     }
 
+    /**
+     * Render All Log Activity page (unified tabs)
+     */
+    public function render_all_logs_activity_page() {
+        include WPDMGR_PLUGIN_DIR . 'admin/views/page-all-logs-activity.php';
+    }
 
 
     public function ajax_toggle_debug() {
@@ -563,18 +581,18 @@ class WPDMGR_Plugin {
         exit;
     }
 
-    public function ajax_toggle_query_monitor() {
+    public function ajax_toggle_perf_monitor() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
             wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
         }
 
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
-        update_option('wpdmgr_query_monitor_enabled', $enabled);
+        update_option('wpdmgr_perf_monitor_enabled', $enabled);
 
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('Query Monitor enabled.', 'wp-debug-manager') : __('Query Monitor disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('Performance monitor enabled.', 'wp-debug-manager') : __('Performance monitor disabled.', 'wp-debug-manager')
         ));
     }
 

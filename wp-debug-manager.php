@@ -53,10 +53,10 @@ register_activation_hook(__FILE__, function() {
 
     $old_query_monitor = get_option('wpdmgr_query_monitor_enabled');
     if ($old_query_monitor !== false) {
-        update_option('wpdmgr_query_monitor_enabled', $old_query_monitor);
+        update_option('wpdmgr_perf_monitor_enabled', $old_query_monitor);
         delete_option('wpdmgr_query_monitor_enabled');
-    } elseif (!get_option('wpdmgr_query_monitor_enabled')) {
-        add_option('wpdmgr_query_monitor_enabled', false);
+    } elseif (!get_option('wpdmgr_perf_monitor_enabled')) {
+        add_option('wpdmgr_perf_monitor_enabled', false);
     }
 
     if (!get_option('wpdmgr_htaccess_backups')) {
