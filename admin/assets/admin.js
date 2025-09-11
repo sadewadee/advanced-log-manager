@@ -118,7 +118,7 @@
                 }
             });
         });
- 
+
          // Add click handler for debug-mode-toggle button
          $('#debug-mode-toggle').siblings('.wpdmgr-toggle').on('click', function() {
              const $checkbox = $(this).siblings('input[type="checkbox"]');
@@ -334,7 +334,7 @@
      */
     function initializeToggles() {
         // Exclude toggles that have specific handlers to prevent double execution
-        const excludeSelectors = '#debug-mode-toggle, #wp-debug-log-toggle, #wp-debug-display-toggle, #script-debug-toggle, #savequeries-toggle, #display-errors-toggle, #perf-monitor-toggle, #smtp-logging-toggle, #smtp-ip-logging-toggle';
+        const excludeSelectors = '#debug-mode-toggle, #wp-debug-log-toggle, #wp-debug-display-toggle, #script-debug-toggle, #savequeries-toggle, #display-errors-toggle, #perf-monitor-toggle, #smtp-logging-toggle, #smtp-ip-logging-toggle, #perf-realtime-toggle, #perf-bootstrap-toggle, #perf-domains-toggle';
 
         $('.wpdmgr-toggle-wrapper input[type="checkbox"]').not(excludeSelectors).on('change', function() {
             const $toggle = $(this).siblings('.wpdmgr-toggle');
@@ -506,8 +506,19 @@
                     const $toggle = $('#perf-monitor-toggle').siblings('.wpdmgr-toggle');
                     if (enabled) {
                         $toggle.addClass('active');
+                        // Enable granular toggles
+                        $('#perf-realtime-toggle, #perf-bootstrap-toggle, #perf-domains-toggle').each(function(){
+                            $(this).closest('.wpdmgr-toggle-wrapper').removeClass('disabled');
+                            $(this).prop('disabled', false);
+                        });
                     } else {
                         $toggle.removeClass('active');
+                        // Disable and reset granular toggles
+                        $('#perf-realtime-toggle, #perf-bootstrap-toggle, #perf-domains-toggle').each(function(){
+                            $(this).closest('.wpdmgr-toggle-wrapper').addClass('disabled');
+                            $(this).prop('disabled', true).prop('checked', false);
+                            $(this).siblings('.wpdmgr-toggle').removeClass('active');
+                        });
                     }
                 } else {
                     showNotice(response.data || wpdmgrToolkit.strings.error_occurred, 'error');
@@ -521,14 +532,135 @@
                     }
                 }
             });
-        });
 
-        // Add click handler for perf-monitor visual toggle (prevent double toggle under label)
-        $('#perf-monitor-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Delegate to native checkbox click to ensure a single change event
-            $(this).siblings('input[type="checkbox"]').trigger('click');
+            // Add click handler for perf-monitor visual toggle (prevent double toggle under label)
+            $('#perf-monitor-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Delegate to native checkbox click to ensure a single change event
+                $(this).siblings('input[type="checkbox"]').trigger('click');
+            });
+
+            // Granular toggles handlers
+            $('#perf-realtime-toggle').off('change').on('change', function(){
+                if (!$('#perf-monitor-toggle').is(':checked')) {
+                    $(this).prop('checked', false);
+                    showNotice('Please enable Performance Bar first', 'error');
+                    return;
+                }
+                const enabled = $(this).is(':checked');
+                showLoading();
+                $.post(wpdmgrToolkit.ajaxurl, {
+                    action: 'wpdmgr_toggle_perf_realtime',
+                    enabled: enabled,
+                    nonce: wpdmgrToolkit.nonce
+                }, function(response){
+                    hideLoading();
+                    if (response.success) {
+                        showNotice(response.data.message, 'success');
+                        const $toggle = $('#perf-realtime-toggle').siblings('.wpdmgr-toggle');
+                        if (enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    } else {
+                        showNotice(response.data || wpdmgrToolkit.strings.error_occurred, 'error');
+                        $('#perf-realtime-toggle').prop('checked', !enabled);
+                        const $toggle = $('#perf-realtime-toggle').siblings('.wpdmgr-toggle');
+                        if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    }
+                }).fail(function(){
+                    hideLoading();
+                    showNotice(wpdmgrToolkit.strings.error_occurred, 'error');
+                    $('#perf-realtime-toggle').prop('checked', !enabled);
+                    const $toggle = $('#perf-realtime-toggle').siblings('.wpdmgr-toggle');
+                    if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                });
+            });
+
+            $('#perf-realtime-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                if ($(this).closest('.wpdmgr-toggle-wrapper').hasClass('disabled')) { return; }
+                $(this).siblings('input[type="checkbox"]').trigger('click');
+            });
+
+            $('#perf-bootstrap-toggle').off('change').on('change', function(){
+                if (!$('#perf-monitor-toggle').is(':checked')) {
+                    $(this).prop('checked', false);
+                    showNotice('Please enable Performance Bar first', 'error');
+                    return;
+                }
+                const enabled = $(this).is(':checked');
+                showLoading();
+                $.post(wpdmgrToolkit.ajaxurl, {
+                    action: 'wpdmgr_toggle_perf_bootstrap',
+                    enabled: enabled,
+                    nonce: wpdmgrToolkit.nonce
+                }, function(response){
+                    hideLoading();
+                    if (response.success) {
+                        showNotice(response.data.message, 'success');
+                        const $toggle = $('#perf-bootstrap-toggle').siblings('.wpdmgr-toggle');
+                        if (enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    } else {
+                        showNotice(response.data || wpdmgrToolkit.strings.error_occurred, 'error');
+                        $('#perf-bootstrap-toggle').prop('checked', !enabled);
+                        const $toggle = $('#perf-bootstrap-toggle').siblings('.wpdmgr-toggle');
+                        if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    }
+                }).fail(function(){
+                    hideLoading();
+                    showNotice(wpdmgrToolkit.strings.error_occurred, 'error');
+                    $('#perf-bootstrap-toggle').prop('checked', !enabled);
+                    const $toggle = $('#perf-bootstrap-toggle').siblings('.wpdmgr-toggle');
+                    if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                });
+            });
+
+            $('#perf-bootstrap-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                if ($(this).closest('.wpdmgr-toggle-wrapper').hasClass('disabled')) { return; }
+                $(this).siblings('input[type="checkbox"]').trigger('click');
+            });
+
+            $('#perf-domains-toggle').off('change').on('change', function(){
+                if (!$('#perf-monitor-toggle').is(':checked')) {
+                    $(this).prop('checked', false);
+                    showNotice('Please enable Performance Bar first', 'error');
+                    return;
+                }
+                const enabled = $(this).is(':checked');
+                showLoading();
+                $.post(wpdmgrToolkit.ajaxurl, {
+                    action: 'wpdmgr_toggle_perf_domains',
+                    enabled: enabled,
+                    nonce: wpdmgrToolkit.nonce
+                }, function(response){
+                    hideLoading();
+                    if (response.success) {
+                        showNotice(response.data.message, 'success');
+                        const $toggle = $('#perf-domains-toggle').siblings('.wpdmgr-toggle');
+                        if (enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    } else {
+                        showNotice(response.data || wpdmgrToolkit.strings.error_occurred, 'error');
+                        $('#perf-domains-toggle').prop('checked', !enabled);
+                        const $toggle = $('#perf-domains-toggle').siblings('.wpdmgr-toggle');
+                        if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                    }
+                }).fail(function(){
+                    hideLoading();
+                    showNotice(wpdmgrToolkit.strings.error_occurred, 'error');
+                    $('#perf-domains-toggle').prop('checked', !enabled);
+                    const $toggle = $('#perf-domains-toggle').siblings('.wpdmgr-toggle');
+                    if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
+                });
+            });
+
+            $('#perf-domains-toggle').siblings('.wpdmgr-toggle').off('click').on('click', function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                if ($(this).closest('.wpdmgr-toggle-wrapper').hasClass('disabled')) { return; }
+                $(this).siblings('input[type="checkbox"]').trigger('click');
+            });
         });
     }
 

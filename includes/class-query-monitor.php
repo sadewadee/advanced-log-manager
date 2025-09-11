@@ -37,11 +37,26 @@ class WPDMGR_Perf_Monitor {
 	 */
 	public function __construct() {
 		if (get_option('wpdmgr_perf_monitor_enabled') && is_user_logged_in()) {
-			$this->init_domain_collectors();
+			// Read granular feature flags
+			$realtime_enabled  = (bool) get_option('wpdmgr_perf_realtime_enabled');
+			$bootstrap_enabled = (bool) get_option('wpdmgr_perf_bootstrap_enabled');
+			$domains_enabled   = (bool) get_option('wpdmgr_perf_domains_enabled');
+
+			// Initialize only the enabled modules
+			if ($domains_enabled) {
+				$this->init_domain_collectors();
+			}
+			if ($realtime_enabled) {
+				$this->start_realtime_hook_monitoring();
+			}
+			if ($bootstrap_enabled) {
+				$this->capture_bootstrap_snapshots();
+			}
 
 			add_action('init', array($this, 'start_performance_tracking'));
 			add_action('admin_bar_menu', array($this, 'add_admin_bar_metrics'), 999);
-			add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+			// Frontend assets are enqueued by class-plugin to avoid duplicate loading
+			// add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
 			add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
             add_action('wp_ajax_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
             add_action('wp_ajax_nopriv_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
@@ -61,23 +76,26 @@ class WPDMGR_Perf_Monitor {
 		$plugin_url = plugin_dir_url(dirname(__FILE__));
 
 		wp_enqueue_style(
-			'wpdmgr-perf-monitor',
-			$plugin_url . 'admin/assets/css/query-monitor.css',
-			array(),
-			'1.2.18'
-		);
-		wp_enqueue_style(
 			'wpdmgr-performance-bar',
 			$plugin_url . 'public/assets/performance-bar.css',
 			array(),
-			'1.2.18'
+			WPDMGR_VERSION
+		);
+
+		// Ensure performance-bar.js is loaded in admin for unified panel handling
+		wp_enqueue_script(
+			'wpdmgr-performance-bar',
+			$plugin_url . 'public/assets/performance-bar.js',
+			array(),
+			WPDMGR_VERSION,
+			true
 		);
 
 		wp_enqueue_script(
 			'wpdmgr-perf-monitor',
 			$plugin_url . 'admin/assets/js/query-monitor.js',
 			array('jquery'),
-			'1.2.18',
+			WPDMGR_VERSION,
 			true
 		);
 
@@ -632,9 +650,7 @@ class WPDMGR_Perf_Monitor {
         // Get counts for tab titles - use same logic as admin bar
         global $wpdb, $wp_scripts, $wp_styles;
         $tab_query_count = $query_count; // Use consistent query count
-        // Scripts count: jumlah script yang sudah di-load oleh WordPress
         $scripts_count = !empty($wp_scripts->done) ? count($wp_scripts->done) : 0;
-        // Styles count: jumlah stylesheet yang sudah di-load oleh WordPress
         $styles_count = !empty($wp_styles->done) ? count($wp_styles->done) : 0;
         ?>
         <div id="wpdmgr-perf-details" class="wpdmgr-perf-details" style="display: none;">
@@ -701,7 +717,7 @@ class WPDMGR_Perf_Monitor {
                             }
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab hide" data-tab="realtime-hooks">
+                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_realtime_enabled') ? '' : 'hide'; ?>" data-tab="realtime-hooks">
                             <span class="dashicons dashicons-clock"></span>
                             <?php
                             $realtime_count = count($this->real_time_hooks);
@@ -712,7 +728,7 @@ class WPDMGR_Perf_Monitor {
                             }
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab hide" data-tab="bootstrap">
+                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>" data-tab="bootstrap">
                             <span class="dashicons dashicons-update"></span>
                             <?php
                             $bootstrap_count = count($this->bootstrap_snapshots);
@@ -723,7 +739,7 @@ class WPDMGR_Perf_Monitor {
                             }
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab hide" data-tab="domains">
+                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_domains_enabled') ? '' : 'hide'; ?>" data-tab="domains">
                             <span class="dashicons dashicons-networking"></span>
                             <?php
                             if (function_exists('_e')) {
@@ -894,7 +910,7 @@ class WPDMGR_Perf_Monitor {
                         </div>
                     </div>
                     <!-- Real-time Hooks Tab -->
-                    <div id="wpdmgr-perf-tab-realtime-hooks" class="wpdmgr-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-realtime-hooks" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_realtime_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         $realtime_count = count($this->real_time_hooks);
                         if (function_exists('printf') && function_exists('__')) {
@@ -908,7 +924,7 @@ class WPDMGR_Perf_Monitor {
                         </div>
                     </div>
                     <!-- Bootstrap Phases Tab -->
-                    <div id="wpdmgr-perf-tab-bootstrap" class="wpdmgr-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-bootstrap" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         $bootstrap_count = count($this->bootstrap_snapshots);
                         if (function_exists('printf') && function_exists('__')) {
@@ -922,7 +938,7 @@ class WPDMGR_Perf_Monitor {
                         </div>
                     </div>
                     <!-- Domain Panels Tab -->
-                    <div id="wpdmgr-perf-tab-domains" class="wpdmgr-perf-tab-content">
+                    <div id="wpdmgr-perf-tab-domains" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_domains_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         if (function_exists('_e')) {
                             _e('Domain-Specific Hook Analysis', 'wp-debug-manager');
@@ -1602,7 +1618,7 @@ class WPDMGR_Perf_Monitor {
 
             // Use reflection to access the private format_caller_stack method
             try {
-                $reflection = new ReflectionClass($debug_instance);
+                $reflection = new \ReflectionClass($debug_instance);
                 $method = $reflection->getMethod('format_caller_stack');
                 $method->setAccessible(true);
                 $formatted = $method->invokeArgs($debug_instance, array($stack));
@@ -1612,7 +1628,7 @@ class WPDMGR_Perf_Monitor {
 
                 // Add HTML wrapper for query monitor display
                 return '<div class="enhanced-caller-stack">' . $formatted . '</div>';
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Fallback to simple display if reflection fails
                 return (function_exists('esc_html') ? esc_html($stack) : htmlspecialchars($stack));
             }
@@ -2647,14 +2663,14 @@ class WPDMGR_Perf_Monitor {
 
         $env_data[] = array(
             'name' => 'Environment Type',
-            'value' => defined('WP_ENVIRONMENT_TYPE') ? WP_ENVIRONMENT_TYPE : 'production',
+            'value' => defined('WP_ENVIRONMENT_TYPE') ? constant('WP_ENVIRONMENT_TYPE') : 'production',
             'category' => 'WordPress',
             'help' => '<a href="#" onclick="alert(\'Environment Type Help\'); return false;">Help</a>'
         );
 
         $env_data[] = array(
             'name' => 'Development Mode',
-            'value' => defined('WP_DEVELOPMENT_MODE') ? (WP_DEVELOPMENT_MODE ?: 'empty string') : 'undefined',
+            'value' => defined('WP_DEVELOPMENT_MODE') ? (constant('WP_DEVELOPMENT_MODE') ?: 'empty string') : 'undefined',
             'category' => 'WordPress',
             'help' => '<a href="#" onclick="alert(\'Development Mode Help\'); return false;">Help</a>'
         );

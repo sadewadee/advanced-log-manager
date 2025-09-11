@@ -5,6 +5,11 @@ All notable changes to WP Debug Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.23] - 2025-09-11
+
+### Fixed
+- Konsistensi perilaku toggle Performance Monitor: klik `#wp-admin-bar-wpdmgr-performance-monitor` di frontend kini membuka `#wpdmgr-perf-details` seperti di admin (mencegah outside-click handler menutup panel segera, menggunakan computed style untuk deteksi visibilitas, dan melonggarkan ketergantungan pada tombol `#wpdmgr-perf-details-btn`).
+
 ## [1.2.22] - 2025-09-10
 
 ### Added
@@ -23,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Perapihan minor style agar tidak ada duplikasi/konflik dengan admin.css ketika filter/aksi dinonaktifkan
 - Memperbaiki PHP syntax error pada header info SMTP Logs akibat duplikasi blok `if/else` di `admin/views/page-smtp-logs.php`
 - Memperbaiki tombol Performance Monitor (id="perf-monitor-toggle") tidak berfungsi: menambahkan handler klik visual, memperbaiki chain AJAX dan state revert di admin/assets/admin.js
+- Memperbaiki error linter PHP: prefix global `\ReflectionClass` dan `\Exception` di `includes/class-query-monitor.php` dan `includes/class-plugin.php`; gunakan `constant()` untuk `WP_ENVIRONMENT_TYPE` dan `WP_DEVELOPMENT_MODE`
+- Menampilkan tab granular (Realtime Hooks, Bootstrap, Domains) secara kondisional berdasarkan opsi: update `<li>` dan `<div>` konten di `includes/class-query-monitor.php`
+- Membersihkan opsi granular baru di `uninstall.php` (`wpdmgr_perf_realtime_enabled`, `wpdmgr_perf_bootstrap_enabled`, `wpdmgr_perf_domains_enabled`)
+- Memperbaiki JavaScript syntax error "missing ) after argument list" di admin.js baris 664
 
 ## [1.2.21] - 2025-09-09
 
@@ -149,6 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implementasi parsing komponen untuk mendeteksi apakah script/style berasal dari Plugin, Theme, atau WordPress Core
 - Peningkatan styling tabel dengan tema dark yang konsisten dengan UI existing
 - Added dynamic item counting for all performance tabs with real-time updates
+- Performance Panel CSS consolidated: set performance-bar.css as single source of truth; removed duplicated `.wpdmgr-perf-*` blocks from query-monitor.css; kept only page-specific UI styles
+- Align asset versions for admin/frontend enqueues to `WPDMGR_VERSION` for consistent cache-busting
 
 ### Improved
 - Enhanced styling for Scripts and Styles tabs with hover effects
@@ -177,6 +188,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed WordPress constants format in wp-config.php - removed unnecessary double quotes that caused malformed output like `define( 'WP_MEMORY_LIMIT', '\'512M\'' );`
 - WordPress constants now use proper format: `define( 'WP_MEMORY_LIMIT', '512M' );` instead of malformed format with escaped quotes
 - Updated WPConfigTransformer integration to use `raw => false` parameter for proper constant value formatting
+- Resolved conflicting tab hover/active states due to duplicate `.wpdmgr-perf-tab` definitions across CSS files
 
 ## [1.0.6] - 2025-01-18
 

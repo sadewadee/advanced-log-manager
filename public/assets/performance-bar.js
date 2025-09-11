@@ -7,11 +7,7 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-        // Check if we're in admin area - if so, let admin.js handle everything
-        if (document.body.classList.contains('wp-admin')) {
-            return;
-        }
-
+        // Removed admin-area early return so performance-bar.js controls panel in both admin and frontend
         initializePerformanceBar();
         adjustBodyPadding();
     });
@@ -31,6 +27,10 @@
 
             // Close on outside click
             document.addEventListener('click', function(e) {
+                // Ignore clicks on admin bar item or custom toggle
+                if (e.target.closest('#wp-admin-bar-wpdmgr-performance-monitor') || e.target.closest('.wpdmgr-admin-perf-toggle')) {
+                    return;
+                }
                 if (!e.target.closest('.wpdmgr-performance-bar')) {
                     closeDetails();
                 }
@@ -49,6 +49,52 @@
 
         // Add class to body for styling adjustments
         document.body.classList.add('wpdmgr-perf-active');
+
+        // Frontend admin-bar toggle support (admin.js is not loaded on frontend)
+        document.addEventListener('click', function(e) {
+            const adminBarItem = e.target.closest('#wp-admin-bar-wpdmgr-performance-monitor .ab-item');
+            const adminPerfToggle = e.target.closest('.wpdmgr-admin-perf-toggle');
+            if (adminBarItem || adminPerfToggle) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent outside click handler from immediately closing the panel
+                // Ensure panel exists (it is rendered late in wp_footer)
+                ensureDetailsPanelReady(function() {
+                    toggleDetails();
+                });
+            }
+        });
+    }
+
+    /**
+     * Ensure details panel is present in the DOM before executing a callback
+     */
+    function ensureDetailsPanelReady(callback) {
+        const existing = document.getElementById('wpdmgr-perf-details');
+        if (existing) {
+            callback();
+            return;
+        }
+        // Observe DOM for panel insertion
+        const observer = new MutationObserver(function() {
+            const panel = document.getElementById('wpdmgr-perf-details');
+            if (panel) {
+                observer.disconnect();
+                callback();
+            }
+        });
+        try {
+            observer.observe(document.body, { childList: true, subtree: true });
+        } catch (e) {
+            // No-op if body not ready; fallback below
+        }
+        // Safety timeout to avoid lingering observer
+        setTimeout(function() {
+            observer.disconnect();
+            const panel = document.getElementById('wpdmgr-perf-details');
+            if (panel) {
+                callback();
+            }
+        }, 5000);
     }
 
     /**
@@ -58,8 +104,8 @@
         const detailsPanel = document.getElementById('wpdmgr-perf-details');
         const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
-        if (detailsPanel && detailsBtn) {
-            const isVisible = detailsPanel.style.display !== 'none';
+        if (detailsPanel) {
+            const isVisible = window.getComputedStyle(detailsPanel).display !== 'none';
 
             if (isVisible) {
                 closeDetails();
@@ -76,10 +122,12 @@
         const detailsPanel = document.getElementById('wpdmgr-perf-details');
         const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
-        if (detailsPanel && detailsBtn) {
+        if (detailsPanel) {
             detailsPanel.style.display = 'block';
-            detailsBtn.setAttribute('aria-expanded', 'true');
-            detailsBtn.classList.add('active');
+            if (detailsBtn) {
+                detailsBtn.setAttribute('aria-expanded', 'true');
+                detailsBtn.classList.add('active');
+            }
 
             // Animate in
             detailsPanel.style.opacity = '0';
@@ -100,14 +148,16 @@
         const detailsPanel = document.getElementById('wpdmgr-perf-details');
         const detailsBtn = document.getElementById('wpdmgr-perf-details-btn');
 
-        if (detailsPanel && detailsBtn) {
+        if (detailsPanel) {
             detailsPanel.style.opacity = '0';
             detailsPanel.style.transform = 'translateY(10px)';
 
             setTimeout(function() {
                 detailsPanel.style.display = 'none';
-                detailsBtn.setAttribute('aria-expanded', 'false');
-                detailsBtn.classList.remove('active');
+                if (detailsBtn) {
+                    detailsBtn.setAttribute('aria-expanded', 'false');
+                    detailsBtn.classList.remove('active');
+                }
             }, 300);
         }
     }

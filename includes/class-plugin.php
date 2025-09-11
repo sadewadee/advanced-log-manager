@@ -53,6 +53,10 @@ class WPDMGR_Plugin {
         add_action('wp_ajax_wpdmgr_get_log_info', array($this, 'ajax_get_log_info'));
         add_action('wp_ajax_wpdmgr_download_query_logs', array($this, 'ajax_download_query_logs'));
         add_action('wp_ajax_wpdmgr_toggle_perf_monitor', array($this, 'ajax_toggle_perf_monitor'));
+        // New granular performance feature toggles
+        add_action('wp_ajax_wpdmgr_toggle_perf_realtime', array($this, 'ajax_toggle_perf_realtime'));
+        add_action('wp_ajax_wpdmgr_toggle_perf_bootstrap', array($this, 'ajax_toggle_perf_bootstrap'));
+        add_action('wp_ajax_wpdmgr_toggle_perf_domains', array($this, 'ajax_toggle_perf_domains'));
         add_action('wp_ajax_wpdmgr_save_htaccess', array($this, 'ajax_save_htaccess'));
         add_action('wp_ajax_wpdmgr_restore_htaccess', array($this, 'ajax_restore_htaccess'));
         add_action('wp_ajax_wpdmgr_apply_php_preset', array($this, 'ajax_apply_php_preset'));
@@ -179,26 +183,6 @@ class WPDMGR_Plugin {
 
         if (!$enabled) {
             return;
-        }
-
-        wp_enqueue_script(
-            'wpdmgr-admin',
-            WPDMGR_PLUGIN_URL . 'admin/assets/admin.js',
-            array('jquery'),
-            WPDMGR_VERSION,
-            false
-        );
-
-        if (function_exists('wp_localize_script')) {
-            wp_localize_script('wpdmgr-admin', 'wpdmgrToolkit', array(
-                'ajaxurl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '/wp-admin/admin-ajax.php',
-                'nonce' => function_exists('wp_create_nonce') ? wp_create_nonce('wpdmgr_action') : '',
-                'strings' => array(
-                    'error_occurred' => function_exists('__') ? __('An error occurred', 'wp-debug-manager') : 'An error occurred',
-                    'confirm_delete' => function_exists('__') ? __('Are you sure you want to delete this?', 'wp-debug-manager') : 'Are you sure you want to delete this?',
-                    'loading' => function_exists('__') ? __('Loading...', 'wp-debug-manager') : 'Loading...'
-                )
-            ));
         }
 
         if (function_exists('wp_enqueue_style')) {
@@ -596,6 +580,46 @@ class WPDMGR_Plugin {
         ));
     }
 
+    // Tambahan: granular performance toggles
+    public function ajax_toggle_perf_realtime() {
+        check_ajax_referer('wpdmgr_action', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+        }
+        $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
+        update_option('wpdmgr_perf_realtime_enabled', $enabled);
+        wp_send_json_success(array(
+            'enabled' => $enabled,
+            'message' => $enabled ? __('Real-time hooks monitoring enabled.', 'wp-debug-manager') : __('Real-time hooks monitoring disabled.', 'wp-debug-manager')
+        ));
+    }
+
+    public function ajax_toggle_perf_bootstrap() {
+        check_ajax_referer('wpdmgr_action', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+        }
+        $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
+        update_option('wpdmgr_perf_bootstrap_enabled', $enabled);
+        wp_send_json_success(array(
+            'enabled' => $enabled,
+            'message' => $enabled ? __('Bootstrap phases snapshots enabled.', 'wp-debug-manager') : __('Bootstrap phases snapshots disabled.', 'wp-debug-manager')
+        ));
+    }
+
+    public function ajax_toggle_perf_domains() {
+        check_ajax_referer('wpdmgr_action', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+        }
+        $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
+        update_option('wpdmgr_perf_domains_enabled', $enabled);
+        wp_send_json_success(array(
+            'enabled' => $enabled,
+            'message' => $enabled ? __('Domain-specific panels enabled.', 'wp-debug-manager') : __('Domain-specific panels disabled.', 'wp-debug-manager')
+        ));
+    }
+
     public function ajax_save_htaccess() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -687,7 +711,7 @@ class WPDMGR_Plugin {
         $test_result = $this->services['debug']->test_wp_config_transformer();
 
 
-        $reflection = new ReflectionClass($this->services['debug']);
+        $reflection = new \ReflectionClass($this->services['debug']);
         $method = $reflection->getMethod('get_custom_debug_log_path');
         $method->setAccessible(true);
         $custom_path = $method->invoke($this->services['debug']);
@@ -727,7 +751,7 @@ class WPDMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
-            $reflection = new ReflectionClass($this->services['smtp_logger']);
+            $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_enabled');
             $property->setAccessible(true);
             $property->setValue($this->services['smtp_logger'], $enabled);
@@ -759,7 +783,7 @@ class WPDMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
-            $reflection = new ReflectionClass($this->services['smtp_logger']);
+            $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_ip_address');
             $property->setAccessible(true);
             $property->setValue($this->services['smtp_logger'], $enabled);

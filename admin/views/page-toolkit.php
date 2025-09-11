@@ -39,6 +39,11 @@ $current_php_config = $php_config_service->get_current_config();
 $server_memory_info = $php_config_service->get_server_memory_info();
 $savequeries = defined('SAVEQUERIES') ? (bool) constant('SAVEQUERIES') : false;
 
+// Tambahan: opsi granular Performance Monitor
+$perf_realtime_enabled = get_option('wpdmgr_perf_realtime_enabled', false);
+$perf_bootstrap_enabled = get_option('wpdmgr_perf_bootstrap_enabled', false);
+$perf_domains_enabled  = get_option('wpdmgr_perf_domains_enabled', false);
+
 // Setting labels and units for display
 $setting_labels = array(
     'memory_limit' => __('Memory Limit', 'wp-debug-manager'),
@@ -341,6 +346,52 @@ $setting_units = array(
                     </label>
                     <p class="description">
                         <?php esc_html_e('Menampilkan bar performa di bagian bawah halaman untuk user yang login.', 'wp-debug-manager'); ?>
+                    </p>
+                </div>
+
+                <!-- Granular feature toggles -->
+                <div class="wpdmgr-form-section">
+                    <label class="wpdmgr-toggle-label">
+                        <span><?php esc_html_e('Enable Real-time Hooks Monitoring', 'wp-debug-manager'); ?></span>
+                        <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
+                            <input type="checkbox" id="perf-realtime-toggle" <?php checked($perf_realtime_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
+                            <div class="wpdmgr-toggle <?php echo $perf_realtime_enabled ? 'active' : ''; ?>">
+                                <div class="wpdmgr-toggle-slider"></div>
+                            </div>
+                        </div>
+                    </label>
+                    <p class="description">
+                        <?php esc_html_e('Pantau eksekusi hook strategis secara real-time (dioptimalkan, bukan hook "all").', 'wp-debug-manager'); ?>
+                    </p>
+                </div>
+
+                <div class="wpdmgr-form-section">
+                    <label class="wpdmgr-toggle-label">
+                        <span><?php esc_html_e('Enable Bootstrap Phases Snapshots', 'wp-debug-manager'); ?></span>
+                        <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
+                            <input type="checkbox" id="perf-bootstrap-toggle" <?php checked($perf_bootstrap_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
+                            <div class="wpdmgr-toggle <?php echo $perf_bootstrap_enabled ? 'active' : ''; ?>">
+                                <div class="wpdmgr-toggle-slider"></div>
+                            </div>
+                        </div>
+                    </label>
+                    <p class="description">
+                        <?php esc_html_e('Ambil snapshot evolusi hook pada fase bootstrap WordPress.', 'wp-debug-manager'); ?>
+                    </p>
+                </div>
+
+                <div class="wpdmgr-form-section">
+                    <label class="wpdmgr-toggle-label">
+                        <span><?php esc_html_e('Enable Domain-specific Panels', 'wp-debug-manager'); ?></span>
+                        <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
+                            <input type="checkbox" id="perf-domains-toggle" <?php checked($perf_domains_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
+                            <div class="wpdmgr-toggle <?php echo $perf_domains_enabled ? 'active' : ''; ?>">
+                                <div class="wpdmgr-toggle-slider"></div>
+                            </div>
+                        </div>
+                    </label>
+                    <p class="description">
+                        <?php esc_html_e('Tampilkan panel analisis berdasarkan domain (Database, HTTP, Template, dsb).', 'wp-debug-manager'); ?>
                     </p>
                 </div>
 
