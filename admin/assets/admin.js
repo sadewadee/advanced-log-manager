@@ -491,6 +491,15 @@
         $('#perf-monitor-toggle').off('change').on('change', function() {
             const enabled = $(this).is(':checked');
 
+            // Confirmation prompt
+            const msg = enabled ? (wpdmgrToolkit.strings && wpdmgrToolkit.strings.confirm_enable_perf ? wpdmgrToolkit.strings.confirm_enable_perf : 'Are you sure to enable Performance Bar?')
+                                : (wpdmgrToolkit.strings && wpdmgrToolkit.strings.confirm_disable_perf ? wpdmgrToolkit.strings.confirm_disable_perf : 'Are you sure to disable Performance Bar?');
+            if (!confirm(msg)) {
+                // Revert immediately if canceled
+                $(this).prop('checked', !enabled);
+                return;
+            }
+
             showLoading();
 
             $.post(wpdmgrToolkit.ajaxurl, {
@@ -531,6 +540,12 @@
                         $toggle.removeClass('active');
                     }
                 }
+            }).fail(function(){
+                hideLoading();
+                showNotice(wpdmgrToolkit.strings.error_occurred, 'error');
+                $('#perf-monitor-toggle').prop('checked', !enabled);
+                const $toggle = $('#perf-monitor-toggle').siblings('.wpdmgr-toggle');
+                if (!enabled) { $toggle.addClass('active'); } else { $toggle.removeClass('active'); }
             });
 
             // Add click handler for perf-monitor visual toggle (prevent double toggle under label)

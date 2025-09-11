@@ -1168,6 +1168,7 @@ class WPDMGR_Perf_Monitor {
 
         echo '</tbody>';
         echo '</table>';
+        echo '<div class="wpdmgr-images-actions"><button id="wpdmgr-images-load-more" class="button button-secondary" data-page-size="20" style="margin-top:10px; display:none;">' . (function_exists('esc_html__') ? esc_html__('Load More', 'wp-debug-manager') : 'Load More') . '</button></div>';
     }
 
     /**
@@ -1690,9 +1691,13 @@ class WPDMGR_Perf_Monitor {
             return;
         }
 
+        // Determine current site host once for scope filtering
+        $site_host = parse_url(home_url(), PHP_URL_HOST);
+        
         echo '<div class="wpdmgr-tab-filters">';
         echo '<label>Filter by Source: <select id="wpdmgr-images-source-filter"><option value="">All Sources</option></select></label>';
         echo '<label>Filter by Hostname: <select id="wpdmgr-images-hostname-filter"><option value="">All Hostnames</option></select></label>';
+        echo '<label>Host Scope: <select id="wpdmgr-images-host-scope"><option value="">All</option><option value="same">Same Domain</option><option value="external">External</option></select></label>';
         echo '<label>Sort by: <select id="wpdmgr-images-sort"><option value="size">File Size</option><option value="load_time">Load Time</option><option value="source">Source</option></select></label>';
         echo '</div>';
 
@@ -1783,7 +1788,7 @@ class WPDMGR_Perf_Monitor {
                 }
             }
 
-            echo '<tr data-source="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '" data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '" data-size="' . $file_size_bytes . '" data-load-time="' . $load_time_ms . '">';
+            echo '<tr data-source="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '" data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '" data-host-scope="' . (($site_host && $hostname === $site_host) ? 'same' : 'external') . '" data-size="' . $file_size_bytes . '" data-load-time="' . $load_time_ms . '">';
             echo '<td class="query-number">' . $counter . '</td>';
             echo '<td class="wpdmgr-image-handle">' . (function_exists('esc_html') ? esc_html($alt) : htmlspecialchars($alt)) . '</td>';
             echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
@@ -2282,6 +2287,12 @@ class WPDMGR_Perf_Monitor {
         // Method 4: Parse output buffer for inline images (if available)
         $this->collect_inline_images($images);
 
+        // Method 5: Widgets/menus and theme extras
+        $this->collect_widget_images($images);
+
+        // Deduplicate by exact src (preserve order), and cap for performance
+        $images = $this->dedupe_images_by_src($images, 100);
+
         return $images;
     }
 
@@ -2378,14 +2389,28 @@ class WPDMGR_Perf_Monitor {
             $style = $wp_styles->registered[$handle];
             $src = $style->src;
 
-            if (!$src || strpos($src, 'http') === 0) {
-                continue; // Skip external CSS for now
+            if (!$src) {
+                continue;
+            }
+
+            // Allow absolute CSS only if same host; map to local path
+            $resolved_src = $src;
+            if (strpos($src, '//') === 0 || strpos($src, 'http://') === 0 || strpos($src, 'https://') === 0) {
+                $home_host = function_exists('home_url') ? parse_url(home_url('/'), PHP_URL_HOST) : '';
+                $src_host = parse_url($src, PHP_URL_HOST);
+                if (!$home_host || !$src_host || strtolower($home_host) !== strtolower($src_host)) {
+                    continue; // skip remote CSS from other hosts
+                }
+                $path = parse_url($src, PHP_URL_PATH);
+                if ($path) {
+                    $resolved_src = $path;
+                }
             }
 
             // Try to read local CSS file and extract background images
-            $local_path = ABSPATH . ltrim($src, '/');
+            $local_path = ABSPATH . ltrim($resolved_src, '/');
             if (file_exists($local_path)) {
-                $css_content = file_get_contents($local_path);
+                $css_content = @file_get_contents($local_path);
                 if ($css_content) {
                     $this->extract_css_images($css_content, $images, $handle);
                 }
@@ -2419,8 +2444,15 @@ class WPDMGR_Perf_Monitor {
                     } else {
                         // Relative to CSS file location
                         $css_dir = dirname($wp_styles->registered[$css_handle]->src);
+                        // Normalize to path when CSS src is absolute URL
+                        if (strpos($css_dir, '//') === 0 || strpos($css_dir, 'http://') === 0 || strpos($css_dir, 'https://') === 0) {
+                            $path = parse_url($css_dir, PHP_URL_PATH);
+                            if ($path) {
+                                $css_dir = $path;
+                            }
+                        }
                         if (function_exists('home_url')) {
-                            $image_url = home_url($css_dir . '/' . $image_url);
+                            $image_url = home_url(rtrim($css_dir, '/') . '/' . ltrim($image_url, '/'));
                         }
                     }
                 }
@@ -2816,5 +2848,32 @@ class WPDMGR_Perf_Monitor {
                 }
             }
         }
+    }
+
+    /**
+     * Lightweight dedupe by src while preserving order, with optional cap
+     *
+     * @param array $images
+     * @param int   $cap
+     * @return array
+     */
+    private function dedupe_images_by_src($images, $cap = 100) {
+        $seen = array();
+        $out = array();
+        foreach ($images as $img) {
+            if (!is_array($img) || empty($img['src'])) {
+                continue;
+            }
+            $src = (string) $img['src'];
+            if (isset($seen[$src])) {
+                continue;
+            }
+            $seen[$src] = true;
+            $out[] = $img;
+            if ($cap && count($out) >= $cap) {
+                break;
+            }
+        }
+        return $out;
     }
 }

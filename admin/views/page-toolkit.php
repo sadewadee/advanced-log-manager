@@ -347,6 +347,9 @@ $setting_units = array(
                     <p class="description">
                         <?php esc_html_e('Menampilkan bar performa di bagian bawah halaman untuk user yang login.', 'wp-debug-manager'); ?>
                     </p>
+                    <p class="description">
+                        <?php esc_html_e('Peringatan: Mengaktifkan Performance Bar dapat menambah sedikit overhead pada waktu muat halaman karena pengumpulan metrik. Disarankan hanya untuk kebutuhan debugging/lingkungan pengembangan.', 'wp-debug-manager'); ?>
+                    </p>
                 </div>
 
                 <!-- Granular feature toggles -->

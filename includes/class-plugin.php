@@ -170,6 +170,8 @@ class WPDMGR_Plugin {
             'strings' => array(
                 'confirm_clear_logs' => __('Are you sure you want to clear all debug logs?', 'wp-debug-manager'),
                 'confirm_restore_htaccess' => __('Are you sure you want to restore this backup?', 'wp-debug-manager'),
+                'confirm_enable_perf' => __('Enabling the Performance Bar may slightly impact page load while collecting metrics. Continue?', 'wp-debug-manager'),
+                'confirm_disable_perf' => __('Disabling the Performance Bar will hide metrics and stop data collection. Continue?', 'wp-debug-manager'),
                 'error_occurred' => __('An error occurred. Please try again.', 'wp-debug-manager'),
                 'success' => __('Operation completed successfully.', 'wp-debug-manager'),
             )

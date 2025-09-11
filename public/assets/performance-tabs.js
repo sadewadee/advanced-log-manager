@@ -120,22 +120,59 @@ var WPDMGR_Images = {
     init: function() {
         this.bindEvents();
         this.populateFilters();
+        // Initialize pagination state
+        this.pageSize = this.getPageSize();
+        this.visibleLimit = this.pageSize;
+        this.bindLoadMore();
+        // Apply initial filtering + pagination
+        this.filterImages();
     },
 
     bindEvents: function() {
         var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
         var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
+        var hostScopeFilter = document.getElementById('wpdmgr-images-host-scope');
         var sortSelect = document.getElementById('wpdmgr-images-sort');
 
         if (sourceFilter) {
-            sourceFilter.addEventListener('change', this.filterImages.bind(this));
+            sourceFilter.addEventListener('change', this.resetAndFilter.bind(this));
         }
         if (hostnameFilter) {
-            hostnameFilter.addEventListener('change', this.filterImages.bind(this));
+            hostnameFilter.addEventListener('change', this.resetAndFilter.bind(this));
+        }
+        if (hostScopeFilter) {
+            hostScopeFilter.addEventListener('change', this.resetAndFilter.bind(this));
         }
         if (sortSelect) {
             sortSelect.addEventListener('change', this.sortImages.bind(this));
         }
+    },
+
+    // Reset visible limit then filter
+    resetAndFilter: function() {
+        this.visibleLimit = this.pageSize;
+        this.filterImages();
+    },
+
+    getPageSize: function() {
+        var btn = document.getElementById('wpdmgr-images-load-more');
+        var size = 20;
+        if (btn && btn.dataset.pageSize) {
+            var parsed = parseInt(btn.dataset.pageSize, 10);
+            if (!isNaN(parsed) && parsed > 0) size = parsed;
+        }
+        return size;
+    },
+
+    bindLoadMore: function() {
+        var self = this;
+        var btn = document.getElementById('wpdmgr-images-load-more');
+        if (!btn) return;
+        btn.style.display = 'none';
+        btn.addEventListener('click', function() {
+            self.visibleLimit += self.pageSize;
+            self.filterImages();
+        });
     },
 
     populateFilters: function() {
@@ -180,42 +217,63 @@ var WPDMGR_Images = {
     filterImages: function() {
         var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
         var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
+        var hostScopeFilter = document.getElementById('wpdmgr-images-host-scope');
         var table = document.querySelector('.wpdmgr-images-table tbody');
+        var loadMoreBtn = document.getElementById('wpdmgr-images-load-more');
 
         if (!table) return;
 
         var selectedSource = sourceFilter ? sourceFilter.value : '';
         var selectedHostname = hostnameFilter ? hostnameFilter.value : '';
+        var selectedScope = hostScopeFilter ? hostScopeFilter.value : '';
 
         var rows = table.querySelectorAll('tr');
-        var visibleCount = 0;
+        var visibleCount = 0;          // count rows actually shown (within page limit)
+        var matchedCount = 0;          // count rows that match filters (before pagination)
 
         rows.forEach(function(row) {
             var source = row.getAttribute('data-source') || '';
             var hostname = row.getAttribute('data-hostname') || '';
+            var scope = row.getAttribute('data-host-scope') || '';
 
-            var showRow = true;
+            var match = true;
 
             if (selectedSource && source !== selectedSource) {
-                showRow = false;
+                match = false;
             }
-
             if (selectedHostname && hostname !== selectedHostname) {
-                showRow = false;
+                match = false;
+            }
+            if (selectedScope && scope !== selectedScope) {
+                match = false;
             }
 
-            if (showRow) {
-                row.style.display = '';
-                visibleCount++;
-                // Update row number
-                var numberCell = row.querySelector('.query-number');
-                if (numberCell) {
-                    numberCell.textContent = visibleCount;
+            if (match) {
+                matchedCount++;
+                if (visibleCount < WPDMGR_Images.visibleLimit) {
+                    row.style.display = '';
+                    visibleCount++;
+                    // Update row number
+                    var numberCell = row.querySelector('.query-number');
+                    if (numberCell) {
+                        numberCell.textContent = visibleCount;
+                    }
+                } else {
+                    row.style.display = 'none';
                 }
             } else {
                 row.style.display = 'none';
             }
         });
+
+        // Load More visibility
+        if (loadMoreBtn) {
+            if (matchedCount > this.visibleLimit) {
+                loadMoreBtn.style.display = '';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
     },
 
     sortImages: function() {
@@ -256,8 +314,8 @@ var WPDMGR_Images = {
             table.appendChild(row);
         });
 
-        // Update row numbers
-        this.updateRowNumbers();
+        // Re-apply filters + pagination and renumber
+        this.filterImages();
     },
 
     updateRowNumbers: function() {
