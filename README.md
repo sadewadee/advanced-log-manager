@@ -185,7 +185,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 ## Credits
 
-Developed by [WPDMGR Team](https://wpdmgr.com) with focus on simplicity, safety, and developer experience.
+Developed by [MordenHost Team](https://mordenhost.com) with focus on simplicity, safety, and developer experience.
 
 ---
 
