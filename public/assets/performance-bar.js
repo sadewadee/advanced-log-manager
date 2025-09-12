@@ -51,18 +51,21 @@
         document.body.classList.add('wpdmgr-perf-active');
 
         // Frontend admin-bar toggle support (admin.js is not loaded on frontend)
-        document.addEventListener('click', function(e) {
-            const adminBarItem = e.target.closest('#wp-admin-bar-wpdmgr-performance-monitor .ab-item');
-            const adminPerfToggle = e.target.closest('.wpdmgr-admin-perf-toggle');
-            if (adminBarItem || adminPerfToggle) {
-                e.preventDefault();
-                e.stopPropagation(); // Prevent outside click handler from immediately closing the panel
-                // Ensure panel exists (it is rendered late in wp_footer)
-                ensureDetailsPanelReady(function() {
-                    toggleDetails();
-                });
-            }
-        });
+        // Only add event listener if jQuery/admin.js is not present to avoid conflicts
+        if (typeof jQuery === 'undefined' || typeof window.wpdmgrAdminInitialized === 'undefined') {
+            document.addEventListener('click', function(e) {
+                const adminBarItem = e.target.closest('#wp-admin-bar-wpdmgr-performance-monitor .ab-item');
+                const adminPerfToggle = e.target.closest('.wpdmgr-admin-perf-toggle');
+                if (adminBarItem || adminPerfToggle) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent outside click handler from immediately closing the panel
+                    // Ensure panel exists (it is rendered late in wp_footer)
+                    ensureDetailsPanelReady(function() {
+                        toggleDetails();
+                    });
+                }
+            });
+        }
     }
 
     /**

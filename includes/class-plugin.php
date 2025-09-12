@@ -204,6 +204,15 @@ class WPDMGR_Plugin {
                 WPDMGR_VERSION,
                 true
             );
+
+            // Enqueue performance tabs for filtering, sorting, and search functionality
+            wp_enqueue_script(
+                'wpdmgr-performance-tabs',
+                WPDMGR_PLUGIN_URL . 'public/assets/performance-tabs.js',
+                array('wpdmgr-performance-bar'),
+                WPDMGR_VERSION,
+                true
+            );
         }
     }
 

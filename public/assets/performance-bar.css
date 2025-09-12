@@ -959,4 +959,8 @@ body.admin-bar.wpdmgr-perf-active {
 
 /* Utility */
 .hide { display: none !important; }
+
+/* Link style for anchors used in tables */
+.wpdmgr-link { color: #0073aa; text-decoration: none; }
+.wpdmgr-link:hover, .wpdmgr-link:focus { text-decoration: underline; color: #006ba1; }
 /* --- End Consolidated from query-monitor.css --- */

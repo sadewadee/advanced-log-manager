@@ -5,6 +5,26 @@ All notable changes to WP Debug Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.25] - 2025-09-13
+
+### Added
+- Filter dan pencarian di semua tab Performance Monitor (Queries, Scripts, Styles, Images, Hooks) dengan input dan select yang konsisten
+
+### Changed
+- Peningkatan aksesibilitas dan sorting tabel: dukungan aria-sort, navigasi keyboard, dan penyortiran numerik via atribut data-* (time-ms, loadtime-ms, filesize-bytes)
+
+## [1.2.24] - 2025-09-12
+
+### Added
+- Host Scope filter pada Images tab di Performance Monitor untuk memfilter gambar berdasarkan domain (All Hosts, Current Host, External Hosts)
+- Tombol "Load More" pada Images tab untuk pagination gambar dengan loading 10 item per batch
+- Teks peringatan di bawah toggle Performance Bar yang menjelaskan dampak pada performa situs
+- Dialog konfirmasi saat mengaktifkan/menonaktifkan Performance Monitor dengan pesan yang disesuaikan
+
+### Changed
+- Meningkatkan UX Images tab dengan filter Host Scope dan pagination untuk mengurangi beban rendering
+- Menambahkan string lokalisasi untuk konfirmasi toggle Performance Monitor (confirm_enable_perf, confirm_disable_perf)
+
 ## [1.2.23] - 2025-09-11
 
 ### Fixed
@@ -130,6 +150,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated WPConfigTransformer usage with proper parameter handling
 
 ## [Unreleased]
+
+### Added
+- Tabbed sidebar interface in Performance Details panel for better organization
+- Individual tabs for Queries, Scripts, Styles, Images, and Hooks monitoring
+- Filter and search functionality across all performance monitoring tabs
+- Sortable columns with accessibility support (ARIA labels)
+- Keyboard navigation support for performance monitoring interface
+- Export functionality for performance data
+- Enhanced visual indicators for performance metrics
+
+### Changed
+- Reorganized Performance Details panel with dedicated tabs
+- Improved accessibility with proper ARIA labels and keyboard support
+- Enhanced visual design of performance monitoring interface
+
+### Fixed
+- Performance monitoring data organization and readability
+- Accessibility issues in performance monitoring interface
+
+## [1.2.26] - 2025-01-14
+
+### Fixed
+- Performance tabs filter, sort, and search functionality not working on frontend
+- Admin bar performance monitor toggle conflict causing double open/close behavior
+- Missing performance-tabs.js enqueue on frontend pages
+
+### Changed
+- Added conditional event listener registration to prevent admin bar toggle conflicts
+- Enhanced frontend script loading for complete performance monitoring functionality
 
 ### Added
 - Added tabbed sidebar interface to Performance Details panel

@@ -41,6 +41,9 @@
         // Initialize debug settings state based on master toggle
         const debugEnabled = $('#debug-mode-toggle').is(':checked');
         toggleDebugSettings(debugEnabled);
+
+        // Set flag to indicate admin.js is initialized
+        window.wpdmgrAdminInitialized = true;
     });
 
     /**
