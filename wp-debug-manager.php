@@ -3,7 +3,7 @@
  * Plugin Name: WP Debug Manager
  * Plugin URI: https://github.com/sadewadee/wp-debug-manager
  * Description: Lightweight developer tools for WordPress: Debug Manager, Query Monitor, Htaccess Editor, PHP Config presets.
- * Version: 1.2.19
+ * Version: 1.2.26
  * Author: WPDMGR Team
  * Author URI: https://wpdmgr.com
  * License: GPL v3 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WPDMGR_VERSION', '1.2.19');
+define('WPDMGR_VERSION', '1.2.26');
 define('WPDMGR_PLUGIN_FILE', __FILE__);
 define('WPDMGR_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WPDMGR_PLUGIN_URL', plugin_dir_url(__FILE__));

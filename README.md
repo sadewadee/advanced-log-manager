@@ -5,7 +5,7 @@ Tags: debug, performance, monitoring, htaccess, php-config, developer-tools
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2.18
+Stable tag: 1.2.26
 License: GPL v3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -143,6 +143,14 @@ Yes, WP Debug Manager is designed to work alongside other debugging tools. It fo
 No, this plugin only modifies configuration files (wp-config.php, .htaccess) and creates its own database tables for logging. Your theme files remain untouched.
 
 == Changelog ==
+
+= 1.2.26 =
+* Fixed performance tabs filter, sort, and search functionality not working on frontend
+* Fixed admin bar performance monitor toggle conflict causing double open/close behavior
+* Added conditional event listener registration to prevent admin bar toggle conflicts
+* Enhanced frontend script loading for complete performance monitoring functionality
+* Added tabbed sidebar interface to Performance Details panel with Overview, Queries, Scripts, and Styles tabs
+* Enhanced Performance Bar with modern tabbed navigation and responsive design
 
 = 1.2.18 =
 * Code cleanup and optimization
