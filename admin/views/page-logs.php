@@ -3,7 +3,7 @@
  * Debug Logs Page Template
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */

@@ -6,7 +6,7 @@
  * via wp-config.php constant: WPDMGR_INTERNAL_LOGGING
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */

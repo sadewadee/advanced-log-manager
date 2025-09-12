@@ -3,7 +3,7 @@
  * Uninstall script for WP Debug Manager
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */
@@ -143,8 +143,8 @@ function wpdmgr_cleanup_transients() {
     global $wpdb;
 
     // Delete performance metrics transients
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_mt_metrics_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_mt_metrics_%'");
+    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_mt_metrics_%'));
+        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_timeout_mt_metrics_%'));
 }
 
 function wpdmgr_cleanup_log_files() {

@@ -3,7 +3,7 @@
  * Query Monitor Service - Performance metrics display
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  * @since 1.2.18
@@ -678,7 +678,7 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-dashboard"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Overview', 'wp-debug-manager');
+                                esc_html_e('Overview', 'wp-debug-manager');
                             } else {
                                 echo 'Overview';
                             }
@@ -688,7 +688,8 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-database"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Queries (%d)', 'wp-debug-manager'), $tab_query_count);
+                                /* translators: %d: number of queries */
+                        printf(__('Queries (%d)', 'wp-debug-manager'), $tab_query_count);
                             } else {
                                 echo 'Queries';
                             }
@@ -698,7 +699,8 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-media-code"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Scripts (%d)', 'wp-debug-manager'), $scripts_count);
+                                /* translators: %d: number of scripts */
+                        printf(__('Scripts (%d)', 'wp-debug-manager'), $scripts_count);
                             } else {
                                 echo 'Scripts';
                             }
@@ -708,7 +710,8 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-admin-appearance"></span>
                             <?php
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Styles (%d)', 'wp-debug-manager'), $styles_count);
+                                /* translators: %d: number of styles */
+                        printf(__('Styles (%d)', 'wp-debug-manager'), $styles_count);
                             } else {
                                 echo 'Styles';
                             }
@@ -718,7 +721,7 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-format-image"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Images', 'wp-debug-manager');
+                                esc_html_e('Images', 'wp-debug-manager');
                             } else {
                                 echo 'Images';
                             }
@@ -728,7 +731,7 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-admin-tools"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Hooks & Actions', 'wp-debug-manager');
+                                esc_html_e('Hooks & Actions', 'wp-debug-manager');
                             } else {
                                 echo 'Hooks & Actions';
                             }
@@ -739,7 +742,8 @@ class WPDMGR_Perf_Monitor {
                             <?php
                             $realtime_count = count($this->real_time_hooks);
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Real-time Hooks (%d)', 'wp-debug-manager'), $realtime_count);
+                                /* translators: %d: number of hooks */
+                        printf(__('Real-time Hooks (%d)', 'wp-debug-manager'), $realtime_count);
                             } else {
                                 echo 'Real-time Hooks (' . $realtime_count . ')';
                             }
@@ -750,7 +754,8 @@ class WPDMGR_Perf_Monitor {
                             <?php
                             $bootstrap_count = count($this->bootstrap_snapshots);
                             if (function_exists('printf') && function_exists('__')) {
-                                printf(__('Bootstrap Phases (%d)', 'wp-debug-manager'), $bootstrap_count);
+                                /* translators: %d: number of phases */
+                        printf(__('Bootstrap Phases (%d)', 'wp-debug-manager'), $bootstrap_count);
                             } else {
                                 echo 'Bootstrap Phases (' . $bootstrap_count . ')';
                             }
@@ -760,7 +765,7 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-networking"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('Domain Panels', 'wp-debug-manager');
+                                esc_html_e('Domain Panels', 'wp-debug-manager');
                             } else {
                                 echo 'Domain Panels';
                             }
@@ -770,7 +775,7 @@ class WPDMGR_Perf_Monitor {
                             <span class="dashicons dashicons-admin-settings"></span>
                             <?php
                             if (function_exists('_e')) {
-                                _e('ENV', 'wp-debug-manager');
+                                esc_html_e('ENV', 'wp-debug-manager');
                             } else {
                                 echo 'ENV';
                             }
@@ -783,7 +788,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-overview" class="wpdmgr-perf-tab-content active">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Performance Details', 'wp-debug-manager');
+                            esc_html_e('Performance Details', 'wp-debug-manager');
                         } else {
                             echo 'Performance Details';
                         }
@@ -792,7 +797,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Database Queries:', 'wp-debug-manager');
+                                    esc_html_e('Database Queries:', 'wp-debug-manager');
                                 } else {
                                     echo 'Database Queries:';
                                 }
@@ -802,7 +807,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Execution Time:', 'wp-debug-manager');
+                                    esc_html_e('Execution Time:', 'wp-debug-manager');
                                 } else {
                                     echo 'Execution Time:';
                                 }
@@ -812,7 +817,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Database Time:', 'wp-debug-manager');
+                                    esc_html_e('Database Time:', 'wp-debug-manager');
                                 } else {
                                     echo 'Database Time:';
                                 }
@@ -822,7 +827,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Peak Memory:', 'wp-debug-manager');
+                                    esc_html_e('Peak Memory:', 'wp-debug-manager');
                                 } else {
                                     echo 'Peak Memory:';
                                 }
@@ -832,7 +837,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('Memory Used:', 'wp-debug-manager');
+                                    esc_html_e('Memory Used:', 'wp-debug-manager');
                                 } else {
                                     echo 'Memory Used:';
                                 }
@@ -842,7 +847,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('PHP Version:', 'wp-debug-manager');
+                                    esc_html_e('PHP Version:', 'wp-debug-manager');
                                 } else {
                                     echo 'PHP Version:';
                                 }
@@ -852,7 +857,7 @@ class WPDMGR_Perf_Monitor {
                             <tr>
                                 <td><?php
                                 if (function_exists('_e')) {
-                                    _e('WordPress Version:', 'wp-debug-manager');
+                                    esc_html_e('WordPress Version:', 'wp-debug-manager');
                                 } else {
                                     echo 'WordPress Version:';
                                 }
@@ -865,7 +870,8 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-queries" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('printf') && function_exists('__')) {
-                             printf(__('Database Queries (%d)', 'wp-debug-manager'), $tab_query_count);
+                             /* translators: %d: number of database queries */
+                        printf(__('Database Queries (%d)', 'wp-debug-manager'), $tab_query_count);
                          } else {
                              echo 'Database Queries (' . $tab_query_count . ')';
                          }
@@ -878,7 +884,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-scripts" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Scripts', 'wp-debug-manager');
+                            esc_html_e('Loaded Scripts', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Scripts';
                         }
@@ -891,7 +897,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-styles" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Styles', 'wp-debug-manager');
+                            esc_html_e('Loaded Styles', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Styles';
                         }
@@ -904,7 +910,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-images" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Loaded Images', 'wp-debug-manager');
+                            esc_html_e('Loaded Images', 'wp-debug-manager');
                         } else {
                             echo 'Loaded Images';
                         }
@@ -917,7 +923,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-hooks" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('WordPress Hooks & Actions', 'wp-debug-manager');
+                            esc_html_e('WordPress Hooks & Actions', 'wp-debug-manager');
                         } else {
                             echo 'WordPress Hooks & Actions';
                         }
@@ -931,7 +937,8 @@ class WPDMGR_Perf_Monitor {
                         <h4><?php
                         $realtime_count = count($this->real_time_hooks);
                         if (function_exists('printf') && function_exists('__')) {
-                            printf(__('Real-time Hook Execution (%d hooks captured)', 'wp-debug-manager'), $realtime_count);
+                            /* translators: %d: number of hooks captured */
+                        printf(__('Real-time Hook Execution (%d hooks captured)', 'wp-debug-manager'), $realtime_count);
                         } else {
                             echo 'Real-time Hook Execution (' . $realtime_count . ' hooks captured)';
                         }
@@ -945,7 +952,8 @@ class WPDMGR_Perf_Monitor {
                         <h4><?php
                         $bootstrap_count = count($this->bootstrap_snapshots);
                         if (function_exists('printf') && function_exists('__')) {
-                            printf(__('Bootstrap Hook Snapshots (%d phases)', 'wp-debug-manager'), $bootstrap_count);
+                            /* translators: %d: number of phases */
+                        printf(__('Bootstrap Hook Snapshots (%d phases)', 'wp-debug-manager'), $bootstrap_count);
                         } else {
                             echo 'Bootstrap Hook Snapshots (' . $bootstrap_count . ' phases)';
                         }
@@ -958,7 +966,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-domains" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_domains_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Domain-Specific Hook Analysis', 'wp-debug-manager');
+                            esc_html_e('Domain-Specific Hook Analysis', 'wp-debug-manager');
                         } else {
                             echo 'Domain-Specific Hook Analysis';
                         }
@@ -971,7 +979,7 @@ class WPDMGR_Perf_Monitor {
                     <div id="wpdmgr-perf-tab-env" class="wpdmgr-perf-tab-content">
                         <h4><?php
                         if (function_exists('_e')) {
-                            _e('Environment Configuration', 'wp-debug-manager');
+                            esc_html_e('Environment Configuration', 'wp-debug-manager');
                         } else {
                             echo 'Environment Configuration';
                         }
@@ -1729,7 +1737,8 @@ class WPDMGR_Perf_Monitor {
 
             // Use reflection to access the private format_caller_stack method
             try {
-                if (class_exists('\\ReflectionClass')) {
+                if (class_exists('\ReflectionClass')) {
+                    /** @var \ReflectionClass $reflection */
                     $reflection = new \ReflectionClass($debug_instance);
                     $method = $reflection->getMethod('format_caller_stack');
                     $method->setAccessible(true);
@@ -2733,7 +2742,7 @@ class WPDMGR_Perf_Monitor {
             if (isset($wpdb->dbh)) {
                 $env_data[] = array(
                     'name' => 'Server Version',
-                    'value' => $wpdb->get_var('SELECT VERSION()'),
+                    'value' => $wpdb->get_var($wpdb->prepare('SELECT VERSION()')),
                     'category' => 'Database',
                     'help' => ''
                 );
@@ -2780,9 +2789,9 @@ class WPDMGR_Perf_Monitor {
                 );
 
                 // Database configuration
-                $innodb_buffer = $wpdb->get_var('SHOW VARIABLES LIKE "innodb_buffer_pool_size"');
-                if ($innodb_buffer) {
-                    $buffer_size = $wpdb->get_var('SELECT @@innodb_buffer_pool_size');
+                $innodb_buffer = $wpdb->get_var($wpdb->prepare('SHOW VARIABLES LIKE %s', 'innodb_buffer_pool_size'));
+            if ($innodb_buffer) {
+                $buffer_size = $wpdb->get_var($wpdb->prepare('SELECT @@innodb_buffer_pool_size'));
                     $env_data[] = array(
                         'name' => 'innodb_buffer_pool_size',
                         'value' => $buffer_size . ' (~' . round($buffer_size / 1024 / 1024 / 1024, 1) . ' GB)',
@@ -2791,7 +2800,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $key_buffer = $wpdb->get_var('SELECT @@key_buffer_size');
+                $key_buffer = $wpdb->get_var($wpdb->prepare('SELECT @@key_buffer_size'));
                 if ($key_buffer) {
                     $env_data[] = array(
                         'name' => 'key_buffer_size',
@@ -2801,7 +2810,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $max_packet = $wpdb->get_var('SELECT @@max_allowed_packet');
+                $max_packet = $wpdb->get_var($wpdb->prepare('SELECT @@max_allowed_packet'));
                 if ($max_packet) {
                     $env_data[] = array(
                         'name' => 'max_allowed_packet',
@@ -2811,7 +2820,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $max_connections = $wpdb->get_var('SELECT @@max_connections');
+                $max_connections = $wpdb->get_var($wpdb->prepare('SELECT @@max_connections'));
                 if ($max_connections) {
                     $env_data[] = array(
                         'name' => 'max_connections',

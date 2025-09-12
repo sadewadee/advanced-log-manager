@@ -3,7 +3,7 @@
  * Main plugin class - Service Container
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */
@@ -272,6 +272,11 @@ class WPDMGR_Plugin {
         }
     }
 
+    /**
+     * Toggle debug constant via AJAX
+     *
+     * @global array $_POST Contains the POST data including constant name and enabled status
+     */
     public function ajax_toggle_debug_constant() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -282,7 +287,7 @@ class WPDMGR_Plugin {
             wp_send_json_error(__('Missing constant parameter.', 'wp-debug-manager'));
         }
 
-
+        /** @var array $_POST */
         $raw_constant = sanitize_text_field( wp_unslash( $_POST['constant'] ) );
         $constant     = ( 'display_errors' === $raw_constant ) ? 'display_errors' : strtoupper( $raw_constant );
         $enabled      = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
@@ -304,7 +309,8 @@ class WPDMGR_Plugin {
                 'enabled' => $enabled,
                 'status' => $status,
                 'message' => sprintf(
-                    $enabled ? __('%s enabled.', 'wp-debug-manager') : __('%s disabled.', 'wp-debug-manager'),
+                    /* translators: %s: feature name */
+            $enabled ? __('%s enabled.', 'wp-debug-manager') : __('%s disabled.', 'wp-debug-manager'),
                     $constant
                 )
             ));
@@ -387,7 +393,8 @@ class WPDMGR_Plugin {
         $cleaned = $this->services['debug']->cleanup_old_query_logs();
 
         if ($cleaned >= 0) {
-            wp_send_json_success(sprintf(__('Cleaned up %d rotation/archived log files (query.log.1, query.log.2, etc.). Active query.log preserved.', 'wp-debug-manager'), $cleaned));
+            /* translators: %d: number of files cleaned */
+        wp_send_json_success(sprintf(__('Cleaned up %d rotation/archived log files (query.log.1, query.log.2, etc.). Active query.log preserved.', 'wp-debug-manager'), $cleaned));
         } else {
             wp_send_json_error(__('Failed to cleanup rotation/archived logs.', 'wp-debug-manager'));
         }
@@ -407,7 +414,8 @@ class WPDMGR_Plugin {
         }
 
         if ($cleaned >= 0) {
-            wp_send_json_success(sprintf(__('Cleaned up %d old debug log files.', 'wp-debug-manager'), $cleaned));
+            /* translators: %d: number of files cleaned */
+        wp_send_json_success(sprintf(__('Cleaned up %d old debug log files.', 'wp-debug-manager'), $cleaned));
         } else {
             wp_send_json_error(__('Failed to cleanup old debug logs.', 'wp-debug-manager'));
         }
@@ -426,7 +434,8 @@ class WPDMGR_Plugin {
         }
 
         if ($cleaned >= 0) {
-            wp_send_json_success(sprintf(__('Cleared %d old debug log files. Current active log preserved.', 'wp-debug-manager'), $cleaned));
+            /* translators: %d: number of files cleared */
+        wp_send_json_success(sprintf(__('Cleared %d old debug log files. Current active log preserved.', 'wp-debug-manager'), $cleaned));
         } else {
             wp_send_json_error(__('Failed to clear debug logs.', 'wp-debug-manager'));
         }
@@ -447,8 +456,10 @@ class WPDMGR_Plugin {
 
         if ($cleaned >= 0) {
             $message = $include_current ?
-                sprintf(__('Removed all %d log files.', 'wp-debug-manager'), $cleaned) :
-                sprintf(__('Cleaned up %d old log files.', 'wp-debug-manager'), $cleaned);
+                /* translators: %d: number of files removed */
+            sprintf(__('Removed all %d log files.', 'wp-debug-manager'), $cleaned) :
+            /* translators: %d: number of files cleaned */
+            sprintf(__('Cleaned up %d old log files.', 'wp-debug-manager'), $cleaned);
             wp_send_json_success($message);
         } else {
             wp_send_json_error(__('Failed to cleanup log files.', 'wp-debug-manager'));
@@ -470,8 +481,10 @@ class WPDMGR_Plugin {
 
         if ($cleaned >= 0) {
             $message = $keep_latest ?
-                sprintf(__('Cleaned up %d old rotation files. Latest backup (query.log.1) preserved.', 'wp-debug-manager'), $cleaned) :
-                sprintf(__('Cleaned up %d rotation files.', 'wp-debug-manager'), $cleaned);
+                /* translators: %d: number of files cleaned */
+            sprintf(__('Cleaned up %d old rotation files. Latest backup (query.log.1) preserved.', 'wp-debug-manager'), $cleaned) :
+            /* translators: %d: number of files cleaned */
+            sprintf(__('Cleaned up %d rotation files.', 'wp-debug-manager'), $cleaned);
             wp_send_json_success($message);
         } else {
             wp_send_json_error(__('Failed to cleanup rotation log files.', 'wp-debug-manager'));
@@ -631,6 +644,11 @@ class WPDMGR_Plugin {
         ));
     }
 
+    /**
+     * Save htaccess file via AJAX
+     *
+     * @global array $_POST Contains the POST data including content
+     */
     public function ajax_save_htaccess() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -642,6 +660,7 @@ class WPDMGR_Plugin {
         }
 
         // Sanitize the content
+        /** @var array $_POST */
         $content = wp_unslash($_POST['content']);
 
         // Remove all HTML tags and dangerous content
@@ -663,6 +682,11 @@ class WPDMGR_Plugin {
         }
     }
 
+    /**
+     * Restore htaccess file via AJAX
+     *
+     * @global array $_POST Contains the POST data including backup index
+     */
     public function ajax_restore_htaccess() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -673,6 +697,7 @@ class WPDMGR_Plugin {
             wp_send_json_error(__('Missing backup index parameter.', 'wp-debug-manager'));
         }
 
+        /** @var array $_POST */
         $backup_index = absint($_POST['backup_index']);
         $result = $this->services['htaccess']->restore_htaccess($backup_index);
 
@@ -683,6 +708,11 @@ class WPDMGR_Plugin {
         }
     }
 
+    /**
+     * Apply PHP preset via AJAX
+     *
+     * @global array $_POST Contains the POST data including preset name
+     */
     public function ajax_apply_php_preset() {
         check_ajax_referer('wpdmgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
@@ -693,6 +723,7 @@ class WPDMGR_Plugin {
             wp_send_json_error(__('Missing preset parameter.', 'wp-debug-manager'));
         }
 
+        /** @var array $_POST */
         $preset = sanitize_key($_POST['preset']);
         $allowed_presets = array('basic', 'medium', 'high');
         if (!in_array($preset, $allowed_presets)) {
@@ -722,6 +753,7 @@ class WPDMGR_Plugin {
         $test_result = $this->services['debug']->test_wp_config_transformer();
 
 
+        /** @var \ReflectionClass $reflection */
         $reflection = new \ReflectionClass($this->services['debug']);
         $method = $reflection->getMethod('get_custom_debug_log_path');
         $method->setAccessible(true);
@@ -762,6 +794,7 @@ class WPDMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
+            /** @var \ReflectionClass $reflection */
             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_enabled');
             $property->setAccessible(true);
@@ -769,6 +802,7 @@ class WPDMGR_Plugin {
 
 
             if ($enabled) {
+                /** @var \ReflectionMethod $init_method */
                 $init_method = $reflection->getMethod('init_hooks');
                 $init_method->setAccessible(true);
                 $init_method->invoke($this->services['smtp_logger']);
@@ -794,6 +828,7 @@ class WPDMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
+            /** @var \ReflectionClass $reflection */
             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_ip_address');
             $property->setAccessible(true);
@@ -842,7 +877,8 @@ class WPDMGR_Plugin {
         $cleaned = $this->services['smtp_logger']->cleanup_old_logs($keep_days);
 
         if ($cleaned >= 0) {
-            wp_send_json_success(sprintf(__('Cleaned up %d old SMTP log files.', 'wp-debug-manager'), $cleaned));
+            /* translators: %d: number of files cleaned */
+        wp_send_json_success(sprintf(__('Cleaned up %d old SMTP log files.', 'wp-debug-manager'), $cleaned));
         } else {
             wp_send_json_error(__('Failed to cleanup old SMTP logs.', 'wp-debug-manager'));
         }

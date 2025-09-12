@@ -4,7 +4,7 @@
  * Enhanced to properly hook into wp_mail() and capture comprehensive email data
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */

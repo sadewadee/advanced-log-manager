@@ -3,7 +3,7 @@
  * SMTP Logs Page Template
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */
@@ -18,18 +18,18 @@ $smtp_status = $smtp_service->get_logging_status();
 ?>
 
 <div class="wrap">
-    <h1><?php _e('SMTP Logs', 'wp-debug-manager'); ?></h1>
+    <h1><?php esc_html_e('SMTP Logs', 'wp-debug-manager'); ?></h1>
     <p class="description">
-        <?php _e('View email logs sent through WordPress. Enable logging to start recording email activity.', 'wp-debug-manager'); ?>
+        <?php esc_html_e('View email logs sent through WordPress. Enable logging to start recording email activity.', 'wp-debug-manager'); ?>
     </p>
 
     <?php if (!$smtp_status['enabled']): ?>
     <div class="notice notice-warning">
         <p>
-            <strong><?php _e('SMTP logging is not enabled!', 'wp-debug-manager'); ?></strong>
-            <?php _e('Email logs are not being recorded. ', 'wp-debug-manager'); ?>
+            <strong><?php esc_html_e('SMTP logging is not enabled!', 'wp-debug-manager'); ?></strong>
+            <?php esc_html_e('Email logs are not being recorded. ', 'wp-debug-manager'); ?>
             <button type="button" id="enable-smtp-logging" class="button button-primary">
-                <?php _e('Enable SMTP Logging', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Enable SMTP Logging', 'wp-debug-manager'); ?>
             </button>
         </p>
     </div>
@@ -39,19 +39,19 @@ $smtp_status = $smtp_service->get_logging_status();
         <div class="wpdmgr-logs-actions">
             <button type="button" id="refresh-smtp-logs" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-update"></span>
-                <?php _e('Refresh', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Refresh', 'wp-debug-manager'); ?>
             </button>
-            <button type="button" id="clear-smtp-logs" class="button" title="<?php _e('Clear current day logs', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <button type="button" id="clear-smtp-logs" class="button" title="<?php esc_attr_e('Clear current day logs', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-trash"></span>
-                <?php _e('Clear', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Clear', 'wp-debug-manager'); ?>
             </button>
-            <button type="button" id="cleanup-smtp-logs" class="button" title="<?php _e('Remove old log files', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <button type="button" id="cleanup-smtp-logs" class="button" title="<?php esc_attr_e('Remove old log files', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-admin-tools"></span>
-                <?php _e('Cleanup', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Cleanup', 'wp-debug-manager'); ?>
             </button>
             <button type="button" id="download-smtp-logs" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
                 <span class="dashicons dashicons-download"></span>
-                <?php _e('Download', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Download', 'wp-debug-manager'); ?>
             </button>
         </div>
 
@@ -59,12 +59,12 @@ $smtp_status = $smtp_service->get_logging_status();
             <?php if ($smtp_status['current_log_exists']): ?>
                 <span class="wpdmgr-log-size">
                     <span class="dashicons dashicons-media-text"></span>
-                    <?php _e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
+                    <?php esc_html_e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
                 </span>
             <?php else: ?>
                 <span class="wpdmgr-no-logs">
                     <span class="dashicons dashicons-info"></span>
-                    <?php _e('No log file for today', 'wp-debug-manager'); ?>
+                    <?php esc_html_e('No log file for today', 'wp-debug-manager'); ?>
                 </span>
             <?php endif; ?>
         </div>
@@ -72,9 +72,9 @@ $smtp_status = $smtp_service->get_logging_status();
 
     <div class="wpdmgr-logs-filters <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>">
         <div class="wpdmgr-filter-group">
-            <label for="smtp-date-filter"><?php _e('Date:', 'wp-debug-manager'); ?></label>
+            <label for="smtp-date-filter"><?php esc_html_e('Date:', 'wp-debug-manager'); ?></label>
             <select id="smtp-date-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <option value=""><?php _e('Today', 'wp-debug-manager'); ?></option>
+                <option value=""><?php esc_html_e('Today', 'wp-debug-manager'); ?></option>
                 <?php foreach ($smtp_status['available_files'] as $file): ?>
                 <option value="<?php echo esc_attr($file['date']); ?>">
                     <?php echo esc_html($file['formatted_date']); ?> (<?php echo esc_html($file['size_formatted']); ?>)
@@ -84,23 +84,23 @@ $smtp_status = $smtp_service->get_logging_status();
         </div>
 
         <div class="wpdmgr-filter-group">
-            <label for="smtp-status-filter"><?php _e('Status:', 'wp-debug-manager'); ?></label>
+            <label for="smtp-status-filter"><?php esc_html_e('Status:', 'wp-debug-manager'); ?></label>
             <select id="smtp-status-filter" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <option value=""><?php _e('All Status', 'wp-debug-manager'); ?></option>
-                <option value="sent"><?php _e('Sent', 'wp-debug-manager'); ?></option>
-                <option value="failed"><?php _e('Failed', 'wp-debug-manager'); ?></option>
-                <option value="queued"><?php _e('Queued', 'wp-debug-manager'); ?></option>
+                <option value=""><?php esc_html_e('All Status', 'wp-debug-manager'); ?></option>
+                <option value="sent"><?php esc_html_e('Sent', 'wp-debug-manager'); ?></option>
+                <option value="failed"><?php esc_html_e('Failed', 'wp-debug-manager'); ?></option>
+                <option value="queued"><?php esc_html_e('Queued', 'wp-debug-manager'); ?></option>
             </select>
         </div>
 
         <div class="wpdmgr-filter-group">
-            <label for="smtp-search"><?php _e('Search:', 'wp-debug-manager'); ?></label>
-            <input type="text" id="smtp-search" placeholder="<?php _e('Search sender, recipient, or subject...', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
+            <label for="smtp-search"><?php esc_html_e('Search:', 'wp-debug-manager'); ?></label>
+            <input type="text" id="smtp-search" placeholder="<?php esc_attr_e('Search sender, recipient, or subject...', 'wp-debug-manager'); ?>" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
         </div>
 
         <div class="wpdmgr-filter-group">
             <button type="button" id="clear-smtp-filters" class="button" <?php echo !$smtp_status['enabled'] ? 'disabled' : ''; ?>>
-                <?php _e('Clear Filters', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Clear Filters', 'wp-debug-manager'); ?>
             </button>
         </div>
     </div>
@@ -110,18 +110,18 @@ $smtp_status = $smtp_service->get_logging_status();
             <?php if (!$smtp_status['current_log_exists'] && !$smtp_status['enabled']): ?>
             <div class="wpdmgr-no-logs-message">
                 <div class="dashicons dashicons-info"></div>
-                <h3><?php _e('No SMTP Logs Found', 'wp-debug-manager'); ?></h3>
-                <p><?php _e('SMTP logging is not enabled. Email activity is not being recorded.', 'wp-debug-manager'); ?></p>
+                <h3><?php esc_html_e('No SMTP Logs Found', 'wp-debug-manager'); ?></h3>
+                <p><?php esc_html_e('SMTP logging is not enabled. Email activity is not being recorded.', 'wp-debug-manager'); ?></p>
                 <p>
                     <button type="button" id="enable-smtp-logging-2" class="button button-primary">
-                        <?php _e('Enable SMTP Logging', 'wp-debug-manager'); ?>
+                        <?php esc_html_e('Enable SMTP Logging', 'wp-debug-manager'); ?>
                     </button>
                 </p>
             </div>
             <?php else: ?>
             <div class="wpdmgr-logs-loading">
                 <div class="wpdmgr-spinner"></div>
-                <p><?php _e('Loading SMTP logs...', 'wp-debug-manager'); ?></p>
+                <p><?php esc_html_e('Loading SMTP logs...', 'wp-debug-manager'); ?></p>
             </div>
             <div id="mt-smtp-logs-content" style="display: none;"></div>
             <?php endif; ?>
@@ -133,9 +133,9 @@ $smtp_status = $smtp_service->get_logging_status();
 // Helper functions for formatting
 function formatSmtpStatus(status) {
     const statusMap = {
-        'sent': { class: 'success', text: '<?php _e('Sent', 'wp-debug-manager'); ?>' },
-        'failed': { class: 'error', text: '<?php _e('Failed', 'wp-debug-manager'); ?>' },
-        'queued': { class: 'warning', text: '<?php _e('Queued', 'wp-debug-manager'); ?>' }
+        'sent': { class: 'success', text: '<?php echo esc_js(__('Sent', 'wp-debug-manager')); ?>' },
+        'failed': { class: 'error', text: '<?php echo esc_js(__('Failed', 'wp-debug-manager')); ?>' },
+        'queued': { class: 'warning', text: '<?php echo esc_js(__('Queued', 'wp-debug-manager')); ?>' }
     };
 
     return statusMap[status] || { class: 'info', text: status };

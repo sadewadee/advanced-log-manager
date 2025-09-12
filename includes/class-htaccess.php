@@ -3,7 +3,7 @@
  * Htaccess Service - Safe .htaccess file editing with auto-backup
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */
@@ -348,6 +348,7 @@ class WPDMGR_Htaccess {
         if ($this->snippet_exists($current_content, $snippet_name)) {
             return array(
                 'success' => false,
+                /* translators: %s: snippet name */
                 'message' => sprintf(__('Snippet "%s" already exists in .htaccess file.', 'wp-debug-manager'), $snippet_name)
             );
         }
@@ -360,6 +361,7 @@ class WPDMGR_Htaccess {
         if ($this->save_htaccess($new_content)) {
             return array(
                 'success' => true,
+                /* translators: %s: snippet name */
                 'message' => sprintf(__('Snippet "%s" added successfully.', 'wp-debug-manager'), $snippet_name)
             );
         } else {
@@ -482,6 +484,7 @@ class WPDMGR_Htaccess {
         if (!$this->snippet_exists($current_content, $snippet_name)) {
             return array(
                 'success' => false,
+                /* translators: %s: snippet name */
                 'message' => sprintf(__('Snippet "%s" not found in .htaccess file.', 'wp-debug-manager'), $snippet_name)
             );
         }
@@ -493,6 +496,7 @@ class WPDMGR_Htaccess {
         if ($this->save_htaccess($new_content)) {
             return array(
                 'success' => true,
+                /* translators: %s: snippet name */
                 'message' => sprintf(__('Snippet "%s" removed successfully.', 'wp-debug-manager'), $snippet_name)
             );
         } else {

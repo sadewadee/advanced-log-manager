@@ -3,7 +3,7 @@
  * Main Admin Page Template
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  */
@@ -101,7 +101,7 @@ $setting_units = array(
                 <div class="wpdmgr-form-section">
                         <div class="wpdmgr-toggle-wrapper">
                             <input type="checkbox" id="debug-mode-toggle" <?php checked($debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo $debug_enabled ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr($debug_enabled ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         <label class="wpdmgr-toggle-label">
@@ -115,9 +115,9 @@ $setting_units = array(
                     <h3><?php esc_html_e('WP Debug Settings', 'wp-debug-manager'); ?></h3>
                     <p class="description"><?php esc_html_e('WordPress debug constants configuration', 'wp-debug-manager'); ?></p>
                     <div class="wpdmgr-toggle-group" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
-                        <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="wp-debug-log-toggle" <?php checked(defined('WP_DEBUG_LOG') && WP_DEBUG_LOG); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="wp-debug-log-toggle" class="wpdmgr-toggle-label">
@@ -125,9 +125,9 @@ $setting_units = array(
                                 <small class="description"><?php esc_html_e('Log errors to file', 'wp-debug-manager'); ?></small>
                             </label>
                         </div>
-                        <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="wp-debug-display-toggle" <?php checked(defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo (defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr((defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="wp-debug-display-toggle" class="wpdmgr-toggle-label">
@@ -135,9 +135,9 @@ $setting_units = array(
                                 <small class="description"><?php esc_html_e('Display errors on screen', 'wp-debug-manager'); ?></small>
                             </label>
                         </div>
-                        <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="script-debug-toggle" <?php checked(defined('SCRIPT_DEBUG') && SCRIPT_DEBUG); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="script-debug-toggle" class="wpdmgr-toggle-label">
@@ -147,7 +147,7 @@ $setting_units = array(
                         </div>
                         <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
                             <input type="checkbox" id="savequeries-toggle" <?php checked($savequeries); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo ($savequeries && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr(($savequeries && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="savequeries-toggle" class="wpdmgr-toggle-label">
@@ -157,7 +157,7 @@ $setting_units = array(
                         </div>
                         <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
                             <input type="checkbox" id="display-errors-toggle" <?php checked($display_errors_on); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo ($display_errors_on && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr(($display_errors_on && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="display-errors-toggle" class="wpdmgr-toggle-label">
@@ -181,7 +181,7 @@ $setting_units = array(
                     <div class="wpdmgr-toggle-group" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
                         <div class="wpdmgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
                             <input type="checkbox" id="smtp-logging-toggle" <?php checked($smtp_enabled); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo ($smtp_enabled && $debug_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr(($smtp_enabled && $debug_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="smtp-logging-toggle" class="wpdmgr-toggle-label">
@@ -193,9 +193,9 @@ $setting_units = array(
                         // Get IP address logging status
                         $ip_logging_enabled = \get_option('wpdmgr_smtp_log_ip_address', false);
                         ?>
-                        <div class="wpdmgr-toggle-wrapper <?php echo (!$debug_enabled || !$smtp_enabled) ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr((!$debug_enabled || !$smtp_enabled) ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="smtp-ip-logging-toggle" <?php checked($ip_logging_enabled); ?> <?php disabled(!$debug_enabled || !$smtp_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo ($ip_logging_enabled && $debug_enabled && $smtp_enabled) ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr(($ip_logging_enabled && $debug_enabled && $smtp_enabled) ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                             <label for="smtp-ip-logging-toggle" class="wpdmgr-toggle-label">
@@ -208,7 +208,7 @@ $setting_units = array(
 
                 <div class="wpdmgr-status-info">
                     <div class="wpdmgr-status-item">
-                        <span class="wpdmgr-status-indicator <?php echo $debug_enabled ? 'active' : 'inactive'; ?>"></span>
+                        <span class="wpdmgr-status-indicator <?php echo esc_attr($debug_enabled ? 'active' : 'inactive'); ?>"></span>
                         <span><?php esc_html_e('Status:', 'wp-debug-manager'); ?>
                             <?php echo $debug_enabled ? esc_html__('Debug Enabled', 'wp-debug-manager') : esc_html__('Debug Disabled', 'wp-debug-manager'); ?>
                         </span>
@@ -256,7 +256,9 @@ $setting_units = array(
                             <?php esc_html_e('Today:', 'wp-debug-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
                             <?php if (count($smtp_status['available_files']) > 0): ?>
                             <small style="margin-left: 5px; color: #007cba;">
-                                (<?php echo esc_html( sprintf( __('%d log files', 'wp-debug-manager'), count($smtp_status['available_files']) ) ); ?>)
+                                (<?php
+                /* translators: %d: number of log files */
+                echo esc_html( sprintf( __('%d log files', 'wp-debug-manager'), count($smtp_status['available_files']) ) ); ?>)
                             </small>
                             <?php endif; ?>
                         </span>
@@ -339,7 +341,7 @@ $setting_units = array(
                         <span><?php esc_html_e('Enable Performance Bar', 'wp-debug-manager'); ?></span>
                         <div class="wpdmgr-toggle-wrapper">
                             <input type="checkbox" id="perf-monitor-toggle" <?php checked($perf_monitor_enabled); ?>>
-                            <div class="wpdmgr-toggle <?php echo $perf_monitor_enabled ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr($perf_monitor_enabled ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         </div>
@@ -356,9 +358,9 @@ $setting_units = array(
                 <div class="wpdmgr-form-section">
                     <label class="wpdmgr-toggle-label">
                         <span><?php esc_html_e('Enable Real-time Hooks Monitoring', 'wp-debug-manager'); ?></span>
-                        <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="perf-realtime-toggle" <?php checked($perf_realtime_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="wpdmgr-toggle <?php echo $perf_realtime_enabled ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr($perf_realtime_enabled ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         </div>
@@ -371,9 +373,9 @@ $setting_units = array(
                 <div class="wpdmgr-form-section">
                     <label class="wpdmgr-toggle-label">
                         <span><?php esc_html_e('Enable Bootstrap Phases Snapshots', 'wp-debug-manager'); ?></span>
-                        <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
+                        <div class="wpdmgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
                             <input type="checkbox" id="perf-bootstrap-toggle" <?php checked($perf_bootstrap_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="wpdmgr-toggle <?php echo $perf_bootstrap_enabled ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr($perf_bootstrap_enabled ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         </div>
@@ -388,7 +390,7 @@ $setting_units = array(
                         <span><?php esc_html_e('Enable Domain-specific Panels', 'wp-debug-manager'); ?></span>
                         <div class="wpdmgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
                             <input type="checkbox" id="perf-domains-toggle" <?php checked($perf_domains_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="wpdmgr-toggle <?php echo $perf_domains_enabled ? 'active' : ''; ?>">
+                            <div class="wpdmgr-toggle <?php echo esc_attr($perf_domains_enabled ? 'active' : ''); ?>">
                                 <div class="wpdmgr-toggle-slider"></div>
                             </div>
                         </div>
@@ -439,7 +441,7 @@ $setting_units = array(
                     <div class="wpdmgr-backup-status">
                         <span class="dashicons dashicons-backup"></span>
                         <span><?php esc_html_e('Backups:', 'wp-debug-manager'); ?>
-                            <strong><?php echo count($htaccess_backups); ?>/3</strong> available
+                            <strong><?php echo esc_html(count($htaccess_backups)); ?>/3</strong> available
                         </span>
                     </div>
                     <?php if (!empty($htaccess_backups)): ?>

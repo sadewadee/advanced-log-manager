@@ -6,7 +6,7 @@
  * with safer implementation using WPConfigTransformer
  *
  * @package WP Debug Manager
- * @author WPDMGR Team
+ * @author Morden Team
  * @license GPL v3 or later
  * @link https://github.com/sadewadee/wp-debug-manager
  * @since 1.0.0
