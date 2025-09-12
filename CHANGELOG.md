@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated version to 1.2.27 with proper zip structure for WordPress installation
 - Git tag v1.2.27 created for release management
+- Created clean distribution zip (wp-debug-manager.zip) with only essential files
+- Removed development files (.trae, .vscode, Error folder) from distribution package
 
 ## [1.2.25] - 2025-09-13
 
