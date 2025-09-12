@@ -8,3 +8,5 @@ test-*.php
 *test.php
 /wp-content/
 .trae/
+*.sh
+.dist/
