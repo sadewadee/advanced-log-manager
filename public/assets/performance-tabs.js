@@ -4,7 +4,7 @@
  */
 
 // Universal Sortable Functionality
-var WPDMGR_Sortable = {
+var ALMGR_Sortable = {
     init: function() {
         this.bindSortableHeaders();
     },
@@ -14,13 +14,13 @@ var WPDMGR_Sortable = {
 
         sortableHeaders.forEach(function(header) {
             header.addEventListener('click', function() {
-                WPDMGR_Sortable.sortTable(this);
+                ALMGR_Sortable.sortTable(this);
             });
             // Keyboard support
             header.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    WPDMGR_Sortable.sortTable(this);
+                    ALMGR_Sortable.sortTable(this);
                 }
             });
 
@@ -65,10 +65,10 @@ var WPDMGR_Sortable = {
 
             if (!aCell || !bCell) return 0;
 
-            var aVal = WPDMGR_Sortable.getSortValue(aCell, column);
-            var bVal = WPDMGR_Sortable.getSortValue(bCell, column);
+            var aVal = ALMGR_Sortable.getSortValue(aCell, column);
+            var bVal = ALMGR_Sortable.getSortValue(bCell, column);
 
-            var result = WPDMGR_Sortable.compare(aVal, bVal, column);
+            var result = ALMGR_Sortable.compare(aVal, bVal, column);
             return isAscending ? result : -result;
         });
 
@@ -78,7 +78,7 @@ var WPDMGR_Sortable = {
         });
 
         // Update row numbers if they exist
-        WPDMGR_Sortable.updateRowNumbers(tbody);
+        ALMGR_Sortable.updateRowNumbers(tbody);
     },
 
     getSortValue: function(cell, column) {
@@ -147,7 +147,7 @@ var WPDMGR_Sortable = {
 };
 
 // Images Tab Functionality
-var WPDMGR_Images = {
+var ALMGR_Images = {
     init: function() {
         this.bindEvents();
         this.populateFilters();
@@ -158,11 +158,11 @@ var WPDMGR_Images = {
     },
 
     bindEvents: function() {
-        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
-        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
-        var hostScopeFilter = document.getElementById('wpdmgr-images-host-scope');
-        var sortSelect = document.getElementById('wpdmgr-images-sort');
-        var searchInput = document.getElementById('wpdmgr-images-search');
+        var sourceFilter = document.getElementById('almgr-images-source-filter');
+        var hostnameFilter = document.getElementById('almgr-images-hostname-filter');
+        var hostScopeFilter = document.getElementById('almgr-images-host-scope');
+        var sortSelect = document.getElementById('almgr-images-sort');
+        var searchInput = document.getElementById('almgr-images-search');
 
         if (sourceFilter) {
             sourceFilter.addEventListener('change', this.resetAndFilter.bind(this));
@@ -188,7 +188,7 @@ var WPDMGR_Images = {
     },
 
     getPageSize: function() {
-        var btn = document.getElementById('wpdmgr-images-load-more');
+        var btn = document.getElementById('almgr-images-load-more');
         var size = 20;
         if (btn && btn.dataset.pageSize) {
             var parsed = parseInt(btn.dataset.pageSize, 10);
@@ -199,7 +199,7 @@ var WPDMGR_Images = {
 
     bindLoadMore: function() {
         var self = this;
-        var btn = document.getElementById('wpdmgr-images-load-more');
+        var btn = document.getElementById('almgr-images-load-more');
         if (!btn) return;
         btn.style.display = 'none';
         btn.addEventListener('click', function() {
@@ -209,7 +209,7 @@ var WPDMGR_Images = {
     },
 
     populateFilters: function() {
-        var table = document.querySelector('.wpdmgr-images-table tbody');
+        var table = document.querySelector('.almgr-images-table tbody');
         if (!table) return;
 
         var sources = new Set();
@@ -224,7 +224,7 @@ var WPDMGR_Images = {
             if (hostname) hostnames.add(hostname);
         });
 
-        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
+        var sourceFilter = document.getElementById('almgr-images-source-filter');
         if (sourceFilter) {
             sources.forEach(function(source) {
                 var option = document.createElement('option');
@@ -234,7 +234,7 @@ var WPDMGR_Images = {
             });
         }
 
-        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
+        var hostnameFilter = document.getElementById('almgr-images-hostname-filter');
         if (hostnameFilter) {
             hostnames.forEach(function(hostname) {
                 var option = document.createElement('option');
@@ -246,12 +246,12 @@ var WPDMGR_Images = {
     },
 
     filterImages: function() {
-        var sourceFilter = document.getElementById('wpdmgr-images-source-filter');
-        var hostnameFilter = document.getElementById('wpdmgr-images-hostname-filter');
-        var hostScopeFilter = document.getElementById('wpdmgr-images-host-scope');
-        var searchInput = document.getElementById('wpdmgr-images-search');
-        var table = document.querySelector('.wpdmgr-images-table tbody');
-        var loadMoreBtn = document.getElementById('wpdmgr-images-load-more');
+        var sourceFilter = document.getElementById('almgr-images-source-filter');
+        var hostnameFilter = document.getElementById('almgr-images-hostname-filter');
+        var hostScopeFilter = document.getElementById('almgr-images-host-scope');
+        var searchInput = document.getElementById('almgr-images-search');
+        var table = document.querySelector('.almgr-images-table tbody');
+        var loadMoreBtn = document.getElementById('almgr-images-load-more');
 
         if (!table) return;
 
@@ -280,7 +280,7 @@ var WPDMGR_Images = {
 
             if (match) {
                 matchedCount++;
-                if (visibleCount < WPDMGR_Images.visibleLimit) {
+                if (visibleCount < ALMGR_Images.visibleLimit) {
                     row.style.display = '';
                     visibleCount++;
                     var numberCell = row.querySelector('.query-number');
@@ -305,8 +305,8 @@ var WPDMGR_Images = {
     },
 
     sortImages: function() {
-        var sortSelect = document.getElementById('wpdmgr-images-sort');
-        var table = document.querySelector('.wpdmgr-images-table tbody');
+        var sortSelect = document.getElementById('almgr-images-sort');
+        var table = document.querySelector('.almgr-images-table tbody');
 
         if (!table || !sortSelect) return;
 
@@ -339,7 +339,7 @@ var WPDMGR_Images = {
     },
 
     updateRowNumbers: function() {
-        var table = document.querySelector('.wpdmgr-images-table tbody');
+        var table = document.querySelector('.almgr-images-table tbody');
         if (!table) return;
         var visibleRows = table.querySelectorAll('tr:not([style*="display: none"])');
         visibleRows.forEach(function(row, index) {
@@ -361,16 +361,16 @@ var WPDMGR_Images = {
 };
 
 // Hooks Tab Functionality
-var WPDMGR_Hooks = {
+var ALMGR_Hooks = {
     init: function() {
         this.bindEvents();
     },
 
     bindEvents: function() {
-        var groupFilter = document.getElementById('wpdmgr-hooks-group-filter');
-        var sortSelect = document.getElementById('wpdmgr-hooks-sort');
-        var searchInput = document.getElementById('wpdmgr-hooks-search');
-        var minPriority = document.getElementById('wpdmgr-hooks-min-priority');
+        var groupFilter = document.getElementById('almgr-hooks-group-filter');
+        var sortSelect = document.getElementById('almgr-hooks-sort');
+        var searchInput = document.getElementById('almgr-hooks-search');
+        var minPriority = document.getElementById('almgr-hooks-min-priority');
 
         if (groupFilter) {
             groupFilter.addEventListener('change', this.filterHooks.bind(this));
@@ -387,10 +387,10 @@ var WPDMGR_Hooks = {
     },
 
     filterHooks: function() {
-        var groupFilter = document.getElementById('wpdmgr-hooks-group-filter');
-        var table = document.querySelector('.wpdmgr-hooks-table tbody');
-        var searchInput = document.getElementById('wpdmgr-hooks-search');
-        var minPriority = document.getElementById('wpdmgr-hooks-min-priority');
+        var groupFilter = document.getElementById('almgr-hooks-group-filter');
+        var table = document.querySelector('.almgr-hooks-table tbody');
+        var searchInput = document.getElementById('almgr-hooks-search');
+        var minPriority = document.getElementById('almgr-hooks-min-priority');
 
         if (!table) return;
 
@@ -433,8 +433,8 @@ var WPDMGR_Hooks = {
     },
 
     sortHooks: function() {
-        var sortSelect = document.getElementById('wpdmgr-hooks-sort');
-        var table = document.querySelector('.wpdmgr-hooks-table tbody');
+        var sortSelect = document.getElementById('almgr-hooks-sort');
+        var table = document.querySelector('.almgr-hooks-table tbody');
 
         if (!table || !sortSelect) return;
 
@@ -463,7 +463,7 @@ var WPDMGR_Hooks = {
     },
 
     updateRowNumbers: function() {
-        var table = document.querySelector('.wpdmgr-hooks-table tbody');
+        var table = document.querySelector('.almgr-hooks-table tbody');
         if (!table) return;
 
         var visibleRows = table.querySelectorAll('tr:not([style*="display: none"])');
@@ -486,26 +486,26 @@ var WPDMGR_Hooks = {
 };
 
 // Queries Tab Functionality
-var WPDMGR_Queries = {
+var ALMGR_Queries = {
     init: function() {
         this.bindEvents();
         this.filterRows();
     },
     bindEvents: function() {
-        var typeFilter = document.getElementById('wpdmgr-queries-type-filter');
-        var minTime = document.getElementById('wpdmgr-queries-min-time');
-        var searchInput = document.getElementById('wpdmgr-queries-search');
+        var typeFilter = document.getElementById('almgr-queries-type-filter');
+        var minTime = document.getElementById('almgr-queries-min-time');
+        var searchInput = document.getElementById('almgr-queries-search');
         var self = this;
         if (typeFilter) typeFilter.addEventListener('change', function(){ self.filterRows(); });
         if (minTime) minTime.addEventListener('input', this.debounce(function(){ self.filterRows(); }, 200));
         if (searchInput) searchInput.addEventListener('input', this.debounce(function(){ self.filterRows(); }, 200));
     },
     filterRows: function() {
-        var table = document.querySelector('.wpdmgr-queries-table tbody');
+        var table = document.querySelector('.almgr-queries-table tbody');
         if (!table) return;
-        var typeFilter = document.getElementById('wpdmgr-queries-type-filter');
-        var minTime = document.getElementById('wpdmgr-queries-min-time');
-        var searchInput = document.getElementById('wpdmgr-queries-search');
+        var typeFilter = document.getElementById('almgr-queries-type-filter');
+        var minTime = document.getElementById('almgr-queries-min-time');
+        var searchInput = document.getElementById('almgr-queries-search');
         var t = typeFilter ? typeFilter.value : '';
         var mt = minTime ? parseFloat(minTime.value) : NaN;
         var s = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -533,13 +533,13 @@ var WPDMGR_Queries = {
 };
 
 // Scripts Tab Functionality
-var WPDMGR_Scripts = {
+var ALMGR_Scripts = {
     init: function() { this.bindEvents(); this.filterRows(); },
     bindEvents: function() {
-        var p = document.getElementById('wpdmgr-scripts-position-filter');
-        var h = document.getElementById('wpdmgr-scripts-hostname-filter');
-        var c = document.getElementById('wpdmgr-scripts-component-filter');
-        var s = document.getElementById('wpdmgr-scripts-search');
+        var p = document.getElementById('almgr-scripts-position-filter');
+        var h = document.getElementById('almgr-scripts-hostname-filter');
+        var c = document.getElementById('almgr-scripts-component-filter');
+        var s = document.getElementById('almgr-scripts-search');
         var self = this;
         if (p) p.addEventListener('change', function(){ self.filterRows(); });
         if (h) h.addEventListener('change', function(){ self.filterRows(); });
@@ -547,12 +547,12 @@ var WPDMGR_Scripts = {
         if (s) s.addEventListener('input', this.debounce(function(){ self.filterRows(); }, 200));
     },
     filterRows: function() {
-        var table = document.querySelector('.wpdmgr-scripts-table tbody');
+        var table = document.querySelector('.almgr-scripts-table tbody');
         if (!table) return;
-        var p = document.getElementById('wpdmgr-scripts-position-filter');
-        var h = document.getElementById('wpdmgr-scripts-hostname-filter');
-        var c = document.getElementById('wpdmgr-scripts-component-filter');
-        var s = document.getElementById('wpdmgr-scripts-search');
+        var p = document.getElementById('almgr-scripts-position-filter');
+        var h = document.getElementById('almgr-scripts-hostname-filter');
+        var c = document.getElementById('almgr-scripts-component-filter');
+        var s = document.getElementById('almgr-scripts-search');
         var pv = p ? p.value : '';
         var hv = h ? h.value : '';
         var cv = c ? c.value : '';
@@ -582,13 +582,13 @@ var WPDMGR_Scripts = {
 };
 
 // Styles Tab Functionality
-var WPDMGR_Styles = {
+var ALMGR_Styles = {
     init: function() { this.bindEvents(); this.filterRows(); },
     bindEvents: function() {
-        var p = document.getElementById('wpdmgr-styles-position-filter');
-        var h = document.getElementById('wpdmgr-styles-hostname-filter');
-        var c = document.getElementById('wpdmgr-styles-component-filter');
-        var s = document.getElementById('wpdmgr-styles-search');
+        var p = document.getElementById('almgr-styles-position-filter');
+        var h = document.getElementById('almgr-styles-hostname-filter');
+        var c = document.getElementById('almgr-styles-component-filter');
+        var s = document.getElementById('almgr-styles-search');
         var self = this;
         if (p) p.addEventListener('change', function(){ self.filterRows(); });
         if (h) h.addEventListener('change', function(){ self.filterRows(); });
@@ -596,12 +596,12 @@ var WPDMGR_Styles = {
         if (s) s.addEventListener('input', this.debounce(function(){ self.filterRows(); }, 200));
     },
     filterRows: function() {
-        var table = document.querySelector('.wpdmgr-styles-table tbody');
+        var table = document.querySelector('.almgr-styles-table tbody');
         if (!table) return;
-        var p = document.getElementById('wpdmgr-styles-position-filter');
-        var h = document.getElementById('wpdmgr-styles-hostname-filter');
-        var c = document.getElementById('wpdmgr-styles-component-filter');
-        var s = document.getElementById('wpdmgr-styles-search');
+        var p = document.getElementById('almgr-styles-position-filter');
+        var h = document.getElementById('almgr-styles-hostname-filter');
+        var c = document.getElementById('almgr-styles-component-filter');
+        var s = document.getElementById('almgr-styles-search');
         var pv = p ? p.value : '';
         var hv = h ? h.value : '';
         var cv = c ? c.value : '';
@@ -632,27 +632,27 @@ var WPDMGR_Styles = {
 // Auto-initialize when performance monitor is shown
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize universal sortable functionality
-    WPDMGR_Sortable.init();
+    ALMGR_Sortable.init();
 
     var checkForTabs = setInterval(function() {
-        var hasAnyTable = document.querySelector('.query-log-table, .wpdmgr-images-table, .wpdmgr-hooks-table, .wpdmgr-queries-table, .wpdmgr-scripts-table, .wpdmgr-styles-table');
+        var hasAnyTable = document.querySelector('.query-log-table, .almgr-images-table, .almgr-hooks-table, .almgr-queries-table, .almgr-scripts-table, .almgr-styles-table');
         if (hasAnyTable) {
-            WPDMGR_Sortable.init();
+            ALMGR_Sortable.init();
 
-            if (document.querySelector('.wpdmgr-images-table')) {
-                WPDMGR_Images.init();
+            if (document.querySelector('.almgr-images-table')) {
+                ALMGR_Images.init();
             }
-            if (document.querySelector('.wpdmgr-hooks-table')) {
-                WPDMGR_Hooks.init();
+            if (document.querySelector('.almgr-hooks-table')) {
+                ALMGR_Hooks.init();
             }
-            if (document.querySelector('.wpdmgr-queries-table')) {
-                WPDMGR_Queries.init();
+            if (document.querySelector('.almgr-queries-table')) {
+                ALMGR_Queries.init();
             }
-            if (document.querySelector('.wpdmgr-scripts-table')) {
-                WPDMGR_Scripts.init();
+            if (document.querySelector('.almgr-scripts-table')) {
+                ALMGR_Scripts.init();
             }
-            if (document.querySelector('.wpdmgr-styles-table')) {
-                WPDMGR_Styles.init();
+            if (document.querySelector('.almgr-styles-table')) {
+                ALMGR_Styles.init();
             }
 
             clearInterval(checkForTabs);
@@ -665,12 +665,12 @@ if (typeof window.mtPerformanceBar !== 'undefined') {
     window.mtPerformanceBar.toggle = function() {
         originalToggle.call(this);
         setTimeout(function() {
-            WPDMGR_Sortable.init();
-            if (document.querySelector('.wpdmgr-images-table')) WPDMGR_Images.init();
-            if (document.querySelector('.wpdmgr-hooks-table')) WPDMGR_Hooks.init();
-            if (document.querySelector('.wpdmgr-queries-table')) WPDMGR_Queries.init();
-            if (document.querySelector('.wpdmgr-scripts-table')) WPDMGR_Scripts.init();
-            if (document.querySelector('.wpdmgr-styles-table')) WPDMGR_Styles.init();
+            ALMGR_Sortable.init();
+            if (document.querySelector('.almgr-images-table')) ALMGR_Images.init();
+            if (document.querySelector('.almgr-hooks-table')) ALMGR_Hooks.init();
+            if (document.querySelector('.almgr-queries-table')) ALMGR_Queries.init();
+            if (document.querySelector('.almgr-scripts-table')) ALMGR_Scripts.init();
+            if (document.querySelector('.almgr-styles-table')) ALMGR_Styles.init();
         }, 200);
     };
 }

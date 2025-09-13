@@ -2,17 +2,17 @@
 /**
  * Main plugin class - Service Container
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class WPDMGR_Plugin {
+class ALMGR_Plugin {
     private static $instance = null;
     private $services = array();
 
@@ -38,48 +38,48 @@ class WPDMGR_Plugin {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_scripts'));
 
         // AJAX handlers
-        add_action('wp_ajax_wpdmgr_toggle_debug', array($this, 'ajax_toggle_debug'));
-        add_action('wp_ajax_wpdmgr_toggle_debug_constant', array($this, 'ajax_toggle_debug_constant'));
-        add_action('wp_ajax_wpdmgr_clear_debug_log', array($this, 'ajax_clear_debug_log'));
-        add_action('wp_ajax_wpdmgr_get_debug_log', array($this, 'ajax_get_debug_log'));
-        add_action('wp_ajax_wpdmgr_get_query_logs', array($this, 'ajax_get_query_logs'));
-        add_action('wp_ajax_wpdmgr_clear_query_log', array($this, 'ajax_clear_query_log'));
-        add_action('wp_ajax_wpdmgr_clear_all_query_logs', array($this, 'ajax_clear_all_query_logs'));
-        add_action('wp_ajax_wpdmgr_cleanup_query_logs', array($this, 'ajax_cleanup_query_logs'));
-        add_action('wp_ajax_wpdmgr_cleanup_debug_logs', array($this, 'ajax_cleanup_debug_logs'));
-        add_action('wp_ajax_wpdmgr_clear_all_debug_logs', array($this, 'ajax_clear_all_debug_logs'));
-        add_action('wp_ajax_wpdmgr_cleanup_all_logs', array($this, 'ajax_cleanup_all_logs'));
-        add_action('wp_ajax_wpdmgr_cleanup_query_rotation_logs', array($this, 'ajax_cleanup_query_rotation_logs'));
-        add_action('wp_ajax_wpdmgr_get_log_info', array($this, 'ajax_get_log_info'));
-        add_action('wp_ajax_wpdmgr_download_query_logs', array($this, 'ajax_download_query_logs'));
-        add_action('wp_ajax_wpdmgr_toggle_perf_monitor', array($this, 'ajax_toggle_perf_monitor'));
+        add_action('wp_ajax_almgr_toggle_debug', array($this, 'ajax_toggle_debug'));
+        add_action('wp_ajax_almgr_toggle_debug_constant', array($this, 'ajax_toggle_debug_constant'));
+        add_action('wp_ajax_almgr_clear_debug_log', array($this, 'ajax_clear_debug_log'));
+        add_action('wp_ajax_almgr_get_debug_log', array($this, 'ajax_get_debug_log'));
+        add_action('wp_ajax_almgr_get_query_logs', array($this, 'ajax_get_query_logs'));
+        add_action('wp_ajax_almgr_clear_query_log', array($this, 'ajax_clear_query_log'));
+        add_action('wp_ajax_almgr_clear_all_query_logs', array($this, 'ajax_clear_all_query_logs'));
+        add_action('wp_ajax_almgr_cleanup_query_logs', array($this, 'ajax_cleanup_query_logs'));
+        add_action('wp_ajax_almgr_cleanup_debug_logs', array($this, 'ajax_cleanup_debug_logs'));
+        add_action('wp_ajax_almgr_clear_all_debug_logs', array($this, 'ajax_clear_all_debug_logs'));
+        add_action('wp_ajax_almgr_cleanup_all_logs', array($this, 'ajax_cleanup_all_logs'));
+        add_action('wp_ajax_almgr_cleanup_query_rotation_logs', array($this, 'ajax_cleanup_query_rotation_logs'));
+        add_action('wp_ajax_almgr_get_log_info', array($this, 'ajax_get_log_info'));
+        add_action('wp_ajax_almgr_download_query_logs', array($this, 'ajax_download_query_logs'));
+        add_action('wp_ajax_almgr_toggle_perf_monitor', array($this, 'ajax_toggle_perf_monitor'));
         // New granular performance feature toggles
-        add_action('wp_ajax_wpdmgr_toggle_perf_realtime', array($this, 'ajax_toggle_perf_realtime'));
-        add_action('wp_ajax_wpdmgr_toggle_perf_bootstrap', array($this, 'ajax_toggle_perf_bootstrap'));
-        add_action('wp_ajax_wpdmgr_toggle_perf_domains', array($this, 'ajax_toggle_perf_domains'));
-        add_action('wp_ajax_wpdmgr_save_htaccess', array($this, 'ajax_save_htaccess'));
-        add_action('wp_ajax_wpdmgr_restore_htaccess', array($this, 'ajax_restore_htaccess'));
-        add_action('wp_ajax_wpdmgr_apply_php_preset', array($this, 'ajax_apply_php_preset'));
-        add_action('wp_ajax_wpdmgr_test_debug_transformer', array($this, 'ajax_test_debug_transformer'));
-        add_action('wp_ajax_wpdmgr_toggle_smtp_logging', array($this, 'ajax_toggle_smtp_logging'));
-        add_action('wp_ajax_wpdmgr_toggle_smtp_ip_logging', array($this, 'ajax_toggle_smtp_ip_logging'));
-        add_action('wp_ajax_wpdmgr_get_smtp_logs', array($this, 'ajax_get_smtp_logs'));
-        add_action('wp_ajax_wpdmgr_clear_smtp_logs', array($this, 'ajax_clear_smtp_logs'));
-        add_action('wp_ajax_wpdmgr_cleanup_smtp_logs', array($this, 'ajax_cleanup_smtp_logs'));
-        add_action('wp_ajax_wpdmgr_download_smtp_logs', array($this, 'ajax_download_smtp_logs'));
+        add_action('wp_ajax_almgr_toggle_perf_realtime', array($this, 'ajax_toggle_perf_realtime'));
+        add_action('wp_ajax_almgr_toggle_perf_bootstrap', array($this, 'ajax_toggle_perf_bootstrap'));
+        add_action('wp_ajax_almgr_toggle_perf_domains', array($this, 'ajax_toggle_perf_domains'));
+        add_action('wp_ajax_almgr_save_htaccess', array($this, 'ajax_save_htaccess'));
+        add_action('wp_ajax_almgr_restore_htaccess', array($this, 'ajax_restore_htaccess'));
+        add_action('wp_ajax_almgr_apply_php_preset', array($this, 'ajax_apply_php_preset'));
+        add_action('wp_ajax_almgr_test_debug_transformer', array($this, 'ajax_test_debug_transformer'));
+        add_action('wp_ajax_almgr_toggle_smtp_logging', array($this, 'ajax_toggle_smtp_logging'));
+        add_action('wp_ajax_almgr_toggle_smtp_ip_logging', array($this, 'ajax_toggle_smtp_ip_logging'));
+        add_action('wp_ajax_almgr_get_smtp_logs', array($this, 'ajax_get_smtp_logs'));
+        add_action('wp_ajax_almgr_clear_smtp_logs', array($this, 'ajax_clear_smtp_logs'));
+        add_action('wp_ajax_almgr_cleanup_smtp_logs', array($this, 'ajax_cleanup_smtp_logs'));
+        add_action('wp_ajax_almgr_download_smtp_logs', array($this, 'ajax_download_smtp_logs'));
 
         // Scheduled tasks
         add_action('init', array($this, 'schedule_log_cleanup'));
-        add_action('wpdmgr_daily_log_cleanup', array($this, 'daily_log_cleanup'));
+        add_action('almgr_daily_log_cleanup', array($this, 'daily_log_cleanup'));
     }
 
     private function init_services() {
-        $this->services['debug'] = new WPDMGR_Debug();
-        $this->services['perf_monitor'] = new WPDMGR_Perf_Monitor();
-        $this->services['htaccess'] = new WPDMGR_Htaccess();
-        $this->services['php_config'] = new WPDMGR_PHP_Config();
-        $this->services['file_manager'] = new WPDMGR_File_Manager();
-        $this->services['smtp_logger'] = new WPDMGR_SMTP_Logger();
+        $this->services['debug'] = new ALMGR_Debug();
+        $this->services['perf_monitor'] = new ALMGR_Perf_Monitor();
+        $this->services['htaccess'] = new ALMGR_Htaccess();
+        $this->services['php_config'] = new ALMGR_PHP_Config();
+        $this->services['file_manager'] = new ALMGR_File_Manager();
+        $this->services['smtp_logger'] = new ALMGR_SMTP_Logger();
     }
 
     public function get_service($name) {
@@ -88,10 +88,10 @@ class WPDMGR_Plugin {
 
     public function add_admin_menu() {
         add_management_page(
-            __('WP Debug Manager', 'wp-debug-manager'),
-            __('WP Debug Manager', 'wp-debug-manager'),
+            __('Advanced Log Manager', 'advanced-log-manager'),
+            __('Advanced Log Manager', 'advanced-log-manager'),
             'manage_options',
-            'wpdmgr',
+            'almgr',
             array($this, 'render_admin_page')
         );
 
@@ -99,87 +99,87 @@ class WPDMGR_Plugin {
         if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             add_submenu_page(
                 'tools.php',
-                __('All Log Activity', 'wp-debug-manager'),
-                __('All Log Activity', 'wp-debug-manager'),
+                __('All Log Activity', 'advanced-log-manager'),
+                __('All Log Activity', 'advanced-log-manager'),
                 'manage_options',
-                'wpdmgr-all-logs-activity',
+                'almgr-all-logs-activity',
                 array($this, 'render_all_logs_activity_page')
             );
         }
 
         // add_submenu_page(
         //     'tools.php',
-        //     __('Debug Logs', 'wp-debug-manager'),
-        //     __('Debug Logs', 'wp-debug-manager'),
+        //     __('Debug Logs', 'advanced-log-manager'),
+        //     __('Debug Logs', 'advanced-log-manager'),
         //     'manage_options',
-        //     'wpdmgr-logs',
+        //     'almgr-logs',
         //     array($this, 'render_logs_page')
         // );
 
         // add_submenu_page(
         //     'tools.php',
-        //     __('Query Logs', 'wp-debug-manager'),
-        //     __('Query Logs', 'wp-debug-manager'),
+        //     __('Query Logs', 'advanced-log-manager'),
+        //     __('Query Logs', 'advanced-log-manager'),
         //     'manage_options',
-        //     'wpdmgr-query-logs',
+        //     'almgr-query-logs',
         //     array($this, 'render_query_logs_page')
         // );
 
         // add_submenu_page(
         //     'tools.php',
-        //     __('SMTP Logs', 'wp-debug-manager'),
-        //     __('SMTP Logs', 'wp-debug-manager'),
+        //     __('SMTP Logs', 'advanced-log-manager'),
+        //     __('SMTP Logs', 'advanced-log-manager'),
         //     'manage_options',
-        //     'wpdmgr-smtp-logs',
+        //     'almgr-smtp-logs',
         //     array($this, 'render_smtp_logs_page')
         // );
     }
 
     public function enqueue_admin_scripts($hook) {
-        if (!in_array($hook, array('tools_page_wpdmgr', 'tools_page_wpdmgr-all-logs-activity'))) {
+        if (!in_array($hook, array('tools_page_almgr', 'tools_page_almgr-all-logs-activity'))) {
             return;
         }
 
         wp_enqueue_style(
-            'wpdmgr-admin',
-            WPDMGR_PLUGIN_URL . 'admin/assets/admin.css',
+            'almgr-admin',
+            ALMGR_PLUGIN_URL . 'admin/assets/admin.css',
             array(),
-            WPDMGR_VERSION
+            ALMGR_VERSION
         );
 
-        if ($hook === 'tools_page_wpdmgr-all-logs-activity') {
+        if ($hook === 'tools_page_almgr-all-logs-activity') {
             wp_enqueue_style(
-                'wpdmgr-query-logs',
-                WPDMGR_PLUGIN_URL . 'admin/assets/css/query-logs.css',
+                'almgr-query-logs',
+                ALMGR_PLUGIN_URL . 'admin/assets/css/query-logs.css',
                 array(),
-                WPDMGR_VERSION
+                ALMGR_VERSION
             );
         }
 
         wp_enqueue_script(
-            'wpdmgr-admin',
-            WPDMGR_PLUGIN_URL . 'admin/assets/admin.js',
+            'almgr-admin',
+            ALMGR_PLUGIN_URL . 'admin/assets/admin.js',
             array('jquery'),
-            WPDMGR_VERSION,
+            ALMGR_VERSION,
             false
         );
 
-        wp_localize_script('wpdmgr-admin', 'wpdmgrToolkit', array(
+        wp_localize_script('almgr-admin', 'almgrToolkit', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wpdmgr_action'),
+            'nonce' => wp_create_nonce('almgr_action'),
             'strings' => array(
-                'confirm_clear_logs' => __('Are you sure you want to clear all debug logs?', 'wp-debug-manager'),
-                'confirm_restore_htaccess' => __('Are you sure you want to restore this backup?', 'wp-debug-manager'),
-                'confirm_enable_perf' => __('Enabling the Performance Bar may slightly impact page load while collecting metrics. Continue?', 'wp-debug-manager'),
-                'confirm_disable_perf' => __('Disabling the Performance Bar will hide metrics and stop data collection. Continue?', 'wp-debug-manager'),
-                'error_occurred' => __('An error occurred. Please try again.', 'wp-debug-manager'),
-                'success' => __('Operation completed successfully.', 'wp-debug-manager'),
+                'confirm_clear_logs' => __('Are you sure you want to clear all debug logs?', 'advanced-log-manager'),
+                'confirm_restore_htaccess' => __('Are you sure you want to restore this backup?', 'advanced-log-manager'),
+                'confirm_enable_perf' => __('Enabling the Performance Bar may slightly impact page load while collecting metrics. Continue?', 'advanced-log-manager'),
+                'confirm_disable_perf' => __('Disabling the Performance Bar will hide metrics and stop data collection. Continue?', 'advanced-log-manager'),
+                'error_occurred' => __('An error occurred. Please try again.', 'advanced-log-manager'),
+                'success' => __('Operation completed successfully.', 'advanced-log-manager'),
             )
         ));
     }
 
     public function enqueue_frontend_scripts() {
-        $enabled = get_option('wpdmgr_perf_monitor_enabled') &&
+        $enabled = get_option('almgr_perf_monitor_enabled') &&
                    is_user_logged_in() &&
                    current_user_can('manage_options');
 
@@ -189,28 +189,28 @@ class WPDMGR_Plugin {
 
         if (function_exists('wp_enqueue_style')) {
             wp_enqueue_style(
-                'wpdmgr-performance-bar',
-                WPDMGR_PLUGIN_URL . 'public/assets/performance-bar.css',
+                'almgr-performance-bar',
+                ALMGR_PLUGIN_URL . 'public/assets/performance-bar.css',
                 array(),
-                WPDMGR_VERSION
+                ALMGR_VERSION
             );
         }
 
         if (function_exists('wp_enqueue_script')) {
             wp_enqueue_script(
-                'wpdmgr-performance-bar',
-                WPDMGR_PLUGIN_URL . 'public/assets/performance-bar.js',
+                'almgr-performance-bar',
+                ALMGR_PLUGIN_URL . 'public/assets/performance-bar.js',
                 array(),
-                WPDMGR_VERSION,
+                ALMGR_VERSION,
                 true
             );
 
             // Enqueue performance tabs for filtering, sorting, and search functionality
             wp_enqueue_script(
-                'wpdmgr-performance-tabs',
-                WPDMGR_PLUGIN_URL . 'public/assets/performance-tabs.js',
-                array('wpdmgr-performance-bar'),
-                WPDMGR_VERSION,
+                'almgr-performance-tabs',
+                ALMGR_PLUGIN_URL . 'public/assets/performance-tabs.js',
+                array('almgr-performance-bar'),
+                ALMGR_VERSION,
                 true
             );
         }
@@ -220,55 +220,55 @@ class WPDMGR_Plugin {
      * Render main admin page
      */
     public function render_admin_page() {
-        include WPDMGR_PLUGIN_DIR . 'admin/views/page-toolkit.php';
+        include ALMGR_PLUGIN_DIR . 'admin/views/page-toolkit.php';
     }
 
     /**
      * Render logs page
      */
     public function render_logs_page() {
-        include WPDMGR_PLUGIN_DIR . 'admin/views/page-logs.php';
+        include ALMGR_PLUGIN_DIR . 'admin/views/page-logs.php';
     }
 
     /**
      * Render query logs page
      */
     public function render_query_logs_page() {
-        include WPDMGR_PLUGIN_DIR . 'admin/views/page-query-logs.php';
+        include ALMGR_PLUGIN_DIR . 'admin/views/page-query-logs.php';
     }
 
     /**
      * Render SMTP logs page
      */
     public function render_smtp_logs_page() {
-        include WPDMGR_PLUGIN_DIR . 'admin/views/page-smtp-logs.php';
+        include ALMGR_PLUGIN_DIR . 'admin/views/page-smtp-logs.php';
     }
 
     /**
      * Render All Log Activity page (unified tabs)
      */
     public function render_all_logs_activity_page() {
-        include WPDMGR_PLUGIN_DIR . 'admin/views/page-all-logs-activity.php';
+        include ALMGR_PLUGIN_DIR . 'admin/views/page-all-logs-activity.php';
     }
 
 
     public function ajax_toggle_debug() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
         $result = $this->services['debug']->toggle_debug($enabled);
 
         if ($result) {
-            update_option('wpdmgr_debug_enabled', $enabled);
+            update_option('almgr_debug_enabled', $enabled);
             wp_send_json_success(array(
                 'enabled' => $enabled,
-                'message' => $enabled ? __('Debug mode enabled.', 'wp-debug-manager') : __('Debug mode disabled.', 'wp-debug-manager')
+                'message' => $enabled ? __('Debug mode enabled.', 'advanced-log-manager') : __('Debug mode disabled.', 'advanced-log-manager')
             ));
         } else {
-            wp_send_json_error(__('Failed to toggle debug mode.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to toggle debug mode.', 'advanced-log-manager'));
         }
     }
 
@@ -278,13 +278,13 @@ class WPDMGR_Plugin {
      * @global array $_POST Contains the POST data including constant name and enabled status
      */
     public function ajax_toggle_debug_constant() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         if (!isset($_POST['constant'])) {
-            wp_send_json_error(__('Missing constant parameter.', 'wp-debug-manager'));
+            wp_send_json_error(__('Missing constant parameter.', 'advanced-log-manager'));
         }
 
         /** @var array $_POST */
@@ -295,7 +295,7 @@ class WPDMGR_Plugin {
 
         $allowed_constants = array( 'WP_DEBUG', 'WP_DEBUG_LOG', 'WP_DEBUG_DISPLAY', 'SCRIPT_DEBUG', 'SAVEQUERIES', 'SMTP_LOGGING', 'display_errors' );
         if (!in_array($constant, $allowed_constants)) {
-            wp_send_json_error(__('Invalid debug constant.', 'wp-debug-manager'));
+            wp_send_json_error(__('Invalid debug constant.', 'advanced-log-manager'));
         }
 
         $result = $this->services['debug']->toggle_debug_constant($constant, $enabled);
@@ -310,34 +310,34 @@ class WPDMGR_Plugin {
                 'status' => $status,
                 'message' => sprintf(
                     /* translators: %s: feature name */
-            $enabled ? __('%s enabled.', 'wp-debug-manager') : __('%s disabled.', 'wp-debug-manager'),
+            $enabled ? __('%s enabled.', 'advanced-log-manager') : __('%s disabled.', 'advanced-log-manager'),
                     $constant
                 )
             ));
         } else {
-            wp_send_json_error(__('Failed to toggle debug constant.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to toggle debug constant.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_clear_debug_log() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $result = $this->services['debug']->clear_debug_log();
 
         if ($result) {
-            wp_send_json_success(__('Debug log cleared.', 'wp-debug-manager'));
+            wp_send_json_success(__('Debug log cleared.', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to clear debug log.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to clear debug log.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_get_debug_log() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $logs = $this->services['debug']->get_debug_log_entries();
@@ -345,9 +345,9 @@ class WPDMGR_Plugin {
     }
 
     public function ajax_get_query_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $logs = $this->services['debug']->get_query_log_entries();
@@ -355,146 +355,146 @@ class WPDMGR_Plugin {
     }
 
     public function ajax_clear_query_log() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $result = $this->services['debug']->clear_query_log();
 
         if ($result) {
-            wp_send_json_success(__('Active query log cleared successfully (content deleted).', 'wp-debug-manager'));
+            wp_send_json_success(__('Active query log cleared successfully (content deleted).', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to clear active query log.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to clear active query log.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_clear_all_query_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $result = $this->services['debug']->clear_all_query_logs();
 
         if ($result) {
-            wp_send_json_success(__('All query logs cleared successfully (active content + rotation files removed).', 'wp-debug-manager'));
+            wp_send_json_success(__('All query logs cleared successfully (active content + rotation files removed).', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to clear all query logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to clear all query logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_cleanup_query_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $cleaned = $this->services['debug']->cleanup_old_query_logs();
 
         if ($cleaned >= 0) {
             /* translators: %d: number of files cleaned */
-        wp_send_json_success(sprintf(__('Cleaned up %d rotation/archived log files (query.log.1, query.log.2, etc.). Active query.log preserved.', 'wp-debug-manager'), $cleaned));
+        wp_send_json_success(sprintf(__('Cleaned up %d rotation/archived log files (query.log.1, query.log.2, etc.). Active query.log preserved.', 'advanced-log-manager'), $cleaned));
         } else {
-            wp_send_json_error(__('Failed to cleanup rotation/archived logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to cleanup rotation/archived logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_cleanup_debug_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $keep_count = isset($_POST['keep_count']) ? absint($_POST['keep_count']) : 3;
         $cleaned = 0;
 
-        if (function_exists('wpdmgr_cleanup_old_debug_logs')) {
-            $cleaned = wpdmgr_cleanup_old_debug_logs($keep_count);
+        if (function_exists('almgr_cleanup_old_debug_logs')) {
+            $cleaned = almgr_cleanup_old_debug_logs($keep_count);
         }
 
         if ($cleaned >= 0) {
             /* translators: %d: number of files cleaned */
-        wp_send_json_success(sprintf(__('Cleaned up %d old debug log files.', 'wp-debug-manager'), $cleaned));
+        wp_send_json_success(sprintf(__('Cleaned up %d old debug log files.', 'advanced-log-manager'), $cleaned));
         } else {
-            wp_send_json_error(__('Failed to cleanup old debug logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to cleanup old debug logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_clear_all_debug_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $cleaned = 0;
 
-        if (function_exists('wpdmgr_clear_all_debug_logs_except_active')) {
-            $cleaned = wpdmgr_clear_all_debug_logs_except_active();
+        if (function_exists('almgr_clear_all_debug_logs_except_active')) {
+            $cleaned = almgr_clear_all_debug_logs_except_active();
         }
 
         if ($cleaned >= 0) {
             /* translators: %d: number of files cleared */
-        wp_send_json_success(sprintf(__('Cleared %d old debug log files. Current active log preserved.', 'wp-debug-manager'), $cleaned));
+        wp_send_json_success(sprintf(__('Cleared %d old debug log files. Current active log preserved.', 'advanced-log-manager'), $cleaned));
         } else {
-            wp_send_json_error(__('Failed to clear debug logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to clear debug logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_cleanup_all_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $include_current = isset($_POST['include_current']) && sanitize_key($_POST['include_current']) === 'true';
         $cleaned = 0;
 
-        if (function_exists('wpdmgr_cleanup_all_log_files')) {
-            $cleaned = wpdmgr_cleanup_all_log_files($include_current);
+        if (function_exists('almgr_cleanup_all_log_files')) {
+            $cleaned = almgr_cleanup_all_log_files($include_current);
         }
 
         if ($cleaned >= 0) {
             $message = $include_current ?
                 /* translators: %d: number of files removed */
-            sprintf(__('Removed all %d log files.', 'wp-debug-manager'), $cleaned) :
+            sprintf(__('Removed all %d log files.', 'advanced-log-manager'), $cleaned) :
             /* translators: %d: number of files cleaned */
-            sprintf(__('Cleaned up %d old log files.', 'wp-debug-manager'), $cleaned);
+            sprintf(__('Cleaned up %d old log files.', 'advanced-log-manager'), $cleaned);
             wp_send_json_success($message);
         } else {
-            wp_send_json_error(__('Failed to cleanup log files.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to cleanup log files.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_cleanup_query_rotation_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $keep_latest = isset($_POST['keep_latest']) && sanitize_key($_POST['keep_latest']) === 'true';
         $cleaned = 0;
 
-        if (function_exists('wpdmgr_cleanup_query_log_rotation_files')) {
-            $cleaned = wpdmgr_cleanup_query_log_rotation_files($keep_latest);
+        if (function_exists('almgr_cleanup_query_log_rotation_files')) {
+            $cleaned = almgr_cleanup_query_log_rotation_files($keep_latest);
         }
 
         if ($cleaned >= 0) {
             $message = $keep_latest ?
                 /* translators: %d: number of files cleaned */
-            sprintf(__('Cleaned up %d old rotation files. Latest backup (query.log.1) preserved.', 'wp-debug-manager'), $cleaned) :
+            sprintf(__('Cleaned up %d old rotation files. Latest backup (query.log.1) preserved.', 'advanced-log-manager'), $cleaned) :
             /* translators: %d: number of files cleaned */
-            sprintf(__('Cleaned up %d rotation files.', 'wp-debug-manager'), $cleaned);
+            sprintf(__('Cleaned up %d rotation files.', 'advanced-log-manager'), $cleaned);
             wp_send_json_success($message);
         } else {
-            wp_send_json_error(__('Failed to cleanup rotation log files.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to cleanup rotation log files.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_get_log_info() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $debug_status = $this->services['debug']->get_debug_status();
@@ -515,8 +515,8 @@ class WPDMGR_Plugin {
      */
     public function schedule_log_cleanup() {
         if (function_exists('wp_next_scheduled') && function_exists('wp_schedule_event')) {
-            if (!wp_next_scheduled('wpdmgr_daily_log_cleanup')) {
-                wp_schedule_event(time(), 'daily', 'wpdmgr_daily_log_cleanup');
+            if (!wp_next_scheduled('almgr_daily_log_cleanup')) {
+                wp_schedule_event(time(), 'daily', 'almgr_daily_log_cleanup');
             }
         }
     }
@@ -533,16 +533,16 @@ class WPDMGR_Plugin {
         $this->services['debug']->cleanup_old_query_logs();
 
 
-        $cleaned_debug_logs = wpdmgr_cleanup_old_debug_logs();
+        $cleaned_debug_logs = almgr_cleanup_old_debug_logs();
         if ($cleaned_debug_logs > 0) {
-            wpdmgr_debug_log("Cleaned up {$cleaned_debug_logs} old debug log files");
+            almgr_debug_log("Cleaned up {$cleaned_debug_logs} old debug log files");
         }
 
 
-        $debug_log_path = wpdmgr_get_debug_log_path();
+        $debug_log_path = almgr_get_debug_log_path();
         if (file_exists($debug_log_path)) {
             $debug_log_size = filesize($debug_log_path);
-            $max_debug_size = wpdmgr_get_debug_log_max_size();
+            $max_debug_size = almgr_get_debug_log_max_size();
 
             if ($debug_log_size > $max_debug_size) {
 
@@ -562,20 +562,20 @@ class WPDMGR_Plugin {
             $truncated_content = implode("\n", $lines);
             file_put_contents($log_path, $truncated_content);
 
-            wpdmgr_debug_log("Debug log truncated to {$max_lines} lines");
+            almgr_debug_log("Debug log truncated to {$max_lines} lines");
         }
     }
 
     public function ajax_download_query_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied.', 'wp-debug-manager'));
+            wp_die(__('Permission denied.', 'advanced-log-manager'));
         }
 
-        $query_log_path = wpdmgr_get_query_log_path();
+        $query_log_path = almgr_get_query_log_path();
 
         if (!file_exists($query_log_path)) {
-            wp_die(__('Query log file not found.', 'wp-debug-manager'));
+            wp_die(__('Query log file not found.', 'advanced-log-manager'));
         }
 
         $content = file_get_contents($query_log_path);
@@ -590,57 +590,57 @@ class WPDMGR_Plugin {
     }
 
     public function ajax_toggle_perf_monitor() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
-        update_option('wpdmgr_perf_monitor_enabled', $enabled);
+        update_option('almgr_perf_monitor_enabled', $enabled);
 
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('Performance monitor enabled.', 'wp-debug-manager') : __('Performance monitor disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('Performance monitor enabled.', 'advanced-log-manager') : __('Performance monitor disabled.', 'advanced-log-manager')
         ));
     }
 
     // Tambahan: granular performance toggles
     public function ajax_toggle_perf_realtime() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
-        update_option('wpdmgr_perf_realtime_enabled', $enabled);
+        update_option('almgr_perf_realtime_enabled', $enabled);
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('Real-time hooks monitoring enabled.', 'wp-debug-manager') : __('Real-time hooks monitoring disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('Real-time hooks monitoring enabled.', 'advanced-log-manager') : __('Real-time hooks monitoring disabled.', 'advanced-log-manager')
         ));
     }
 
     public function ajax_toggle_perf_bootstrap() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
-        update_option('wpdmgr_perf_bootstrap_enabled', $enabled);
+        update_option('almgr_perf_bootstrap_enabled', $enabled);
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('Bootstrap phases snapshots enabled.', 'wp-debug-manager') : __('Bootstrap phases snapshots disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('Bootstrap phases snapshots enabled.', 'advanced-log-manager') : __('Bootstrap phases snapshots disabled.', 'advanced-log-manager')
         ));
     }
 
     public function ajax_toggle_perf_domains() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
-        update_option('wpdmgr_perf_domains_enabled', $enabled);
+        update_option('almgr_perf_domains_enabled', $enabled);
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('Domain-specific panels enabled.', 'wp-debug-manager') : __('Domain-specific panels disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('Domain-specific panels enabled.', 'advanced-log-manager') : __('Domain-specific panels disabled.', 'advanced-log-manager')
         ));
     }
 
@@ -650,13 +650,13 @@ class WPDMGR_Plugin {
      * @global array $_POST Contains the POST data including content
      */
     public function ajax_save_htaccess() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         if (!isset($_POST['content'])) {
-            wp_send_json_error(__('Missing content parameter.', 'wp-debug-manager'));
+            wp_send_json_error(__('Missing content parameter.', 'advanced-log-manager'));
         }
 
         // Sanitize the content
@@ -667,18 +667,18 @@ class WPDMGR_Plugin {
         $content = wp_kses($content, array());
 
         // Additional sanitization using helper function
-        $content = wpdmgr_sanitize_file_content($content);
+        $content = almgr_sanitize_file_content($content);
 
         if ($content === false) {
-            wp_send_json_error(__('Content contains potentially dangerous code and was rejected.', 'wp-debug-manager'));
+            wp_send_json_error(__('Content contains potentially dangerous code and was rejected.', 'advanced-log-manager'));
         }
 
         $result = $this->services['htaccess']->save_htaccess($content);
 
         if ($result) {
-            wp_send_json_success(__('.htaccess file saved successfully.', 'wp-debug-manager'));
+            wp_send_json_success(__('.htaccess file saved successfully.', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to save .htaccess file.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to save .htaccess file.', 'advanced-log-manager'));
         }
     }
 
@@ -688,13 +688,13 @@ class WPDMGR_Plugin {
      * @global array $_POST Contains the POST data including backup index
      */
     public function ajax_restore_htaccess() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         if (!isset($_POST['backup_index'])) {
-            wp_send_json_error(__('Missing backup index parameter.', 'wp-debug-manager'));
+            wp_send_json_error(__('Missing backup index parameter.', 'advanced-log-manager'));
         }
 
         /** @var array $_POST */
@@ -702,9 +702,9 @@ class WPDMGR_Plugin {
         $result = $this->services['htaccess']->restore_htaccess($backup_index);
 
         if ($result) {
-            wp_send_json_success(__('.htaccess file restored successfully.', 'wp-debug-manager'));
+            wp_send_json_success(__('.htaccess file restored successfully.', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to restore .htaccess file.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to restore .htaccess file.', 'advanced-log-manager'));
         }
     }
 
@@ -714,40 +714,40 @@ class WPDMGR_Plugin {
      * @global array $_POST Contains the POST data including preset name
      */
     public function ajax_apply_php_preset() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         if (!isset($_POST['preset'])) {
-            wp_send_json_error(__('Missing preset parameter.', 'wp-debug-manager'));
+            wp_send_json_error(__('Missing preset parameter.', 'advanced-log-manager'));
         }
 
         /** @var array $_POST */
         $preset = sanitize_key($_POST['preset']);
         $allowed_presets = array('basic', 'medium', 'high');
         if (!in_array($preset, $allowed_presets)) {
-            wp_send_json_error(__('Invalid preset value.', 'wp-debug-manager'));
+            wp_send_json_error(__('Invalid preset value.', 'advanced-log-manager'));
         }
 
         $result = $this->services['php_config']->apply_preset($preset);
 
         if ($result) {
-            update_option('wpdmgr_php_preset', $preset);
-            wp_send_json_success(__('PHP configuration applied successfully.', 'wp-debug-manager'));
+            update_option('almgr_php_preset', $preset);
+            wp_send_json_success(__('PHP configuration applied successfully.', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to apply PHP configuration.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to apply PHP configuration.', 'advanced-log-manager'));
         }
     }
 
 
     public function ajax_test_debug_transformer() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
-        wpdmgr_debug_log('=== DEBUG TRANSFORMER TEST (via AJAX) ===');
+        almgr_debug_log('=== DEBUG TRANSFORMER TEST (via AJAX) ===');
 
 
         $test_result = $this->services['debug']->test_wp_config_transformer();
@@ -764,15 +764,15 @@ class WPDMGR_Plugin {
             'WP_DEBUG_LOG' => $custom_path
         ];
 
-        wpdmgr_debug_log('Attempting to apply test debug settings via WPConfigTransformer');
-        $apply_result = WPDMGR_WP_Config_Integration::apply_debug_constants($test_settings);
-        wpdmgr_debug_log('Apply result: ' . ($apply_result ? 'SUCCESS' : 'FAILED'));
+        almgr_debug_log('Attempting to apply test debug settings via WPConfigTransformer');
+        $apply_result = ALMGR_WP_Config_Integration::apply_debug_constants($test_settings);
+        almgr_debug_log('Apply result: ' . ($apply_result ? 'SUCCESS' : 'FAILED'));
 
         $response = [
             'transformer_test' => $test_result,
             'apply_test' => $apply_result,
-            'wp_config_path' => wpdmgr_get_wp_config_path(),
-            'wp_config_writable' => is_writable(wpdmgr_get_wp_config_path()),
+            'wp_config_path' => almgr_get_wp_config_path(),
+            'wp_config_writable' => is_writable(almgr_get_wp_config_path()),
             'message' => 'Test completed. Check error logs for detailed results.'
         ];
 
@@ -782,15 +782,15 @@ class WPDMGR_Plugin {
 
 
     public function ajax_toggle_smtp_logging() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
 
 
-        update_option('wpdmgr_smtp_logging_enabled', $enabled);
+        update_option('almgr_smtp_logging_enabled', $enabled);
 
 
         if (isset($this->services['smtp_logger'])) {
@@ -811,20 +811,20 @@ class WPDMGR_Plugin {
 
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('SMTP logging enabled.', 'wp-debug-manager') : __('SMTP logging disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('SMTP logging enabled.', 'advanced-log-manager') : __('SMTP logging disabled.', 'advanced-log-manager')
         ));
     }
 
     public function ajax_toggle_smtp_ip_logging() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $enabled = isset($_POST['enabled']) && sanitize_key($_POST['enabled']) === 'true';
 
 
-        update_option('wpdmgr_smtp_log_ip_address', $enabled);
+        update_option('almgr_smtp_log_ip_address', $enabled);
 
 
         if (isset($this->services['smtp_logger'])) {
@@ -837,14 +837,14 @@ class WPDMGR_Plugin {
 
         wp_send_json_success(array(
             'enabled' => $enabled,
-            'message' => $enabled ? __('IP address logging enabled.', 'wp-debug-manager') : __('IP address logging disabled.', 'wp-debug-manager')
+            'message' => $enabled ? __('IP address logging enabled.', 'advanced-log-manager') : __('IP address logging disabled.', 'advanced-log-manager')
         ));
     }
 
     public function ajax_get_smtp_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : null;
@@ -853,24 +853,24 @@ class WPDMGR_Plugin {
     }
 
     public function ajax_clear_smtp_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $result = $this->services['smtp_logger']->clear_current_log();
 
         if ($result) {
-            wp_send_json_success(__('SMTP logs cleared successfully.', 'wp-debug-manager'));
+            wp_send_json_success(__('SMTP logs cleared successfully.', 'advanced-log-manager'));
         } else {
-            wp_send_json_error(__('Failed to clear SMTP logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to clear SMTP logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_cleanup_smtp_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Permission denied.', 'wp-debug-manager'));
+            wp_send_json_error(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $keep_days = isset($_POST['keep_days']) ? absint($_POST['keep_days']) : 30;
@@ -878,23 +878,23 @@ class WPDMGR_Plugin {
 
         if ($cleaned >= 0) {
             /* translators: %d: number of files cleaned */
-        wp_send_json_success(sprintf(__('Cleaned up %d old SMTP log files.', 'wp-debug-manager'), $cleaned));
+        wp_send_json_success(sprintf(__('Cleaned up %d old SMTP log files.', 'advanced-log-manager'), $cleaned));
         } else {
-            wp_send_json_error(__('Failed to cleanup old SMTP logs.', 'wp-debug-manager'));
+            wp_send_json_error(__('Failed to cleanup old SMTP logs.', 'advanced-log-manager'));
         }
     }
 
     public function ajax_download_smtp_logs() {
-        check_ajax_referer('wpdmgr_action', 'nonce');
+        check_ajax_referer('almgr_action', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied.', 'wp-debug-manager'));
+            wp_die(__('Permission denied.', 'advanced-log-manager'));
         }
 
         $date = isset($_GET['date']) ? sanitize_text_field($_GET['date']) : date('dmY');
-        $log_file = ABSPATH . 'wp-content/wp-debug-manager/smtp-' . $date . '.log';
+        $log_file = ABSPATH . 'wp-content/advanced-log-manager/smtp-' . $date . '.log';
 
         if (!file_exists($log_file)) {
-            wp_die(__('SMTP log file not found.', 'wp-debug-manager'));
+            wp_die(__('SMTP log file not found.', 'advanced-log-manager'));
         }
 
         $content = file_get_contents($log_file);

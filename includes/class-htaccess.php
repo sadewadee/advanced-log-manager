@@ -2,10 +2,10 @@
 /**
  * Htaccess Service - Safe .htaccess file editing with auto-backup
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 // Prevent direct access
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WPDMGR_Htaccess {
+class ALMGR_Htaccess {
 
     /**
      * Maximum number of backups to keep
@@ -24,7 +24,7 @@ class WPDMGR_Htaccess {
      * Get .htaccess file content
      */
     public function get_htaccess_content() {
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         if (!file_exists($htaccess_path)) {
             return '';
@@ -37,7 +37,7 @@ class WPDMGR_Htaccess {
      * Save .htaccess file with automatic backup
      */
     public function save_htaccess($content) {
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         // Check for duplicate snippets before saving
         $content = $this->remove_duplicate_snippets($content);
@@ -53,7 +53,7 @@ class WPDMGR_Htaccess {
         }
 
         // Sanitize content
-        $content = wpdmgr_sanitize_file_content($content);
+        $content = almgr_sanitize_file_content($content);
         if ($content === false) {
             return false;
         }
@@ -79,14 +79,14 @@ class WPDMGR_Htaccess {
      * Create backup of current .htaccess file
      */
     private function create_backup() {
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         if (!file_exists($htaccess_path)) {
             return false;
         }
 
         $content = file_get_contents($htaccess_path);
-        $backups = get_option('wpdmgr_htaccess_backups', array());
+        $backups = get_option('almgr_htaccess_backups', array());
 
         // Add new backup
         $backup = array(
@@ -102,7 +102,7 @@ class WPDMGR_Htaccess {
             $backups = array_slice($backups, 0, self::MAX_BACKUPS);
         }
 
-        update_option('wpdmgr_htaccess_backups', $backups);
+        update_option('almgr_htaccess_backups', $backups);
         return true;
     }
 
@@ -110,7 +110,7 @@ class WPDMGR_Htaccess {
      * Get all backups
      */
     public function get_backups() {
-        return get_option('wpdmgr_htaccess_backups', array());
+        return get_option('almgr_htaccess_backups', array());
     }
 
     /**
@@ -124,7 +124,7 @@ class WPDMGR_Htaccess {
         }
 
         $backup = $backups[$backup_index];
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         // Create backup of current state before restoring
         if (file_exists($htaccess_path)) {
@@ -145,7 +145,7 @@ class WPDMGR_Htaccess {
         }
 
         $latest_backup = $backups[0];
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         return file_put_contents($htaccess_path, $latest_backup['content']) !== false;
     }
@@ -236,7 +236,7 @@ class WPDMGR_Htaccess {
             $response = wp_remote_head($test_url, array(
                 'timeout' => 15,
                 'sslverify' => false,
-                'user-agent' => 'WPDMGR-Toolkit-HTAccess-Validator/1.0'
+                'user-agent' => 'ALMGR-Toolkit-HTAccess-Validator/1.0'
             ));
 
             if (is_wp_error($response)) {
@@ -288,9 +288,9 @@ class WPDMGR_Htaccess {
                 'start' => '# Security Headers',
                 'end' => '</IfModule>'
             ),
-            'wpdmgr_toolkit' => array(
-                'start' => '# BEGIN WP Debug Manager',
-                'end' => '# END WP Debug Manager'
+            'almgr_toolkit' => array(
+                'start' => '# BEGIN Advance Log Manager',
+                'end' => '# END Advance Log Manager'
             )
         );
 
@@ -349,7 +349,7 @@ class WPDMGR_Htaccess {
             return array(
                 'success' => false,
                 /* translators: %s: snippet name */
-                'message' => sprintf(__('Snippet "%s" already exists in .htaccess file.', 'wp-debug-manager'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" already exists in .htaccess file.', 'advanced-log-manager'), $snippet_name)
             );
         }
 
@@ -362,12 +362,12 @@ class WPDMGR_Htaccess {
             return array(
                 'success' => true,
                 /* translators: %s: snippet name */
-                'message' => sprintf(__('Snippet "%s" added successfully.', 'wp-debug-manager'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" added successfully.', 'advanced-log-manager'), $snippet_name)
             );
         } else {
             return array(
                 'success' => false,
-                'message' => __('Failed to add snippet. .htaccess validation failed or caused 503 error.', 'wp-debug-manager')
+                'message' => __('Failed to add snippet. .htaccess validation failed or caused 503 error.', 'advanced-log-manager')
             );
         }
     }
@@ -379,7 +379,7 @@ class WPDMGR_Htaccess {
         $snippet_markers = array(
             "# BEGIN {$snippet_name}",
             "# {$snippet_name}",
-            "# BEGIN WP Debug Manager - {$snippet_name}",
+            "# BEGIN Advance Log Manager - {$snippet_name}",
             "# Browser Caching", // for cache_control
             "# GZIP Compression", // for gzip_compression
             "# Security Headers", // for security_headers
@@ -401,10 +401,10 @@ class WPDMGR_Htaccess {
     private function format_snippet($snippet_name, $snippet_content) {
         $timestamp = date('Y-m-d H:i:s');
 
-        $formatted = "# BEGIN WP Debug Manager - {$snippet_name}\n";
+        $formatted = "# BEGIN Advance Log Manager - {$snippet_name}\n";
         $formatted .= "# Added on: {$timestamp}\n";
         $formatted .= trim($snippet_content) . "\n";
-        $formatted .= "# END WP Debug Manager - {$snippet_name}";
+        $formatted .= "# END Advance Log Manager - {$snippet_name}";
 
         return $formatted;
     }
@@ -413,7 +413,7 @@ class WPDMGR_Htaccess {
      * Get .htaccess file info
      */
     public function get_htaccess_info() {
-        $htaccess_path = wpdmgr_get_htaccess_path();
+        $htaccess_path = almgr_get_htaccess_path();
 
         $info = array(
             'exists' => false,
@@ -440,7 +440,7 @@ class WPDMGR_Htaccess {
      * Clear all backups
      */
     public function clear_backups() {
-        return delete_option('wpdmgr_htaccess_backups');
+        return delete_option('almgr_htaccess_backups');
     }
 
     /**
@@ -451,22 +451,22 @@ class WPDMGR_Htaccess {
 
         $snippets = array(
             'wordpress_rewrite' => array(
-                'title' => __('WordPress Rewrite Rules', 'wp-debug-manager'),
+                'title' => __('WordPress Rewrite Rules', 'advanced-log-manager'),
                 'content' => "# BEGIN WordPress\n<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteRule ^index\\.php$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . /index.php [L]\n</IfModule>\n# END WordPress",
                 'exists' => $this->snippet_exists($current_content, 'wordpress_rewrite')
             ),
             'cache_control' => array(
-                'title' => __('Browser Caching', 'wp-debug-manager'),
+                'title' => __('Browser Caching', 'advanced-log-manager'),
                 'content' => "# Browser Caching\n<IfModule mod_expires.c>\nExpiresActive On\nExpiresByType text/css \"access plus 1 year\"\nExpiresByType application/javascript \"access plus 1 year\"\nExpiresByType image/png \"access plus 1 year\"\nExpiresByType image/jpg \"access plus 1 year\"\nExpiresByType image/jpeg \"access plus 1 year\"\nExpiresByType image/gif \"access plus 1 year\"\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'cache_control')
             ),
             'gzip_compression' => array(
-                'title' => __('GZIP Compression', 'wp-debug-manager'),
+                'title' => __('GZIP Compression', 'advanced-log-manager'),
                 'content' => "# GZIP Compression\n<IfModule mod_deflate.c>\nAddOutputFilterByType DEFLATE text/plain\nAddOutputFilterByType DEFLATE text/html\nAddOutputFilterByType DEFLATE text/xml\nAddOutputFilterByType DEFLATE text/css\nAddOutputFilterByType DEFLATE application/xml\nAddOutputFilterByType DEFLATE application/xhtml+xml\nAddOutputFilterByType DEFLATE application/rss+xml\nAddOutputFilterByType DEFLATE application/javascript\nAddOutputFilterByType DEFLATE application/x-javascript\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'gzip_compression')
             ),
             'security_headers' => array(
-                'title' => __('Security Headers', 'wp-debug-manager'),
+                'title' => __('Security Headers', 'advanced-log-manager'),
                 'content' => "# Security Headers\n<IfModule mod_headers.c>\nHeader always set X-Content-Type-Options nosniff\nHeader always set X-Frame-Options SAMEORIGIN\nHeader always set X-XSS-Protection \"1; mode=block\"\nHeader always set Referrer-Policy \"strict-origin-when-cross-origin\"\n</IfModule>",
                 'exists' => $this->snippet_exists($current_content, 'security_headers')
             )
@@ -485,7 +485,7 @@ class WPDMGR_Htaccess {
             return array(
                 'success' => false,
                 /* translators: %s: snippet name */
-                'message' => sprintf(__('Snippet "%s" not found in .htaccess file.', 'wp-debug-manager'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" not found in .htaccess file.', 'advanced-log-manager'), $snippet_name)
             );
         }
 
@@ -497,12 +497,12 @@ class WPDMGR_Htaccess {
             return array(
                 'success' => true,
                 /* translators: %s: snippet name */
-                'message' => sprintf(__('Snippet "%s" removed successfully.', 'wp-debug-manager'), $snippet_name)
+                'message' => sprintf(__('Snippet "%s" removed successfully.', 'advanced-log-manager'), $snippet_name)
             );
         } else {
             return array(
                 'success' => false,
-                'message' => __('Failed to remove snippet. .htaccess validation failed.', 'wp-debug-manager')
+                'message' => __('Failed to remove snippet. .htaccess validation failed.', 'advanced-log-manager')
             );
         }
     }
@@ -522,7 +522,7 @@ class WPDMGR_Htaccess {
             'security_headers' => array('# Security Headers', '</IfModule>')
         );
 
-        $pattern = $snippet_patterns[$snippet_name] ?? array("# BEGIN WP Debug Manager - {$snippet_name}", "# END WP Debug Manager - {$snippet_name}");
+        $pattern = $snippet_patterns[$snippet_name] ?? array("# BEGIN Advance Log Manager - {$snippet_name}", "# END Advance Log Manager - {$snippet_name}");
 
         foreach ($lines as $line) {
             $line_trimmed = trim($line);

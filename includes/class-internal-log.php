@@ -3,12 +3,12 @@
  * Internal Logging Helper
  *
  * Provides controlled internal logging that can be enabled/disabled
- * via wp-config.php constant: WPDMGR_INTERNAL_LOGGING
+ * via wp-config.php constant: ALMGR_INTERNAL_LOGGING
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
@@ -21,12 +21,18 @@ if (!defined('ABSPATH')) {
  * @param string $message Log message
  * @param string $context Context prefix (optional)
  */
-function wpdmgr_internal_log($message, $context = 'MT') {
-    if (!defined('WPDMGR_INTERNAL_LOGGING') || !WPDMGR_INTERNAL_LOGGING) {
+function almgr_internal_log($message, $context = 'MT') {
+    // Define default if not set in wp-config.php
+    if (!defined('ALMGR_INTERNAL_LOGGING')) {
+        define('ALMGR_INTERNAL_LOGGING', false);
+    }
+    
+    if (!ALMGR_INTERNAL_LOGGING) {
         return;
     }
 
     if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         error_log($context . ': ' . $message);
     }
 }
@@ -34,20 +40,20 @@ function wpdmgr_internal_log($message, $context = 'MT') {
 /**
  * Debug-level internal logging
  */
-function wpdmgr_debug_log($message) {
-    wpdmgr_internal_log($message, 'MT Debug');
+function almgr_debug_log($message) {
+    almgr_internal_log($message, 'MT Debug');
 }
 
 /**
  * Error-level internal logging
  */
-function wpdmgr_error_log($message) {
-    wpdmgr_internal_log($message, 'MT Error');
+function almgr_error_log($message) {
+    almgr_internal_log($message, 'MT Error');
 }
 
 /**
  * Config-level internal logging
  */
-function wpdmgr_config_log($message) {
-    wpdmgr_internal_log($message, 'MT Config');
+function almgr_config_log($message) {
+    almgr_internal_log($message, 'MT Config');
 }

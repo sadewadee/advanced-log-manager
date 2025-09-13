@@ -2,43 +2,43 @@
 /**
  * Helper functions for MT
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-function wpdmgr_can_manage() {
+function almgr_can_manage() {
     return function_exists('current_user_can') ? current_user_can('manage_options') : false;
 }
 
-function wpdmgr_verify_nonce($nonce, $action = 'wpdmgr_action') {
+function almgr_verify_nonce($nonce, $action = 'almgr_action') {
     return function_exists('wp_verify_nonce') ? wp_verify_nonce($nonce, $action) : false;
 }
 
-function wpdmgr_send_json($data) {
+function almgr_send_json($data) {
     if (function_exists('wp_send_json')) {
         wp_send_json($data);
     }
 }
 
-function wpdmgr_send_json_success($data = null) {
+function almgr_send_json_success($data = null) {
     if (function_exists('wp_send_json_success')) {
         wp_send_json_success($data);
     }
 }
 
-function wpdmgr_send_json_error($data = null) {
+function almgr_send_json_error($data = null) {
     if (function_exists('wp_send_json_error')) {
         wp_send_json_error($data);
     }
 }
 
-function wpdmgr_get_wp_config_path() {
+function almgr_get_wp_config_path() {
     $config_path = ABSPATH . 'wp-config.php';
     if (file_exists($config_path)) {
         return $config_path;
@@ -52,11 +52,11 @@ function wpdmgr_get_wp_config_path() {
     return false;
 }
 
-function wpdmgr_get_htaccess_path() {
+function almgr_get_htaccess_path() {
     return ABSPATH . '.htaccess';
 }
 
-function wpdmgr_format_bytes($size) {
+function almgr_format_bytes($size) {
     $units = array('B', 'KB', 'MB', 'GB');
     for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
         $size /= 1024;
@@ -64,25 +64,25 @@ function wpdmgr_format_bytes($size) {
     return round($size, 2) . ' ' . $units[$i];
 }
 
-function wpdmgr_format_time($time) {
+function almgr_format_time($time) {
     if ($time < 1) {
         return round($time * 1000) . 'ms';
     }
     return round($time, 3) . 's';
 }
 
-function wpdmgr_get_debug_log_path() {
+function almgr_get_debug_log_path() {
     if (defined('WP_DEBUG_LOG') && is_string(WP_DEBUG_LOG) && !in_array(WP_DEBUG_LOG, ['true', 'false', '1', '0'], true)) {
         $custom_path = WP_DEBUG_LOG;
 
-        if (!wpdmgr_is_absolute_path($custom_path)) {
+        if (!almgr_is_absolute_path($custom_path)) {
             $custom_path = ABSPATH . ltrim($custom_path, '/');
         }
 
         return $custom_path;
     }
 
-    $wp_config_path = wpdmgr_get_wp_config_path();
+    $wp_config_path = almgr_get_wp_config_path();
     if ($wp_config_path && file_exists($wp_config_path)) {
         $content = file_get_contents($wp_config_path);
 
@@ -113,25 +113,25 @@ function wpdmgr_get_debug_log_path() {
  * @param string $path Path to check
  * @return bool True if absolute path
  */
-function wpdmgr_is_absolute_path($path) {
+function almgr_is_absolute_path($path) {
     return (substr($path, 0, 1) === '/' || preg_match('/^[a-zA-Z]:[\\]/', $path));
 }
 
 
-function wpdmgr_get_query_log_path() {
+function almgr_get_query_log_path() {
 
-    $wp_config_path = wpdmgr_get_wp_config_path();
+    $wp_config_path = almgr_get_wp_config_path();
     if ($wp_config_path && file_exists($wp_config_path)) {
         $content = file_get_contents($wp_config_path);
 
 
         $patterns = [
 
-            '/define\s*\(\s*[\'"]WPDMGR_QUERY_LOG[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
+            '/define\s*\(\s*[\'"]ALMGR_QUERY_LOG[\'"]\s*,\s*[\'"]([^\'"])+[\'"]\s*\)/',
 
-            '/define\s*\(\s*[\'"]WPDMGR_QUERY_LOG[\'"]\s*,\s*[\'"]\\\\?[\'"]([^\\\\]+)\\\\?[\'"][\'"] *\)/',
+            '/define\s*\(\s*[\'"]ALMGR_QUERY_LOG[\'"]\s*,\s*[\'"]\\\\?[\'"]([^\\\\]+)\\\\?[\'"][\'"] *\)/',
 
-            '/define\s*\(\s*"WPDMGR_QUERY_LOG"\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)/',
+            '/define\s*\(\s*"ALMGR_QUERY_LOG"\s*,\s*[\'"]([^\'"])+[\'"]\s*\)/',
         ];
 
         foreach ($patterns as $pattern) {
@@ -148,7 +148,7 @@ function wpdmgr_get_query_log_path() {
     }
 
 
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
 
     if (!file_exists($log_directory)) {
@@ -167,16 +167,16 @@ function wpdmgr_get_query_log_path() {
  *
  * @return string Custom query log path
  */
-function wpdmgr_generate_custom_query_log_path() {
+function almgr_generate_custom_query_log_path() {
     // Generate random string for unique log file (similar to debug log)
     $random_string = function_exists('wp_generate_password') ?
         wp_generate_password(8, false, false) :
-        substr(md5(uniqid(wpdmgr_rand(), true)), 0, 8);
+        substr(md5(uniqid(time(), true)), 0, 8);
 
     $log_filename = 'wp-queries-' . $random_string . '.log';
 
-    // Use wp-content/wp-debug-manager directory
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+    // Use wp-content/advanced-log-manager directory
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
     // Ensure directory exists
     if (!file_exists($log_directory)) {
@@ -195,8 +195,8 @@ function wpdmgr_generate_custom_query_log_path() {
  *
  * @return int Maximum size in bytes (default: 10MB)
  */
-function wpdmgr_get_query_log_max_size() {
-    return apply_filters('wpdmgr_query_log_max_size', 10 * 1024 * 1024);
+function almgr_get_query_log_max_size() {
+    return apply_filters('almgr_query_log_max_size', 10 * 1024 * 1024);
 }
 
 /**
@@ -204,14 +204,14 @@ function wpdmgr_get_query_log_max_size() {
  *
  * @return int Maximum size in bytes (default: 50MB)
  */
-function wpdmgr_get_debug_log_max_size() {
-    return apply_filters('wpdmgr_debug_log_max_size', 50 * 1024 * 1024);
+function almgr_get_debug_log_max_size() {
+    return apply_filters('almgr_debug_log_max_size', 50 * 1024 * 1024);
 }
 
 /**
  * Check if file is writable with proper error handling
  */
-function wpdmgr_is_file_writable($file_path) {
+function almgr_is_file_writable($file_path) {
     if (!file_exists($file_path)) {
         // Try to create parent directory if it doesn't exist
         $dir = dirname($file_path);
@@ -238,7 +238,7 @@ function wpdmgr_is_file_writable($file_path) {
 /**
  * Sanitize file content before saving
  */
-function wpdmgr_sanitize_file_content($content) {
+function almgr_sanitize_file_content($content) {
     // For .htaccess files, we need to be more careful about what we consider malicious
     // Only block actual PHP execution, not legitimate .htaccess directives
     $dangerous_patterns = array(
@@ -263,15 +263,15 @@ function wpdmgr_sanitize_file_content($content) {
  *
  * @return int Number of files cleaned up
  */
-function wpdmgr_clear_all_debug_logs_except_active() {
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+function almgr_clear_all_debug_logs_except_active() {
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
     if (!is_dir($log_directory)) {
         return 0;
     }
 
     // Get current active debug log path
-    $current_debug_log = wpdmgr_get_debug_log_path();
+    $current_debug_log = almgr_get_debug_log_path();
     $current_filename = basename($current_debug_log);
 
     // Find all debug log files
@@ -292,9 +292,9 @@ function wpdmgr_clear_all_debug_logs_except_active() {
             continue;
         }
 
-        if (file_exists($file) && unlink($file)) {
+        if (file_exists($file) && wp_delete_file($file)) {
             $removed_count++;
-            wpdmgr_debug_log('Cleared debug log file: ' . basename($file));
+            almgr_debug_log('Cleared debug log file: ' . basename($file));
         }
     }
 
@@ -307,8 +307,8 @@ function wpdmgr_clear_all_debug_logs_except_active() {
  * @param int $keep_count Number of recent files to keep (default: 3)
  * @return int Number of files cleaned up
  */
-function wpdmgr_cleanup_old_debug_logs($keep_count = 3) {
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+function almgr_cleanup_old_debug_logs($keep_count = 3) {
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
     if (!is_dir($log_directory)) {
         return 0;
@@ -332,9 +332,9 @@ function wpdmgr_cleanup_old_debug_logs($keep_count = 3) {
     $removed_count = 0;
 
     foreach ($files_to_remove as $file) {
-        if (file_exists($file) && unlink($file)) {
+        if (file_exists($file) && wp_delete_file($file)) {
             $removed_count++;
-            wpdmgr_debug_log('Cleaned up old debug log file: ' . basename($file));
+            almgr_debug_log('Cleaned up old debug log file: ' . basename($file));
         }
     }
 
@@ -342,13 +342,13 @@ function wpdmgr_cleanup_old_debug_logs($keep_count = 3) {
 }
 
 /**
- * Cleanup all log files (debug and query logs) from wp-debug-manager directory
+ * Cleanup all log files (debug and query logs) from advanced-log-manager directory
  *
  * @param bool $include_current Whether to include current log files (default: false)
  * @return int Number of files cleaned up
  */
-function wpdmgr_cleanup_all_log_files($include_current = false) {
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+function almgr_cleanup_all_log_files($include_current = false) {
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
     if (!is_dir($log_directory)) {
         return 0;
@@ -371,9 +371,9 @@ function wpdmgr_cleanup_all_log_files($include_current = false) {
         $log_files = glob($log_directory . $pattern);
 
         foreach ($log_files as $log_file) {
-            if (file_exists($log_file) && unlink($log_file)) {
+            if (file_exists($log_file) && wp_delete_file($log_file)) {
                 $removed_count++;
-                wpdmgr_debug_log('Cleaned up log file: ' . basename($log_file));
+                almgr_debug_log('Cleaned up log file: ' . basename($log_file));
             }
         }
     }
@@ -387,8 +387,8 @@ function wpdmgr_cleanup_all_log_files($include_current = false) {
  * @param bool $keep_latest Whether to keep the latest rotation file (query.log.1)
  * @return int Number of files cleaned up
  */
-function wpdmgr_cleanup_query_log_rotation_files($keep_latest = true) {
-    $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+function almgr_cleanup_query_log_rotation_files($keep_latest = true) {
+    $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
     if (!is_dir($log_directory)) {
         return 0;
@@ -430,9 +430,9 @@ function wpdmgr_cleanup_query_log_rotation_files($keep_latest = true) {
             continue;
         }
 
-        if (file_exists($file) && is_writable($file) && unlink($file)) {
+        if (file_exists($file) && is_writable($file) && wp_delete_file($file)) {
             $removed_count++;
-            wpdmgr_debug_log('Cleaned up query rotation file: ' . $filename);
+            almgr_debug_log('Cleaned up query rotation file: ' . $filename);
         }
     }
 

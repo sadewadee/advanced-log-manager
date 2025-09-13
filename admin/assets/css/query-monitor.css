@@ -1,12 +1,12 @@
 /**
  * Query Monitor Performance Bar Styles
  *
- * @package WPDMGR_Toolkit
+ * @package ALMGR_Toolkit
  * @since 1.2.18
  */
 
 /* Admin bar MT performance styling - similar to Query Monitor */
-#wp-admin-bar-wpdmgr-performance-monitor .ab-icon {
+#wp-admin-bar-almgr-performance-monitor .ab-icon {
 	background-color: #0073aa !important;
 	color: #fff !important;
 	font-weight: bold !important;
@@ -18,29 +18,29 @@
 	line-height: 20px !important;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor .ab-icon {
+#wp-admin-bar-almgr-performance-monitor .ab-icon {
 	display: none !important;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor .ab-label small {
+#wp-admin-bar-almgr-performance-monitor .ab-label small {
 	font-size: 9px !important;
 	font-weight: normal !important;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor:hover .ab-icon {
+#wp-admin-bar-almgr-performance-monitor:hover .ab-icon {
 	background-color: #005a87 !important;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor.menupop .ab-item {
+#wp-admin-bar-almgr-performance-monitor.menupop .ab-item {
 	cursor: pointer !important;
 }
 
 /* Admin Bar Click Handler */
-#wp-admin-bar-wpdmgr-performance-monitor {
+#wp-admin-bar-almgr-performance-monitor {
     cursor: pointer !important;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor .ab-item {
+#wp-admin-bar-almgr-performance-monitor .ab-item {
     cursor: pointer !important;
 }
 
@@ -48,21 +48,21 @@
    to establish a single source of truth and avoid duplication. */
 
 /* Tab Filters */
-.wpdmgr-tab-filters {
+.almgr-tab-filters {
 	margin-bottom: 15px;
 	padding: 10px;
 	background: #2c3338;
 	border-radius: 4px;
 }
 
-.wpdmgr-tab-filters label {
+.almgr-tab-filters label {
 	display: inline-block;
 	margin-right: 20px;
 	color: #a0a5aa;
 	font-size: 12px;
 }
 
-.wpdmgr-tab-filters select {
+.almgr-tab-filters select {
 	margin-left: 8px;
 	padding: 4px 8px;
 	background: #32373c;
@@ -106,7 +106,7 @@
 	flex: 0 0 calc(50% - 1rem);
 }
 
-.wpdmgr-env-container {
+.almgr-env-container {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1rem;
@@ -197,12 +197,12 @@
 }
 
 /* Hooks Tab Specific Styling */
-.wpdmgr-hook-handle {
+.almgr-hook-handle {
 	vertical-align: top;
 	font-weight: 500;
 }
 
-.wpdmgr-hooks-table .query-sql code {
+.almgr-hooks-table .query-sql code {
 	display: inline-block;
 	margin: 2px 0;
 	padding: 2px 4px;
@@ -211,21 +211,21 @@
 	font-size: 11px;
 }
 
-.wpdmgr-hooks-table .sql-container {
+.almgr-hooks-table .sql-container {
 	line-height: 1.4;
 }
 
 /* Grouped hooks visual separation */
-.wpdmgr-hooks-table tr[data-hook]:not([data-hook=""]) + tr[data-hook]:not([data-hook=""]) {
+.almgr-hooks-table tr[data-hook]:not([data-hook=""]) + tr[data-hook]:not([data-hook=""]) {
 	border-top: 2px solid #e0e0e0;
 }
 
-.wpdmgr-hooks-table .wpdmgr-hook-handle[rowspan] {
+.almgr-hooks-table .almgr-hook-handle[rowspan] {
 	border-right: 3px solid #0073aa;
 }
 
 /* Real-time Hooks Styling */
-.wpdmgr-realtime-hooks-table .query-number {
+.almgr-realtime-hooks-table .query-number {
 	font-weight: bold;
 	color: #0073aa;
 }
@@ -276,24 +276,24 @@
 	border-radius: 2px;
 }
 
-.wpdmgr-realtime-summary {
+.almgr-realtime-summary {
 	margin-top: 15px;
 	padding: 10px;
 	border-left: 4px solid #0073aa;
 }
 
-.wpdmgr-realtime-summary h5 {
+.almgr-realtime-summary h5 {
 	margin: 0 0 8px 0;
 	color: #0073aa;
 }
 
-.wpdmgr-realtime-summary ul {
+.almgr-realtime-summary ul {
 	margin: 0;
 	padding-left: 20px;
 }
 
 /* Real-time Controls Styling */
-.wpdmgr-realtime-controls {
+.almgr-realtime-controls {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -303,26 +303,26 @@
 	border-left: 4px solid #0073aa;
 }
 
-.wpdmgr-realtime-actions {
+.almgr-realtime-actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-.wpdmgr-realtime-status {
+.almgr-realtime-status {
 	font-size: 12px;
 	color: #666;
 }
 
-#wpdmgr-status-text {
+#almgr-status-text {
 	font-weight: bold;
 }
 
-#wpdmgr-status-text.active {
+#almgr-status-text.active {
 	color: #28a745;
 }
 
-#wpdmgr-status-text.error {
+#almgr-status-text.error {
 	color: #dc3545;
 }
 
@@ -342,31 +342,31 @@
 }
 
 /* Performance Summary Improvements */
-.wpdmgr-realtime-summary {
+.almgr-realtime-summary {
 	border-left-color: #28a745;
 }
 
-.wpdmgr-realtime-summary #hooks-count,
-.wpdmgr-realtime-summary #memory-usage {
+.almgr-realtime-summary #hooks-count,
+.almgr-realtime-summary #memory-usage {
 	font-weight: bold;
 	color: #0073aa;
 }
 
 /* Responsive adjustments for controls */
 @media (max-width: 768px) {
-	.wpdmgr-realtime-controls {
+	.almgr-realtime-controls {
 		flex-direction: column;
 		align-items: stretch;
 		gap: 10px;
 	}
 
-	.wpdmgr-tab-filters {
+	.almgr-tab-filters {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
 	}
 
-	.wpdmgr-realtime-actions {
+	.almgr-realtime-actions {
 		justify-content: center;
 	}
 }
@@ -407,7 +407,7 @@
 	line-height: 1.4;
 }
 
-.wpdmgr-bootstrap-summary {
+.almgr-bootstrap-summary {
 	margin-top: 15px;
 	padding: 10px;
 	background: #fff3cd;
@@ -415,12 +415,12 @@
 }
 
 /* Domain Panels Styling */
-.wpdmgr-domain-panels {
+.almgr-domain-panels {
 	display: grid;
 	gap: 15px;
 }
 
-.wpdmgr-domain-panel {
+.almgr-domain-panel {
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	overflow: hidden;
@@ -508,7 +508,7 @@
 }
 
 @media (max-width: 768px) {
-	.wpdmgr-domain-panels {
+	.almgr-domain-panels {
 		grid-template-columns: 1fr;
 	}
 

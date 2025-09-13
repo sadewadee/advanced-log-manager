@@ -1,7 +1,7 @@
 /**
  * Query Monitor Performance Bar JavaScript
  *
- * @package WPDMGR_Toolkit
+ * @package ALMGR_Toolkit
  * @since 1.2.18
  */
 
@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 	// Real-time monitoring functionality
-	const toggleButton = document.getElementById('wpdmgr-toggle-realtime');
-	const refreshButton = document.getElementById('wpdmgr-refresh-hooks');
-	const statusText = document.getElementById('wpdmgr-status-text');
+	const toggleButton = document.getElementById('almgr-toggle-realtime');
+	const refreshButton = document.getElementById('almgr-refresh-hooks');
+	const statusText = document.getElementById('almgr-status-text');
 	const hooksCount = document.getElementById('hooks-count');
 	const memoryUsage = document.getElementById('memory-usage');
 
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Send AJAX request for updated hook data
 		const formData = new FormData();
-		formData.append('action', 'wpdmgr_monitor_hooks');
+		formData.append('action', 'almgr_monitor_hooks');
 		formData.append('nonce', window.mtHookMonitor.nonce);
 
 		fetch(window.mtHookMonitor.ajaxUrl, {
@@ -168,13 +168,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	// Real-time hooks filtering
-	var phaseFilter = document.getElementById('wpdmgr-realtime-phase-filter');
-	var domainFilter = document.getElementById('wpdmgr-realtime-domain-filter');
-	var limitSelect = document.getElementById('wpdmgr-realtime-limit');
+	var phaseFilter = document.getElementById('almgr-realtime-phase-filter');
+	var domainFilter = document.getElementById('almgr-realtime-domain-filter');
+	var limitSelect = document.getElementById('almgr-realtime-limit');
 
 	if (phaseFilter || domainFilter) {
 		// Populate filter options from existing data
-		var realtimeTable = document.querySelector('.wpdmgr-realtime-hooks-table tbody');
+		var realtimeTable = document.querySelector('.almgr-realtime-hooks-table tbody');
 		if (realtimeTable) {
 			var phases = new Set();
 			var domains = new Set();

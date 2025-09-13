@@ -2,10 +2,10 @@
 /**
  * Query Monitor Service - Performance metrics display
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  * @since 1.2.18
  */
 
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  *
  * @since 1.2.18
  */
-class WPDMGR_Perf_Monitor {
+class ALMGR_Perf_Monitor {
 
     private $metrics = array();
     private $hook_collectors = array();
@@ -29,6 +29,8 @@ class WPDMGR_Perf_Monitor {
     private $domain_collectors = array();
     private $real_time_hooks = array();
     private $hook_execution_order = 0;
+    private $queries = array();
+    private $num_queries = 0;
 
 	/**
 	 * Constructor - Initialize the Query Monitor
@@ -36,11 +38,11 @@ class WPDMGR_Perf_Monitor {
 	 * Sets up the performance monitoring if enabled and user is logged in.
 	 */
 	public function __construct() {
-		if (get_option('wpdmgr_perf_monitor_enabled') && is_user_logged_in()) {
-			// Read granular feature flags
-			$realtime_enabled  = (bool) get_option('wpdmgr_perf_realtime_enabled');
-			$bootstrap_enabled = (bool) get_option('wpdmgr_perf_bootstrap_enabled');
-			$domains_enabled   = (bool) get_option('wpdmgr_perf_domains_enabled');
+        if (get_option('almgr_perf_monitor_enabled') && is_user_logged_in()) {
+            // Read granular feature flags
+            $realtime_enabled  = (bool) get_option('almgr_perf_realtime_enabled');
+            $bootstrap_enabled = (bool) get_option('almgr_perf_bootstrap_enabled');
+            $domains_enabled   = (bool) get_option('almgr_perf_domains_enabled');
 
 			// Initialize only the enabled modules
 			if ($domains_enabled) {
@@ -58,8 +60,8 @@ class WPDMGR_Perf_Monitor {
 			// Frontend assets are enqueued by class-plugin to avoid duplicate loading
 			// add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
 			add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
-            add_action('wp_ajax_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
-            add_action('wp_ajax_nopriv_wpdmgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
+            add_action('wp_ajax_almgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
+            add_action('wp_ajax_nopriv_almgr_monitor_hooks', array($this, 'ajax_monitor_hooks'));
 		}
 	}
 
@@ -76,65 +78,65 @@ class WPDMGR_Perf_Monitor {
 		$plugin_url = plugin_dir_url(dirname(__FILE__));
 
 		wp_enqueue_style(
-			'wpdmgr-performance-bar',
+			'almgr-performance-bar',
 			$plugin_url . 'public/assets/performance-bar.css',
 			array(),
-			WPDMGR_VERSION
+			ALMGR_VERSION
 		);
 
 		// Ensure performance-bar.js is loaded in admin for unified panel handling
 		wp_enqueue_script(
-			'wpdmgr-performance-bar',
+			'almgr-performance-bar',
 			$plugin_url . 'public/assets/performance-bar.js',
 			array(),
-			WPDMGR_VERSION,
+			ALMGR_VERSION,
 			true
 		);
 
         // Tabs enhancements for filtering, sorting, ARIA, shortcuts, and export
         wp_enqueue_script(
-            'wpdmgr-performance-tabs',
+            'almgr-performance-tabs',
             $plugin_url . 'public/assets/performance-tabs.js',
-            array('wpdmgr-performance-bar'),
-            WPDMGR_VERSION,
+            array('almgr-performance-bar'),
+            ALMGR_VERSION,
             true
         );
 
         // Localize strings for UI elements
-        wp_localize_script('wpdmgr-performance-tabs', 'wpdmgrPerfTabsL10n', array(
-            'searchPlaceholder' => __('Search...', 'wp-debug-manager'),
-            'exportCSV' => __('Export CSV', 'wp-debug-manager'),
-            'loading' => __('Loading...', 'wp-debug-manager'),
-            'shortcutSearch' => __('Press / to search', 'wp-debug-manager')
+        wp_localize_script('almgr-performance-tabs', 'almgrPerfTabsL10n', array(
+            'searchPlaceholder' => __('Search...', 'advanced-log-manager'),
+            'exportCSV' => __('Export CSV', 'advanced-log-manager'),
+            'loading' => __('Loading...', 'advanced-log-manager'),
+            'shortcutSearch' => __('Press / to search', 'advanced-log-manager')
         ));
 
 		wp_enqueue_script(
-			'wpdmgr-perf-monitor',
+			'almgr-perf-monitor',
 			$plugin_url . 'admin/assets/js/query-monitor.js',
 			array('jquery'),
-			WPDMGR_VERSION,
+			ALMGR_VERSION,
 			true
 		);
 
-		wp_localize_script('wpdmgr-perf-monitor', 'mtQueryMonitorL10n', array(
-			'enableRealTimeUpdates' => __('Enable Real-time Updates', 'wp-debug-manager'),
-			'stopRealTimeUpdates' => __('Stop Real-time Updates', 'wp-debug-manager'),
-			'statusActive' => __('Active', 'wp-debug-manager'),
-			'statusStatic' => __('Static View', 'wp-debug-manager'),
-			'statusRefreshing' => __('Refreshing...', 'wp-debug-manager'),
-			'statusUpdated' => __('Updated', 'wp-debug-manager'),
-			'statusError' => __('Error', 'wp-debug-manager'),
-			'viewDetails' => __('View Details', 'wp-debug-manager'),
-			'hideDetails' => __('Hide Details', 'wp-debug-manager'),
-			'toggle' => __('Toggle', 'wp-debug-manager'),
-			'hide' => __('Hide', 'wp-debug-manager'),
+		wp_localize_script('almgr-perf-monitor', 'mtQueryMonitorL10n', array(
+			'enableRealTimeUpdates' => __('Enable Real-time Updates', 'advanced-log-manager'),
+			'stopRealTimeUpdates' => __('Stop Real-time Updates', 'advanced-log-manager'),
+			'statusActive' => __('Active', 'advanced-log-manager'),
+			'statusStatic' => __('Static View', 'advanced-log-manager'),
+			'statusRefreshing' => __('Refreshing...', 'advanced-log-manager'),
+			'statusUpdated' => __('Updated', 'advanced-log-manager'),
+			'statusError' => __('Error', 'advanced-log-manager'),
+			'viewDetails' => __('View Details', 'advanced-log-manager'),
+			'hideDetails' => __('Hide Details', 'advanced-log-manager'),
+			'toggle' => __('Toggle', 'advanced-log-manager'),
+			'hide' => __('Hide', 'advanced-log-manager'),
 		));
 
 		// Pass AJAX data
-		if (function_exists('wp_create_nonce')) {
-			wp_localize_script('wpdmgr-perf-monitor', 'mtHookMonitor', array(
+		{
+			wp_localize_script('almgr-perf-monitor', 'mtHookMonitor', array(
 				'ajaxUrl' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('wpdmgr_monitor_hooks_nonce'),
+				'nonce' => wp_create_nonce('almgr_monitor_hooks_nonce'),
 				'isActive' => false,
 				'interval' => null
 			));
@@ -305,7 +307,7 @@ class WPDMGR_Perf_Monitor {
     public function ajax_monitor_hooks() {
         // Verify nonce for security
         $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-        if (!wp_verify_nonce($nonce, 'wpdmgr_monitor_hooks_nonce')) {
+        if (!wp_verify_nonce($nonce, 'almgr_monitor_hooks_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -553,14 +555,14 @@ class WPDMGR_Perf_Monitor {
         }
 
         // Store metrics in transient for display
-        set_transient('wpdmgr_metrics_' . get_current_user_id(), $this->metrics, 30);
+        set_transient('almgr_metrics_' . get_current_user_id(), $this->metrics, 30);
     }
 
     /**
      * Get current metrics
      */
     public function get_metrics() {
-        $cached_metrics = get_transient('wpdmgr_metrics_' . get_current_user_id());
+        $cached_metrics = get_transient('almgr_metrics_' . get_current_user_id());
         if ($cached_metrics) {
             return $cached_metrics;
         }
@@ -602,7 +604,7 @@ class WPDMGR_Perf_Monitor {
         $query_time = isset($metrics['query_time']) ? $metrics['query_time'] : 0;
 
         $time_formatted = number_format($execution_time, 3) . 's';
-        $memory_formatted = $this->wpdmgr_format_bytes($peak_memory);
+        $memory_formatted = $this->almgr_format_bytes($peak_memory);
         $db_time_formatted = number_format($query_time * 1000, 1) . 'ms';
 
         // Format like Query Monitor: time, memory, database time, queries
@@ -616,11 +618,11 @@ class WPDMGR_Perf_Monitor {
 
         // Add single admin bar item with all metrics
         $wp_admin_bar->add_node(array(
-            'id'    => 'wpdmgr-performance-monitor',
+            'id'    => 'almgr-performance-monitor',
             'title' => '<span class="ab-icon">MT</span><span class="ab-label">' . $label_content . '</span>',
             'href'  => '#',
             'meta'  => array(
-                'class' => 'menupop wpdmgr-admin-perf-toggle',
+                'class' => 'menupop almgr-admin-perf-toggle',
                 'onclick' => 'return false;'
             )
         ));
@@ -661,7 +663,7 @@ class WPDMGR_Perf_Monitor {
         $query_time = isset($metrics['query_time']) ? $metrics['query_time'] : 0;
 
         $time_formatted = number_format($execution_time, 3) . 's';
-        $memory_formatted = $this->wpdmgr_format_bytes($peak_memory);
+        $memory_formatted = $this->almgr_format_bytes($peak_memory);
         $db_time_formatted = number_format($query_time * 1000, 1) . 'ms';
 
         // Get counts for tab titles - use same logic as admin bar
@@ -670,321 +672,213 @@ class WPDMGR_Perf_Monitor {
         $scripts_count = !empty($wp_scripts->done) ? count($wp_scripts->done) : 0;
         $styles_count = !empty($wp_styles->done) ? count($wp_styles->done) : 0;
         ?>
-        <div id="wpdmgr-perf-details" class="wpdmgr-perf-details" style="display: none;">
-            <div class="wpdmgr-perf-details-content">
-                <div class="wpdmgr-perf-sidebar">
-                    <ul class="wpdmgr-perf-tabs">
-                        <li class="wpdmgr-perf-tab active" data-tab="overview">
+        <div id="almgr-perf-details" class="almgr-perf-details" style="display: none;">
+            <div class="almgr-perf-details-content">
+                <div class="almgr-perf-sidebar">
+                    <ul class="almgr-perf-tabs">
+                        <li class="almgr-perf-tab active" data-tab="overview">
                             <span class="dashicons dashicons-dashboard"></span>
                             <?php
-                            if (function_exists('_e')) {
-                                esc_html_e('Overview', 'wp-debug-manager');
-                            } else {
-                                echo 'Overview';
-                            }
+                            esc_html_e('Overview', 'advanced-log-manager');
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="queries">
+                        <li class="almgr-perf-tab" data-tab="queries">
                             <span class="dashicons dashicons-database"></span>
                             <?php
-                            if (function_exists('printf') && function_exists('__')) {
-                                /* translators: %d: number of queries */
-                        printf(__('Queries (%d)', 'wp-debug-manager'), $tab_query_count);
-                            } else {
-                                echo 'Queries';
-                            }
+                            /* translators: %d: number of queries */
+                            printf(__('Queries (%d)', 'advanced-log-manager'), $tab_query_count);
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="scripts">
+                        <li class="almgr-perf-tab" data-tab="scripts">
                             <span class="dashicons dashicons-media-code"></span>
                             <?php
-                            if (function_exists('printf') && function_exists('__')) {
-                                /* translators: %d: number of scripts */
-                        printf(__('Scripts (%d)', 'wp-debug-manager'), $scripts_count);
-                            } else {
-                                echo 'Scripts';
-                            }
+                            /* translators: %d: number of scripts */
+                            printf(__('Scripts (%d)', 'advanced-log-manager'), $scripts_count);
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="styles">
+                        <li class="almgr-perf-tab" data-tab="styles">
                             <span class="dashicons dashicons-admin-appearance"></span>
                             <?php
-                            if (function_exists('printf') && function_exists('__')) {
-                                /* translators: %d: number of styles */
-                        printf(__('Styles (%d)', 'wp-debug-manager'), $styles_count);
-                            } else {
-                                echo 'Styles';
-                            }
+                            /* translators: %d: number of styles */
+                            printf(__('Styles (%d)', 'advanced-log-manager'), $styles_count);
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="images">
+                        <li class="almgr-perf-tab" data-tab="images">
                             <span class="dashicons dashicons-format-image"></span>
                             <?php
-                            if (function_exists('_e')) {
-                                esc_html_e('Images', 'wp-debug-manager');
-                            } else {
-                                echo 'Images';
-                            }
+                            esc_html_e('Images', 'advanced-log-manager');
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="hooks">
+                        <li class="almgr-perf-tab" data-tab="hooks">
                             <span class="dashicons dashicons-admin-tools"></span>
                             <?php
-                            if (function_exists('_e')) {
-                                esc_html_e('Hooks & Actions', 'wp-debug-manager');
-                            } else {
-                                echo 'Hooks & Actions';
-                            }
+                            esc_html_e('Hooks & Actions', 'advanced-log-manager');
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_realtime_enabled') ? '' : 'hide'; ?>" data-tab="realtime-hooks">
+                        <li class="almgr-perf-tab <?php echo get_option('almgr_perf_realtime_enabled') ? '' : 'hide'; ?>" data-tab="realtime-hooks">
                             <span class="dashicons dashicons-clock"></span>
                             <?php
                             $realtime_count = count($this->real_time_hooks);
-                            if (function_exists('printf') && function_exists('__')) {
-                                /* translators: %d: number of hooks */
-                        printf(__('Real-time Hooks (%d)', 'wp-debug-manager'), $realtime_count);
-                            } else {
-                                echo 'Real-time Hooks (' . $realtime_count . ')';
-                            }
+                            /* translators: %d: number of hooks */
+                            printf(__('Real-time Hooks (%d)', 'advanced-log-manager'), $realtime_count);
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>" data-tab="bootstrap">
+                        <li class="almgr-perf-tab <?php echo get_option('almgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>" data-tab="bootstrap">
                             <span class="dashicons dashicons-update"></span>
                             <?php
                             $bootstrap_count = count($this->bootstrap_snapshots);
-                            if (function_exists('printf') && function_exists('__')) {
-                                /* translators: %d: number of phases */
-                        printf(__('Bootstrap Phases (%d)', 'wp-debug-manager'), $bootstrap_count);
-                            } else {
-                                echo 'Bootstrap Phases (' . $bootstrap_count . ')';
-                            }
+                            /* translators: %d: number of phases */
+                            printf(__('Bootstrap Phases (%d)', 'advanced-log-manager'), $bootstrap_count);
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab <?php echo get_option('wpdmgr_perf_domains_enabled') ? '' : 'hide'; ?>" data-tab="domains">
+                        <li class="almgr-perf-tab <?php echo get_option('almgr_perf_domains_enabled') ? '' : 'hide'; ?>" data-tab="domains">
                             <span class="dashicons dashicons-networking"></span>
                             <?php
-                            if (function_exists('_e')) {
-                                esc_html_e('Domain Panels', 'wp-debug-manager');
-                            } else {
-                                echo 'Domain Panels';
-                            }
+                            esc_html_e('Domain Panels', 'advanced-log-manager');
                             ?>
                         </li>
-                        <li class="wpdmgr-perf-tab" data-tab="env">
+                        <li class="almgr-perf-tab" data-tab="env">
                             <span class="dashicons dashicons-admin-settings"></span>
                             <?php
-                            if (function_exists('_e')) {
-                                esc_html_e('ENV', 'wp-debug-manager');
-                            } else {
-                                echo 'ENV';
-                            }
+                            esc_html_e('ENV', 'advanced-log-manager');
                             ?>
                         </li>
                     </ul>
                 </div>
-                <div class="wpdmgr-perf-content">
+                <div class="almgr-perf-content">
                     <!-- Overview Tab -->
-                    <div id="wpdmgr-perf-tab-overview" class="wpdmgr-perf-tab-content active">
+                    <div id="almgr-perf-tab-overview" class="almgr-perf-tab-content active">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Performance Details', 'wp-debug-manager');
-                        } else {
-                            echo 'Performance Details';
-                        }
+                        esc_html_e('Performance Details', 'advanced-log-manager');
                         ?></h4>
-                        <table class="wpdmgr-perf-table">
+                        <table class="almgr-perf-table">
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('Database Queries:', 'wp-debug-manager');
-                                } else {
-                                    echo 'Database Queries:';
-                                }
+                                esc_html_e('Database Queries:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html($tab_query_count) : htmlspecialchars($tab_query_count); ?></td>
+                                <td><?php echo esc_html($tab_query_count); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('Execution Time:', 'wp-debug-manager');
-                                } else {
-                                    echo 'Execution Time:';
-                                }
+                                esc_html_e('Execution Time:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html($time_formatted) : htmlspecialchars($time_formatted); ?></td>
+                                <td><?php echo esc_html($time_formatted); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('Database Time:', 'wp-debug-manager');
-                                } else {
-                                    echo 'Database Time:';
-                                }
+                                esc_html_e('Database Time:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html($db_time_formatted) : htmlspecialchars($db_time_formatted); ?></td>
+                                <td><?php echo esc_html($db_time_formatted); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('Peak Memory:', 'wp-debug-manager');
-                                } else {
-                                    echo 'Peak Memory:';
-                                }
+                                esc_html_e('Peak Memory:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html($memory_formatted) : htmlspecialchars($memory_formatted); ?></td>
+                                <td><?php echo esc_html($memory_formatted); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('Memory Used:', 'wp-debug-manager');
-                                } else {
-                                    echo 'Memory Used:';
-                                }
+                                esc_html_e('Memory Used:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html(function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes($metrics['memory_usage'] ?? 0) : $this->wpdmgr_format_bytes($metrics['memory_usage'] ?? 0)) : htmlspecialchars($this->wpdmgr_format_bytes($metrics['memory_usage'] ?? 0)); ?></td>
+                                <td><?php echo esc_html($this->almgr_format_bytes($metrics['memory_usage'] ?? 0)); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('PHP Version:', 'wp-debug-manager');
-                                } else {
-                                    echo 'PHP Version:';
-                                }
+                                esc_html_e('PHP Version:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') ? esc_html(PHP_VERSION) : htmlspecialchars(PHP_VERSION); ?></td>
+                                <td><?php echo esc_html(PHP_VERSION); ?></td>
                             </tr>
                             <tr>
                                 <td><?php
-                                if (function_exists('_e')) {
-                                    esc_html_e('WordPress Version:', 'wp-debug-manager');
-                                } else {
-                                    echo 'WordPress Version:';
-                                }
+                                esc_html_e('WordPress Version:', 'advanced-log-manager');
                                 ?></td>
-                                <td><?php echo function_exists('esc_html') && function_exists('get_bloginfo') ? esc_html(get_bloginfo('version')) : 'N/A'; ?></td>
+                                <td><?php echo esc_html(get_bloginfo('version')); ?></td>
                             </tr>
                         </table>
                     </div>
                     <!-- Queries Tab -->
-                    <div id="wpdmgr-perf-tab-queries" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-queries" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('printf') && function_exists('__')) {
-                             /* translators: %d: number of database queries */
-                        printf(__('Database Queries (%d)', 'wp-debug-manager'), $tab_query_count);
-                         } else {
-                             echo 'Database Queries (' . $tab_query_count . ')';
-                         }
+                        /* translators: %d: number of database queries */
+                        printf(__('Database Queries (%d)', 'advanced-log-manager'), $tab_query_count);
                         ?></h4>
-                        <div class="wpdmgr-queries-container">
+                        <div class="almgr-queries-container">
                             <?php $this->render_queries_tab(); ?>
                         </div>
                     </div>
                     <!-- Scripts Tab -->
-                    <div id="wpdmgr-perf-tab-scripts" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-scripts" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Loaded Scripts', 'wp-debug-manager');
-                        } else {
-                            echo 'Loaded Scripts';
-                        }
+                        esc_html_e('Loaded Scripts', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-scripts-container">
+                        <div class="almgr-scripts-container">
                             <?php $this->render_scripts_tab(); ?>
                         </div>
                     </div>
                     <!-- Styles Tab -->
-                    <div id="wpdmgr-perf-tab-styles" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-styles" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Loaded Styles', 'wp-debug-manager');
-                        } else {
-                            echo 'Loaded Styles';
-                        }
+                        esc_html_e('Loaded Styles', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-styles-container">
+                        <div class="almgr-styles-container">
                             <?php $this->render_styles_tab(); ?>
                         </div>
                     </div>
                     <!-- Images Tab -->
-                    <div id="wpdmgr-perf-tab-images" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-images" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Loaded Images', 'wp-debug-manager');
-                        } else {
-                            echo 'Loaded Images';
-                        }
+                        esc_html_e('Loaded Images', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-images-container">
+                        <div class="almgr-images-container">
                             <?php $this->render_images_tab(); ?>
                         </div>
                     </div>
                     <!-- Hooks & Actions Tab -->
-                    <div id="wpdmgr-perf-tab-hooks" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-hooks" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('WordPress Hooks & Actions', 'wp-debug-manager');
-                        } else {
-                            echo 'WordPress Hooks & Actions';
-                        }
+                        esc_html_e('WordPress Hooks & Actions', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-hooks-container">
+                        <div class="almgr-hooks-container">
                             <?php $this->render_hooks_tab(); ?>
                         </div>
                     </div>
                     <!-- Real-time Hooks Tab -->
-                    <div id="wpdmgr-perf-tab-realtime-hooks" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_realtime_enabled') ? '' : 'hide'; ?>">
+                    <div id="almgr-perf-tab-realtime-hooks" class="almgr-perf-tab-content <?php echo get_option('almgr_perf_realtime_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         $realtime_count = count($this->real_time_hooks);
-                        if (function_exists('printf') && function_exists('__')) {
-                            /* translators: %d: number of hooks captured */
-                        printf(__('Real-time Hook Execution (%d hooks captured)', 'wp-debug-manager'), $realtime_count);
-                        } else {
-                            echo 'Real-time Hook Execution (' . $realtime_count . ' hooks captured)';
-                        }
+                        /* translators: %d: number of hooks captured */
+                        printf(__('Real-time Hook Execution (%d hooks captured)', 'advanced-log-manager'), $realtime_count);
                         ?></h4>
-                        <div class="wpdmgr-realtime-hooks-container">
+                        <div class="almgr-realtime-hooks-container">
                             <?php $this->render_realtime_hooks_tab(); ?>
                         </div>
                     </div>
                     <!-- Bootstrap Phases Tab -->
-                    <div id="wpdmgr-perf-tab-bootstrap" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>">
+                    <div id="almgr-perf-tab-bootstrap" class="almgr-perf-tab-content <?php echo get_option('almgr_perf_bootstrap_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
                         $bootstrap_count = count($this->bootstrap_snapshots);
-                        if (function_exists('printf') && function_exists('__')) {
-                            /* translators: %d: number of phases */
-                        printf(__('Bootstrap Hook Snapshots (%d phases)', 'wp-debug-manager'), $bootstrap_count);
-                        } else {
-                            echo 'Bootstrap Hook Snapshots (' . $bootstrap_count . ' phases)';
-                        }
+                        /* translators: %d: number of phases */
+                        printf(__('Bootstrap Hook Snapshots (%d phases)', 'advanced-log-manager'), $bootstrap_count);
                         ?></h4>
-                        <div class="wpdmgr-bootstrap-container">
+                        <div class="almgr-bootstrap-container">
                             <?php $this->render_bootstrap_tab(); ?>
                         </div>
                     </div>
                     <!-- Domain Panels Tab -->
-                    <div id="wpdmgr-perf-tab-domains" class="wpdmgr-perf-tab-content <?php echo get_option('wpdmgr_perf_domains_enabled') ? '' : 'hide'; ?>">
+                    <div id="almgr-perf-tab-domains" class="almgr-perf-tab-content <?php echo get_option('almgr_perf_domains_enabled') ? '' : 'hide'; ?>">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Domain-Specific Hook Analysis', 'wp-debug-manager');
-                        } else {
-                            echo 'Domain-Specific Hook Analysis';
-                        }
+                        esc_html_e('Domain-Specific Hook Analysis', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-domains-container">
+                        <div class="almgr-domains-container">
                             <?php $this->render_domains_tab(); ?>
                         </div>
                     </div>
                     <!-- ENV Tab -->
-                    <div id="wpdmgr-perf-tab-env" class="wpdmgr-perf-tab-content">
+                    <div id="almgr-perf-tab-env" class="almgr-perf-tab-content">
                         <h4><?php
-                        if (function_exists('_e')) {
-                            esc_html_e('Environment Configuration', 'wp-debug-manager');
-                        } else {
-                            echo 'Environment Configuration';
-                        }
+                        esc_html_e('Environment Configuration', 'advanced-log-manager');
                         ?></h4>
-                        <div class="wpdmgr-env-container">
+                        <div class="almgr-env-container">
                             <?php $this->render_env_tab(); ?>
                         </div>
                     </div>
@@ -1000,20 +894,12 @@ class WPDMGR_Perf_Monitor {
 	 * @return array
 	 */
 	private function get_secure_site_info() {
-		if (function_exists('home_url')) {
-			$home_url = home_url();
-			$parsed_url = parse_url($home_url);
-			return array(
-				'url' => $home_url,
-				'host' => $parsed_url['host'] ?? 'localhost',
-				'scheme' => $parsed_url['scheme'] ?? 'http'
-			);
-		}
-
+		$home_url = home_url();
+		$parsed_url = parse_url($home_url);
 		return array(
-			'url' => 'http://localhost',
-			'host' => 'localhost',
-			'scheme' => 'http'
+			'url' => $home_url,
+			'host' => $parsed_url['host'] ?? 'localhost',
+			'scheme' => $parsed_url['scheme'] ?? 'http'
 		);
 	}
 
@@ -1040,7 +926,7 @@ class WPDMGR_Perf_Monitor {
 				$component_type = 'WordPress Core Component (Herald Fonts)';
 			}
 
-			$clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($src) : htmlspecialchars($src)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+			$clickable_url = '<a class="almgr-link" href="' . esc_url($src) . '" target="_blank">' . esc_html($src) . '</a>';
 
 			// Try to get file size for external files
 			$file_size = $this->get_remote_file_size($src);
@@ -1050,12 +936,12 @@ class WPDMGR_Perf_Monitor {
 			$site_info = $this->get_secure_site_info();
 			$hostname = $site_info['host'];
 			$full_url = $site_info['url'] . ltrim($src, '/');
-			$clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($full_url) : htmlspecialchars($full_url)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+			$clickable_url = '<a class="almgr-link" href="' . esc_url($full_url) . '" target="_blank">' . esc_html($src) . '</a>';
 
 			// Try to get local file size
 			$local_path = ABSPATH . ltrim($src, '/');
 			if (file_exists($local_path)) {
-				$file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
+				$file_size = function_exists('almgr_format_bytes') ? almgr_format_bytes(filesize($local_path)) : $this->almgr_format_bytes(filesize($local_path));
 				$load_time = $this->get_estimated_load_time($src, filesize($local_path));
 			}
 		}
@@ -1141,19 +1027,19 @@ class WPDMGR_Perf_Monitor {
         global $wpdb;
 
         if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES')) {
-            echo '<p>' . (function_exists('__') ? __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'wp-debug-manager') : 'Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.') . '</p>';
+            echo '<p>' . __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'advanced-log-manager') . '</p>';
             return;
         }
 
         if (empty($wpdb->queries)) {
-            echo '<p>' . (function_exists('__') ? __('No queries recorded for this page.', 'wp-debug-manager') : 'No queries recorded for this page.') . '</p>';
+            echo '<p>' . __('No queries recorded for this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
         // Filters: Type, Min Time, Search
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Type: <select id="wpdmgr-queries-type-filter">'
-            . '<option value="">' . (function_exists('__') ? __('All', 'wp-debug-manager') : 'All') . '</option>'
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Type: <select id="almgr-queries-type-filter">'
+            . '<option value="">' . __('All', 'advanced-log-manager') . '</option>'
             . '<option value="SELECT">SELECT</option>'
             . '<option value="INSERT">INSERT</option>'
             . '<option value="UPDATE">UPDATE</option>'
@@ -1162,11 +1048,11 @@ class WPDMGR_Perf_Monitor {
             . '<option value="DESCRIBE">DESCRIBE</option>'
             . '<option value="OTHER">OTHER</option>'
             . '</select></label>';
-        echo '<label>Min Time (ms): <input type="number" id="wpdmgr-queries-min-time" min="0" step="1" placeholder="0"></label>';
-        echo '<label>Search: <input type="search" id="wpdmgr-queries-search" placeholder="' . (function_exists('__') ? __('Search SQL...', 'wp-debug-manager') : 'Search SQL...') . '"></label>';
+        echo '<label>Min Time (ms): <input type="number" id="almgr-queries-min-time" min="0" step="1" placeholder="0"></label>';
+        echo '<label>Search: <input type="search" id="almgr-queries-search" placeholder="' . __('Search SQL...', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-queries-table">';
+        echo '<table class="query-log-table almgr-queries-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1187,19 +1073,19 @@ class WPDMGR_Perf_Monitor {
             $time_formatted = number_format($time * 1000, 2) . 'ms';
             $time_ms_attr = (int) round($time * 1000);
 
-            echo '<tr class="' . (function_exists('esc_attr') ? esc_attr($time_class) : htmlspecialchars($time_class)) .
-                 '" data-query-type="' . (function_exists('esc_attr') ? esc_attr($query_type) : htmlspecialchars($query_type)) .
+            echo '<tr class="' . esc_attr($time_class) .
+                 '" data-query-type="' . esc_attr($query_type) .
                  '" data-time-ms="' . $time_ms_attr .
-                 '" data-sql="' . (function_exists('esc_attr') ? esc_attr($sql) : htmlspecialchars($sql)) . '">';
+                 '" data-sql="' . esc_attr($sql) . '">';
             echo '<td class="query-number">' . ($index + 1) . '</td>';
             echo '<td class="query-time">';
             if ($time > 0.05) {
                 echo '<span class="slow-indicator" title="Slow Query"><span class="dashicons dashicons-warning"></span></span> ';
             }
-            echo (function_exists('esc_html') ? esc_html($time_formatted) : htmlspecialchars($time_formatted)) . '</td>';
+            echo esc_html($time_formatted) . '</td>';
             echo '<td class="query-sql">';
             echo '<div class="sql-container">';
-            echo '<code>' . (function_exists('esc_html') ? esc_html($sql) : htmlspecialchars($sql)) . '</code>';
+            echo '<code>' . esc_html($sql) . '</code>';
             echo '<button type="button" class="button-link copy-sql" title="Copy SQL">';
             echo '<span class="dashicons dashicons-admin-page"></span>';
             echo '</button>';
@@ -1226,7 +1112,7 @@ class WPDMGR_Perf_Monitor {
 	 */
 	private function get_remote_file_size($url) {
 		// Use cached result if available
-		$cache_key = 'wpdmgr_file_size_' . md5($url);
+		$cache_key = 'almgr_file_size_' . md5($url);
 		$cached_size = get_transient($cache_key);
 		if ($cached_size !== false) {
 			return $cached_size;
@@ -1236,7 +1122,7 @@ class WPDMGR_Perf_Monitor {
 		$response = wp_remote_head($url, array(
 			'timeout' => 3,
 			'redirection' => 3,
-			'user-agent' => 'WP Debug Manager Performance Monitor/1.0',
+			'user-agent' => 'Advance Log Manager Performance Monitor/1.0',
 			'sslverify' => false,
 		));
 
@@ -1244,7 +1130,7 @@ class WPDMGR_Perf_Monitor {
 			$headers = wp_remote_retrieve_headers($response);
 			if (isset($headers['content-length'])) {
 				$size_bytes = intval($headers['content-length']);
-				$formatted_size = $this->wpdmgr_format_bytes($size_bytes);
+				$formatted_size = $this->almgr_format_bytes($size_bytes);
 				// Cache for 1 hour
 				set_transient($cache_key, $formatted_size, 3600);
 				return $formatted_size;
@@ -1253,7 +1139,7 @@ class WPDMGR_Perf_Monitor {
 
 		// Fallback to domain-based estimates
 		$domain = parse_url($url, PHP_URL_HOST);
-		$fallback_size = __('Unknown', 'wp-debug-manager');
+		$fallback_size = __('Unknown', 'advanced-log-manager');
 
 		if (strpos($domain, 'fonts.googleapis.com') !== false) {
 			$fallback_size = '~3KB';
@@ -1278,7 +1164,7 @@ class WPDMGR_Perf_Monitor {
 	 */
 	private function get_estimated_load_time($url, $file_size = null) {
 		// Use cached result if available
-		$cache_key = 'wpdmgr_load_time_' . md5($url);
+		$cache_key = 'almgr_load_time_' . md5($url);
 		$cached_time = get_transient($cache_key);
 		if ($cached_time !== false) {
 			return $cached_time;
@@ -1300,7 +1186,7 @@ class WPDMGR_Perf_Monitor {
 			$response = wp_remote_head($url, array(
 				'timeout' => 5,
 				'redirection' => 3,
-				'user-agent' => 'WP Debug Manager Performance Monitor/1.0',
+				'user-agent' => 'Advance Log Manager Performance Monitor/1.0',
 				'sslverify' => false,
 			));
 
@@ -1320,7 +1206,7 @@ class WPDMGR_Perf_Monitor {
 			return $this->format_load_time_with_color(120, 'warning'); // Default external estimate
 		}
 
-		return __('N/A', 'wp-debug-manager');
+		return __('N/A', 'advanced-log-manager');
 	}
 
     /**
@@ -1383,7 +1269,7 @@ class WPDMGR_Perf_Monitor {
     /**
      * Format bytes to human readable format
      */
-    private function wpdmgr_format_bytes($bytes) {
+    private function almgr_format_bytes($bytes) {
         if ($bytes >= 1073741824) {
             return number_format($bytes / 1073741824, 2) . 'GB';
         } elseif ($bytes >= 1048576) {
@@ -1432,18 +1318,18 @@ class WPDMGR_Perf_Monitor {
         global $wp_scripts;
 
         if (!$wp_scripts || empty($wp_scripts->done)) {
-            echo '<p>' . __('No scripts loaded on this page.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No scripts loaded on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Position: <select id="wpdmgr-scripts-position-filter"><option value="">All Positions</option><option value="header">Header</option><option value="footer">Footer</option></select></label>';
-        echo '<label>Hostname: <select id="wpdmgr-scripts-hostname-filter"><option value="">All Hostnames</option></select></label>';
-        echo '<label>Component: <select id="wpdmgr-scripts-component-filter"><option value="">All Components</option></select></label>';
-        echo '<label>Search: <input type="search" id="wpdmgr-scripts-search" placeholder="' . ( function_exists('esc_attr__') ? esc_attr__( 'Search handle/source…', 'wp-debug-manager') : 'Search handle/source…' ) . '"></label>';
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Position: <select id="almgr-scripts-position-filter"><option value="">All Positions</option><option value="header">Header</option><option value="footer">Footer</option></select></label>';
+        echo '<label>Hostname: <select id="almgr-scripts-hostname-filter"><option value="">All Hostnames</option></select></label>';
+        echo '<label>Component: <select id="almgr-scripts-component-filter"><option value="">All Components</option></select></label>';
+        echo '<label>Search: <input type="search" id="almgr-scripts-search" placeholder="' . esc_attr__( 'Search handle/source…', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-scripts-table">';
+        echo '<table class="query-log-table almgr-scripts-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1498,7 +1384,7 @@ class WPDMGR_Perf_Monitor {
                             $component_type = 'WordPress Core Component (Herald Fonts)';
                         }
                     }
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($src) : htmlspecialchars($src)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($src) . '" target="_blank">' . esc_html($src) . '</a>';
 
                     // Try to get file size for external files (simulated)
                     $file_size = $this->get_remote_file_size($src);
@@ -1514,12 +1400,12 @@ class WPDMGR_Perf_Monitor {
                     $site_url = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
                     $hostname = $site_url;
                     $full_url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $site_url . $src;
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($full_url) : htmlspecialchars($full_url)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($full_url) . '" target="_blank">' . esc_html($src) . '</a>';
 
                     // Try to get local file size
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
-                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
+                        $file_size = function_exists('almgr_format_bytes') ? almgr_format_bytes(filesize($local_path)) : $this->almgr_format_bytes(filesize($local_path));
                         $load_time = $this->get_estimated_load_time($src, filesize($local_path));
                         $file_size_bytes = (int) filesize($local_path);
                         $load_time_ms = $this->parse_formatted_load_time_to_ms($load_time);
@@ -1544,21 +1430,21 @@ class WPDMGR_Perf_Monitor {
             }
 
             echo '<tr'
-                . ' data-position="' . (function_exists('esc_attr') ? esc_attr($position) : htmlspecialchars($position)) . '"'
-                . ' data-handle="' . (function_exists('esc_attr') ? esc_attr($handle) : htmlspecialchars($handle)) . '"'
-                . ' data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '"'
-                . ' data-component="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '"'
-                . ' data-version="' . (function_exists('esc_attr') ? esc_attr($version) : htmlspecialchars($version)) . '"'
+                . ' data-position="' . esc_attr($position) . '"'
+                . ' data-handle="' . esc_attr($handle) . '"'
+                . ' data-hostname="' . esc_attr($hostname) . '"'
+                . ' data-component="' . esc_attr($component_type) . '"'
+                . ' data-version="' . esc_attr($version) . '"'
                 . ' data-filesize-bytes="' . intval($file_size_bytes ?? 0) . '"'
                 . ' data-loadtime-ms="' . intval($load_time_ms ?? 0) . '"'
-                . ' data-source="' . (function_exists('esc_attr') ? esc_attr($src) : htmlspecialchars($src)) . '">';
+                . ' data-source="' . esc_attr($src) . '">';
             echo '<td class="query-number">' . $counter . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($position) : htmlspecialchars($position)) . '</td>';
-            echo '<td class="wpdmgr-script-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
+            echo '<td>' . esc_html($position) . '</td>';
+            echo '<td class="almgr-script-handle">' . esc_html($handle) . '</td>';
+            echo '<td>' . esc_html($hostname) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($component_type) : htmlspecialchars($component_type)) . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($version) : htmlspecialchars($version)) . '</td>';
+            echo '<td>' . esc_html($component_type) . '</td>';
+            echo '<td>' . esc_html($version) . '</td>';
             echo '<td>' . $this->format_file_size_with_color($file_size) . '</td>';
             echo '<td>' . $load_time . '</td>';
             echo '</tr>';
@@ -1578,18 +1464,18 @@ class WPDMGR_Perf_Monitor {
         global $wp_styles;
 
         if (!$wp_styles || empty($wp_styles->done)) {
-            echo '<p>' . __('No styles loaded on this page.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No styles loaded on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Position: <select id="wpdmgr-styles-position-filter"><option value="">All Positions</option><option value="header">Header</option><option value="footer">Footer</option></select></label>';
-        echo '<label>Hostname: <select id="wpdmgr-styles-hostname-filter"><option value="">All Hostnames</option></select></label>';
-        echo '<label>Component: <select id="wpdmgr-styles-component-filter"><option value="">All Components</option></select></label>';
-        echo '<label>Search: <input type="search" id="wpdmgr-styles-search" placeholder="' . ( function_exists('esc_attr__') ? esc_attr__( 'Search handle/source…', 'wp-debug-manager') : 'Search handle/source…' ) . '"></label>';
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Position: <select id="almgr-styles-position-filter"><option value="">All Positions</option><option value="header">Header</option><option value="footer">Footer</option></select></label>';
+        echo '<label>Hostname: <select id="almgr-styles-hostname-filter"><option value="">All Hostnames</option></select></label>';
+        echo '<label>Component: <select id="almgr-styles-component-filter"><option value="">All Components</option></select></label>';
+        echo '<label>Search: <input type="search" id="almgr-styles-search" placeholder="' . esc_attr__( 'Search handle/source…', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-styles-table">';
+        echo '<table class="query-log-table almgr-styles-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1638,7 +1524,7 @@ class WPDMGR_Perf_Monitor {
                             $component_type = 'WordPress Core Component (Herald Fonts)';
                         }
                     }
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($src) : htmlspecialchars($src)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($src) . '" target="_blank">' . esc_html($src) . '</a>';
 
                     // Try to get file size for external files (simulated)
                     $file_size = $this->get_remote_file_size($src);
@@ -1648,12 +1534,12 @@ class WPDMGR_Perf_Monitor {
                     $site_url = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
                     $hostname = $site_url;
                     $full_url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $site_url . $src;
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($full_url) : htmlspecialchars($full_url)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($full_url) . '" target="_blank">' . esc_html($src) . '</a>';
 
                     // Try to get local file size
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
-                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes(filesize($local_path)) : $this->wpdmgr_format_bytes(filesize($local_path));
+                        $file_size = function_exists('almgr_format_bytes') ? almgr_format_bytes(filesize($local_path)) : $this->almgr_format_bytes(filesize($local_path));
                         $load_time = $this->get_estimated_load_time($src, filesize($local_path));
                         $file_size_bytes = (int) filesize($local_path);
                         $load_time_ms = $this->parse_formatted_load_time_to_ms($load_time);
@@ -1678,21 +1564,21 @@ class WPDMGR_Perf_Monitor {
             }
 
             echo '<tr'
-                . ' data-position="' . (function_exists('esc_attr') ? esc_attr($position) : htmlspecialchars($position)) . '"'
-                . ' data-handle="' . (function_exists('esc_attr') ? esc_attr($handle) : htmlspecialchars($handle)) . '"'
-                . ' data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '"'
-                . ' data-component="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '"'
-                . ' data-version="' . (function_exists('esc_attr') ? esc_attr($version) : htmlspecialchars($version)) . '"'
+                . ' data-position="' . esc_attr($position) . '"'
+                . ' data-handle="' . esc_attr($handle) . '"'
+                . ' data-hostname="' . esc_attr($hostname) . '"'
+                . ' data-component="' . esc_attr($component_type) . '"'
+                . ' data-version="' . esc_attr($version) . '"'
                 . ' data-filesize-bytes="' . intval($file_size_bytes ?? 0) . '"'
                 . ' data-loadtime-ms="' . intval($load_time_ms ?? 0) . '"'
-                . ' data-source="' . (function_exists('esc_attr') ? esc_attr($src) : htmlspecialchars($src)) . '">';
+                . ' data-source="' . esc_attr($src) . '">';
             echo '<td class="query-number">' . $counter . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($position) : htmlspecialchars($position)) . '</td>';
-            echo '<td class="wpdmgr-style-handle">' . (function_exists('esc_html') ? esc_html($handle) : htmlspecialchars($handle)) . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
+            echo '<td>' . esc_html($position) . '</td>';
+            echo '<td class="almgr-style-handle">' . esc_html($handle) . '</td>';
+            echo '<td>' . esc_html($hostname) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($component_type) : htmlspecialchars($component_type)) . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($version) : htmlspecialchars($version)) . '</td>';
+            echo '<td>' . esc_html($component_type) . '</td>';
+            echo '<td>' . esc_html($version) . '</td>';
             echo '<td>' . $this->format_file_size_with_color($file_size) . '</td>';
             echo '<td>' . $load_time . '</td>';
             echo '</tr>';
@@ -1721,25 +1607,25 @@ class WPDMGR_Perf_Monitor {
     }
 
     /**
-     * Format enhanced caller stack using WPDMGR_Debug functionality
+     * Format enhanced caller stack using ALMGR_Debug functionality
      */
     private function format_enhanced_caller_stack($stack) {
         if (empty($stack)) {
             return '<span style="color: #999; font-style: italic;">No stack trace available</span>';
         }
 
-        // Get or create WPDMGR_Debug instance to use enhanced formatting
-        if (class_exists('WPDMGR_Debug')) {
+        // Get or create ALMGR_Debug instance to use enhanced formatting
+        if (class_exists('ALMGR_Debug')) {
             static $debug_instance = null;
             if ($debug_instance === null) {
-                $debug_instance = new WPDMGR_Debug();
+                $debug_instance = new ALMGR_Debug();
             }
 
             // Use reflection to access the private format_caller_stack method
             try {
-                if (class_exists('\ReflectionClass')) {
-                    /** @var \ReflectionClass $reflection */
-                    $reflection = new \ReflectionClass($debug_instance);
+                if (class_exists('ReflectionClass')) {
+                    /** @var ReflectionClass $reflection */
+                    $reflection = new ReflectionClass($debug_instance);
                     $method = $reflection->getMethod('format_caller_stack');
                     $method->setAccessible(true);
                     $formatted = $method->invokeArgs($debug_instance, array($stack));
@@ -1751,15 +1637,15 @@ class WPDMGR_Perf_Monitor {
                     return '<div class="enhanced-caller-stack">' . $formatted . '</div>';
                 }
                 // Fallback if ReflectionClass not available
-                return (function_exists('esc_html') ? esc_html($stack) : htmlspecialchars($stack));
+                return esc_html($stack);
             } catch (\Exception $e) {
                 // Fallback to simple display if reflection fails
-                return (function_exists('esc_html') ? esc_html($stack) : htmlspecialchars($stack));
+                return esc_html($stack);
             }
         }
 
-        // Fallback to simple display if WPDMGR_Debug is not available
-        return (function_exists('esc_html') ? esc_html($stack) : htmlspecialchars($stack));
+        // Fallback to simple display if ALMGR_Debug is not available
+        return esc_html($stack);
     }
 
     /**
@@ -1810,22 +1696,22 @@ class WPDMGR_Perf_Monitor {
         $images = $this->get_page_images();
 
         if (empty($images)) {
-            echo '<p>' . __('No images found on this page.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No images found on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
         // Determine current site host once for scope filtering
         $site_host = parse_url(home_url(), PHP_URL_HOST);
 
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Filter by Source: <select id="wpdmgr-images-source-filter"><option value="">All Sources</option></select></label>';
-        echo '<label>Filter by Hostname: <select id="wpdmgr-images-hostname-filter"><option value="">All Hostnames</option></select></label>';
-        echo '<label>Host Scope: <select id="wpdmgr-images-host-scope"><option value="">All</option><option value="same">Same Domain</option><option value="external">External</option></select></label>';
-        echo '<label>Sort by: <select id="wpdmgr-images-sort"><option value="size">File Size</option><option value="load_time">Load Time</option><option value="source">Source</option></select></label>';
-        echo '<label>Search: <input type="search" id="wpdmgr-images-search" placeholder="' . (function_exists('__') ? __('Search Alt/Source...', 'wp-debug-manager') : 'Search Alt/Source...') . '"></label>';
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Filter by Source: <select id="almgr-images-source-filter"><option value="">All Sources</option></select></label>';
+        echo '<label>Filter by Hostname: <select id="almgr-images-hostname-filter"><option value="">All Hostnames</option></select></label>';
+        echo '<label>Host Scope: <select id="almgr-images-host-scope"><option value="">All</option><option value="same">Same Domain</option><option value="external">External</option></select></label>';
+        echo '<label>Sort by: <select id="almgr-images-sort"><option value="size">File Size</option><option value="load_time">Load Time</option><option value="source">Source</option></select></label>';
+        echo '<label>Search: <input type="search" id="almgr-images-search" placeholder="' . __('Search Alt/Source...', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-images-table">';
+        echo '<table class="query-log-table almgr-images-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1893,7 +1779,7 @@ class WPDMGR_Perf_Monitor {
                             $component_type = 'External Image';
                         }
                     }
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($src) : htmlspecialchars($src)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($src) . '" target="_blank">' . esc_html($src) . '</a>';
                     $file_size_result = $this->get_remote_file_size($src);
                     $file_size = $file_size_result;
                     $load_time = $this->get_estimated_load_time($src);
@@ -1901,12 +1787,12 @@ class WPDMGR_Perf_Monitor {
                     $site_url = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
                     $hostname = $site_url;
                     $full_url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $site_url . $src;
-                    $clickable_url = '<a class="wpdmgr-link" href="' . (function_exists('esc_url') ? esc_url($full_url) : htmlspecialchars($full_url)) . '" target="_blank">' . (function_exists('esc_html') ? esc_html($src) : htmlspecialchars($src)) . '</a>';
+                    $clickable_url = '<a class="almgr-link" href="' . esc_url($full_url) . '" target="_blank">' . esc_html($src) . '</a>';
 
                     $local_path = ABSPATH . ltrim($src, '/');
                     if (file_exists($local_path)) {
                         $file_size_bytes = filesize($local_path);
-                        $file_size = function_exists('wpdmgr_format_bytes') ? wpdmgr_format_bytes($file_size_bytes) : $this->wpdmgr_format_bytes($file_size_bytes);
+                        $file_size = function_exists('almgr_format_bytes') ? almgr_format_bytes($file_size_bytes) : $this->almgr_format_bytes($file_size_bytes);
                         $load_time = $this->get_estimated_load_time($src, $file_size_bytes);
                     }
                 }
@@ -1933,10 +1819,10 @@ class WPDMGR_Perf_Monitor {
                 }
             }
 
-            echo '<tr data-source="' . (function_exists('esc_attr') ? esc_attr($component_type) : htmlspecialchars($component_type)) . '" data-hostname="' . (function_exists('esc_attr') ? esc_attr($hostname) : htmlspecialchars($hostname)) . '" data-host-scope="' . (($site_host && $hostname === $site_host) ? 'same' : 'external') . '" data-size="' . $file_size_bytes_attr . '" data-load-time="' . $load_time_ms_attr . '" data-alt="' . (function_exists('esc_attr') ? esc_attr($alt) : htmlspecialchars($alt)) . '" data-src="' . (function_exists('esc_attr') ? esc_attr($src) : htmlspecialchars($src)) . '">';
+            echo '<tr data-source="' . esc_attr($component_type) . '" data-hostname="' . esc_attr($hostname) . '" data-host-scope="' . (($site_host && $hostname === $site_host) ? 'same' : 'external') . '" data-size="' . $file_size_bytes_attr . '" data-load-time="' . $load_time_ms_attr . '" data-alt="' . esc_attr($alt) . '" data-src="' . esc_attr($src) . '">';
             echo '<td class="query-number">' . $counter . '</td>';
-            echo '<td class="wpdmgr-image-handle">' . (function_exists('esc_html') ? esc_html($alt) : htmlspecialchars($alt)) . '</td>';
-            echo '<td>' . (function_exists('esc_html') ? esc_html($hostname) : htmlspecialchars($hostname)) . '</td>';
+            echo '<td class="almgr-image-handle">' . esc_html($alt) . '</td>';
+            echo '<td>' . esc_html($hostname) . '</td>';
             echo '<td class="query-sql"><div class="sql-container"><code>' . $clickable_url . '</code></div></td>';
             echo '<td>' . $this->format_file_size_with_color($file_size) . '</td>';
             echo '<td>' . $load_time . '</td>';
@@ -1948,7 +1834,7 @@ class WPDMGR_Perf_Monitor {
         echo '</tbody>';
         echo '</table>';
 
-        echo '<div class="wpdmgr-load-more-container"><button id="wpdmgr-images-load-more" type="button" data-page-size="20">' . (function_exists('__') ? __('Load More', 'wp-debug-manager') : 'Load More') . '</button></div>';
+        echo '<div class="almgr-load-more-container"><button id="almgr-images-load-more" type="button" data-page-size="20">' . __('Load More', 'advanced-log-manager') . '</button></div>';
     }
 
     /**
@@ -1958,18 +1844,18 @@ class WPDMGR_Perf_Monitor {
         global $wp_filter;
 
         if (empty($wp_filter)) {
-            echo '<p>' . __('No hooks registered.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No hooks registered.', 'advanced-log-manager') . '</p>';
             return;
         }
 
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Group by: <select id="wpdmgr-hooks-group-filter"><option value="all">All</option><option value="hook">Hook</option><option value="filter">Filter</option></select></label>';
-        echo '<label>Sort by: <select id="wpdmgr-hooks-sort"><option value="hook">Hook Name</option><option value="priority">Priority</option></select></label>';
-        echo '<label>Search: <input type="search" id="wpdmgr-hooks-search" placeholder="' . ( function_exists('__') ? esc_attr__( 'Search hook/callback…', 'wp-debug-manager' ) : 'Search hook/callback…' ) . '"></label>';
-        echo '<label>Min Priority: <input type="number" id="wpdmgr-hooks-min-priority" min="0" step="1" placeholder="0"></label>';
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Group by: <select id="almgr-hooks-group-filter"><option value="all">All</option><option value="hook">Hook</option><option value="filter">Filter</option></select></label>';
+        echo '<label>Sort by: <select id="almgr-hooks-sort"><option value="hook">Hook Name</option><option value="priority">Priority</option></select></label>';
+        echo '<label>Search: <input type="search" id="almgr-hooks-search" placeholder="' . esc_attr__( 'Search hook/callback…', 'advanced-log-manager' ) . '"></label>';
+        echo '<label>Min Priority: <input type="number" id="almgr-hooks-min-priority" min="0" step="1" placeholder="0"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-hooks-table">';
+        echo '<table class="query-log-table almgr-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No.</th>';
@@ -2077,9 +1963,9 @@ class WPDMGR_Perf_Monitor {
             // Show hook name cell only for the first occurrence of this hook
             if ($show_hook_cell) {
                 $rowspan = $hook_counts[$hook_name];
-                echo '<td class="wpdmgr-hook-handle" rowspan="' . $rowspan . '">';
+                echo '<td class="almgr-hook-handle" rowspan="' . $rowspan . '">';
                 echo '<span class="hook-type hook-type-' . $group['hook_type'] . '">' . strtoupper($group['hook_type']) . '</span> ';
-                echo (function_exists('esc_html') ? esc_html($hook_name) : htmlspecialchars($hook_name));
+                echo esc_html($hook_name);
                 echo '</td>';
                 $displayed_hooks[$hook_name] = true;
             }
@@ -2089,7 +1975,7 @@ class WPDMGR_Perf_Monitor {
                 if ($index > 0) {
                     echo '<br>';
                 }
-                echo '<code>' . (function_exists('esc_html') ? esc_html($function_name) : htmlspecialchars($function_name)) . '</code>';
+                echo '<code>' . esc_html($function_name) . '</code>';
             }
             echo '</div></td>';
             echo '</tr>';
@@ -2108,35 +1994,35 @@ class WPDMGR_Perf_Monitor {
      */
     private function render_realtime_hooks_tab() {
         if (empty($this->real_time_hooks)) {
-            echo '<p>' . __('No strategic hooks captured. This indicates the monitoring has not detected any significant WordPress activity.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No strategic hooks captured. This indicates the monitoring has not detected any significant WordPress activity.', 'advanced-log-manager') . '</p>';
             echo '<p>Only Monitor ' . count($this->get_strategic_hooks()) . ' strategic hooks for better performance.</p>';
             return;
         }
 
-        echo '<div class="wpdmgr-realtime-controls">';
-        echo '<div class="wpdmgr-tab-filters">';
-        echo '<label>Filter by Phase: <select id="wpdmgr-realtime-phase-filter"><option value="">All Phases</option></select></label>';
-        echo '<label>Filter by Domain: <select id="wpdmgr-realtime-domain-filter"><option value="">All Domains</option></select></label>';
-        echo '<label>Show: <select id="wpdmgr-realtime-limit"><option value="20">Last 20</option><option value="50" selected>Last 50</option><option value="100">Last 100</option></select></label>';
+        echo '<div class="almgr-realtime-controls">';
+        echo '<div class="almgr-tab-filters">';
+        echo '<label>Filter by Phase: <select id="almgr-realtime-phase-filter"><option value="">All Phases</option></select></label>';
+        echo '<label>Filter by Domain: <select id="almgr-realtime-domain-filter"><option value="">All Domains</option></select></label>';
+        echo '<label>Show: <select id="almgr-realtime-limit"><option value="20">Last 20</option><option value="50" selected>Last 50</option><option value="100">Last 100</option></select></label>';
         echo '</div>';
-        echo '<div class="wpdmgr-realtime-actions">';
-        echo '<button id="wpdmgr-toggle-realtime" class="button button-primary">Enable Real-time Updates</button>';
-        echo '<button id="wpdmgr-refresh-hooks" class="button">Refresh Now</button>';
-        echo '<span class="wpdmgr-realtime-status">Status: <span id="wpdmgr-status-text">Static View</span></span>';
+        echo '<div class="almgr-realtime-actions">';
+        echo '<button id="almgr-toggle-realtime" class="button button-primary">Enable Real-time Updates</button>';
+        echo '<button id="almgr-refresh-hooks" class="button">Refresh Now</button>';
+        echo '<span class="almgr-realtime-status">Status: <span id="almgr-status-text">Static View</span></span>';
         echo '</div>';
         echo '</div>';
 
-        echo '<div id="wpdmgr-realtime-summary" class="wpdmgr-realtime-summary">';
+        echo '<div id="almgr-realtime-summary" class="almgr-realtime-summary">';
         echo '<h5>Strategic Hook Monitoring Summary</h5>';
         echo '<ul>';
         echo '<li>Strategic hooks captured: <span id="hooks-count">' . count($this->real_time_hooks) . '</span> (vs. 21,000+ with "all" hook)</li>';
         echo '<li>Monitoring approach: <span class="status-good">Selective strategic hooks</span> (Performance optimized)</li>';
-        echo '<li>Memory usage: <span id="memory-usage">' . $this->wpdmgr_format_bytes(memory_get_usage()) . '</span></li>';
+        echo '<li>Memory usage: <span id="memory-usage">' . $this->almgr_format_bytes(memory_get_usage()) . '</span></li>';
         echo '<li>Resource impact: <span class="status-good">Minimal</span> (No "all action" warning)</li>';
         echo '</ul>';
         echo '</div>';
 
-        echo '<table class="query-log-table wpdmgr-realtime-hooks-table" id="realtime-hooks-table">';
+        echo '<table class="query-log-table almgr-realtime-hooks-table" id="realtime-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="order">Order</th>';
@@ -2166,7 +2052,7 @@ class WPDMGR_Perf_Monitor {
      */
     private function render_hook_row($hook_data, $start_time) {
         $relative_time = $start_time ? ($hook_data['time'] - $start_time) * 1000 : 0;
-        $memory_formatted = $this->wpdmgr_format_bytes($hook_data['memory']);
+        $memory_formatted = $this->almgr_format_bytes($hook_data['memory']);
         $domain = $this->categorize_hook_by_domain($hook_data['hook']);
 
         echo '<tr data-phase="' . esc_attr($hook_data['phase']) . '" data-domain="' . esc_attr($domain ?: 'uncategorized') . '">';
@@ -2174,7 +2060,7 @@ class WPDMGR_Perf_Monitor {
         echo '<td>' . number_format($relative_time, 2) . 'ms</td>';
         echo '<td>' . esc_html($memory_formatted) . '</td>';
         echo '<td><span class="phase-badge phase-' . esc_attr($hook_data['phase']) . '">' . esc_html($hook_data['phase']) . '</span></td>';
-        echo '<td class="wpdmgr-hook-name">';
+        echo '<td class="almgr-hook-name">';
         if ($domain) {
             echo '<span class="domain-badge domain-' . esc_attr($domain) . '">' . esc_html(strtoupper($domain)) . '</span> ';
         }
@@ -2203,11 +2089,11 @@ class WPDMGR_Perf_Monitor {
      */
     private function render_bootstrap_tab() {
         if (empty($this->bootstrap_snapshots)) {
-            echo '<p>' . __('No bootstrap snapshots captured. This indicates monitoring was not active during early WordPress loading.', 'wp-debug-manager') . '</p>';
+            echo '<p>' . __('No bootstrap snapshots captured. This indicates monitoring was not active during early WordPress loading.', 'advanced-log-manager') . '</p>';
             return;
         }
 
-        echo '<table class="query-log-table wpdmgr-bootstrap-table">';
+        echo '<table class="query-log-table almgr-bootstrap-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="phase">Bootstrap Phase</th>';
@@ -2229,7 +2115,7 @@ class WPDMGR_Perf_Monitor {
             }
 
             $relative_time = ($snapshot['time'] - $first_time) * 1000;
-            $memory_formatted = $this->wpdmgr_format_bytes($snapshot['memory']);
+            $memory_formatted = $this->almgr_format_bytes($snapshot['memory']);
             $hook_growth = $snapshot['hook_count'] - $previous_hook_count;
             $previous_hook_count = $snapshot['hook_count'];
 
@@ -2273,24 +2159,19 @@ class WPDMGR_Perf_Monitor {
 
         echo '</tbody>';
         echo '</table>';
-
-        echo '<div class="wpdmgr-bootstrap-summary">';
-        echo '<h5>Bootstrap Analysis</h5>';
-        echo '<p>This shows how WordPress hook registration evolves during the loading process. Each phase adds new hooks and callbacks.</p>';
-        echo '</div>';
     }
 
     /**
      * Render domain-specific panels similar to Query Monitor
      */
     private function render_domains_tab() {
-        echo '<div class="wpdmgr-domain-panels">';
+        echo '<div class="almgr-domain-panels">';
 
         foreach ($this->domain_collectors as $domain => $data) {
             $hook_count = count($data['hooks']);
             if ($hook_count === 0) continue;
 
-            echo '<div class="wpdmgr-domain-panel" id="domain-panel-' . esc_attr($domain) . '">';
+            echo '<div class="almgr-domain-panel" id="domain-panel-' . esc_attr($domain) . '">';
             echo '<h5 class="domain-panel-title">';
             echo '<span class="domain-icon domain-icon-' . esc_attr($domain) . '"></span>';
             echo esc_html(ucwords($domain)) . ' Domain';
@@ -2336,31 +2217,6 @@ class WPDMGR_Perf_Monitor {
      */
     private function render_domain_insights($domain, $data) {
         echo '<div class="domain-insights">';
-        echo '<h6>Domain Insights</h6>';
-
-        switch ($domain) {
-            case 'database':
-                echo '<p>Database-related hooks help track query performance and data access patterns.</p>';
-                break;
-            case 'http':
-                echo '<p>HTTP hooks monitor external requests and API calls that can affect page load time.</p>';
-                break;
-            case 'template':
-                echo '<p>Template hooks show the theme loading process and template hierarchy decisions.</p>';
-                break;
-            case 'rewrite':
-                echo '<p>Rewrite hooks track URL parsing and routing decisions in WordPress.</p>';
-                break;
-            case 'capabilities':
-                echo '<p>Capability hooks monitor user permission checks and role-based access.</p>';
-                break;
-            case 'cache':
-                echo '<p>Cache hooks track object caching operations and cache invalidation.</p>';
-                break;
-            case 'assets':
-                echo '<p>Asset hooks monitor script and stylesheet enqueuing and loading.</p>';
-                break;
-        }
 
         $hook_count = count($data['hooks']);
         if ($hook_count > 20) {
@@ -2395,7 +2251,7 @@ class WPDMGR_Perf_Monitor {
             if (!isset($categories[$category_key])) continue;
 
             echo '<div class="env-category-section">';
-            echo '<h5 class="env-category-title">' . (function_exists('esc_html') ? esc_html($category_title) : htmlspecialchars($category_title)) . '</h5>';
+            echo '<h5 class="env-category-title">' . esc_html($category_title) . '</h5>';
             echo '<table class="query-log-table env-category-table">';
             echo '<thead>';
             echo '<tr>';
@@ -2407,8 +2263,8 @@ class WPDMGR_Perf_Monitor {
 
             foreach ($categories[$category_key] as $env_item) {
                 echo '<tr>';
-                echo '<td class="wpdmgr-env-handle">' . (function_exists('esc_html') ? esc_html($env_item['name']) : htmlspecialchars($env_item['name'])) . '</td>';
-                echo '<td class="query-sql"><div class="sql-container"><code>' . (function_exists('esc_html') ? esc_html($env_item['value']) : htmlspecialchars($env_item['value'])) . '</code></div></td>';
+                echo '<td class="almgr-env-handle">' . esc_html($env_item['name']) . '</td>';
+                echo '<td class="query-sql"><div class="sql-container"><code>' . esc_html($env_item['value']) . '</code></div></td>';
                 echo '</tr>';
             }
 
@@ -2450,7 +2306,7 @@ class WPDMGR_Perf_Monitor {
      */
     private function collect_attachment_images(&$images) {
         // Get featured image if on single post/page
-        if (function_exists('is_singular') && is_singular() && function_exists('has_post_thumbnail') && has_post_thumbnail()) {
+        if (is_singular() && has_post_thumbnail()) {
             $thumbnail_id = get_post_thumbnail_id();
             $thumbnail_url = wp_get_attachment_image_src($thumbnail_id, 'full');
             if ($thumbnail_url) {
@@ -2545,7 +2401,7 @@ class WPDMGR_Perf_Monitor {
             // Allow absolute CSS only if same host; map to local path
             $resolved_src = $src;
             if (strpos($src, '//') === 0 || strpos($src, 'http://') === 0 || strpos($src, 'https://') === 0) {
-                $home_host = function_exists('home_url') ? parse_url(home_url('/'), PHP_URL_HOST) : '';
+                $home_host = parse_url(home_url('/'), PHP_URL_HOST);
                 $src_host = parse_url($src, PHP_URL_HOST);
                 if (!$home_host || !$src_host || strtolower($home_host) !== strtolower($src_host)) {
                     continue; // skip remote CSS from other hosts
@@ -2587,7 +2443,7 @@ class WPDMGR_Perf_Monitor {
                 // Convert relative URLs to absolute
                 if (strpos($image_url, 'http') !== 0) {
                     if (strpos($image_url, '/') === 0) {
-                        if (function_exists('home_url')) {
+                        {
                             $image_url = home_url($image_url);
                         }
                     } else {
@@ -2600,7 +2456,7 @@ class WPDMGR_Perf_Monitor {
                                 $css_dir = $path;
                             }
                         }
-                        if (function_exists('home_url')) {
+                        {
                             $image_url = home_url(rtrim($css_dir, '/') . '/' . ltrim($image_url, '/'));
                         }
                     }
@@ -2620,7 +2476,7 @@ class WPDMGR_Perf_Monitor {
      */
     private function collect_inline_images(&$images) {
         // For now, we can check if we're on a post/page and try to get images from content
-        if (function_exists('is_singular') && is_singular()) {
+        if (is_singular()) {
             global $post;
             if ($post && !empty($post->post_content)) {
                 $content = $post->post_content;
@@ -2635,9 +2491,7 @@ class WPDMGR_Perf_Monitor {
                         // Convert relative URLs
                         if (strpos($src, 'http') !== 0 && strpos($src, '//') !== 0) {
                             if (strpos($src, '/') === 0) {
-                                if (function_exists('home_url')) {
-                                    $src = home_url($src);
-                                }
+                                $src = home_url($src);
                             }
                         }
 
@@ -2673,9 +2527,32 @@ class WPDMGR_Perf_Monitor {
             'help' => ''
         );
 
+        // Get current user and group information
+        $user_info = 'Unknown';
+        if (extension_loaded('posix')) {
+            // @phpstan-ignore-next-line
+            if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
+                // @phpstan-ignore-next-line  
+                $user_data = function_exists('posix_getpwuid') ? @posix_getpwuid(@posix_geteuid()) : null;
+                if ($user_data && is_array($user_data) && isset($user_data['name'])) {
+                    $user_info = $user_data['name'];
+                    // @phpstan-ignore-next-line
+                    if (function_exists('posix_getgrgid') && function_exists('posix_getegid')) {
+                        // @phpstan-ignore-next-line
+                        $group_data = function_exists('posix_getgrgid') ? @posix_getgrgid(@posix_getegid()) : null;
+                        if ($group_data && is_array($group_data) && isset($group_data['name'])) {
+                            $user_info .= ':' . $group_data['name'];
+                        }
+                    }
+                }
+            }
+        } elseif (function_exists('get_current_user')) {
+            $user_info = get_current_user();
+        }
+
         $env_data[] = array(
             'name' => 'User/Group',
-            'value' => 'Hidden for security',
+            'value' => $user_info,
             'category' => 'PHP',
             'help' => ''
         );
@@ -2756,8 +2633,10 @@ class WPDMGR_Perf_Monitor {
 
                 global $wpdb;
                 $client_version = 'Unknown';
-                if ($wpdb && method_exists($wpdb, 'db_version')) {
+                if ($wpdb && is_object($wpdb) && method_exists($wpdb, 'db_version')) {
                     $client_version = $wpdb->db_version();
+                } elseif ($wpdb && is_object($wpdb)) {
+                    $client_version = $wpdb->get_var('SELECT VERSION()');
                 }
 
                 $env_data[] = array(
@@ -2769,29 +2648,62 @@ class WPDMGR_Perf_Monitor {
 
                 $env_data[] = array(
                     'name' => 'Database User',
-                    'value' => 'Hidden for security',
+                    'value' => defined('DB_USER') ? DB_USER : 'Not defined',
                     'category' => 'Database',
                     'help' => ''
                 );
 
                 $env_data[] = array(
                     'name' => 'Database Host',
-                    'value' => 'Hidden for security',
+                    'value' => defined('DB_HOST') ? DB_HOST : 'Not defined',
                     'category' => 'Database',
                     'help' => ''
                 );
 
                 $env_data[] = array(
                     'name' => 'Database Name',
-                    'value' => 'Hidden for security',
+                    'value' => defined('DB_NAME') ? DB_NAME : 'Not defined',
                     'category' => 'Database',
                     'help' => ''
                 );
 
-                // Database configuration
-                $innodb_buffer = $wpdb->get_var($wpdb->prepare('SHOW VARIABLES LIKE %s', 'innodb_buffer_pool_size'));
-            if ($innodb_buffer) {
-                $buffer_size = $wpdb->get_var($wpdb->prepare('SELECT @@innodb_buffer_pool_size'));
+                // Database configuration with caching
+                $cache_key = 'almgr_db_config_' . md5(DB_HOST . DB_NAME);
+                $cached_config = wp_cache_get($cache_key, 'almgr_db_config');
+
+                if (false === $cached_config) {
+                    // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+                    $innodb_buffer = $wpdb->get_var($wpdb->prepare('SHOW VARIABLES LIKE %s', 'innodb_buffer_pool_size'));
+                    if ($innodb_buffer) {
+                        $buffer_size = $wpdb->get_var($wpdb->prepare('SELECT @@innodb_buffer_pool_size'));
+                    }
+                    $env_data[] = array(
+                        'name' => 'innodb_buffer_pool_size',
+                        'value' => $buffer_size . ' (~' . round($buffer_size / 1024 / 1024 / 1024, 1) . ' GB)',
+                        'category' => 'Database',
+                        'help' => ''
+                    );
+
+                    $key_buffer = $wpdb->get_var($wpdb->prepare('SELECT @@key_buffer_size'));
+                    $max_packet = $wpdb->get_var($wpdb->prepare('SELECT @@max_allowed_packet'));
+                    $max_connections = $wpdb->get_var($wpdb->prepare('SELECT @@max_connections'));
+                        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+
+                    $cached_config = array(
+                        'buffer_size' => $buffer_size,
+                        'key_buffer' => $key_buffer,
+                        'max_packet' => $max_packet,
+                        'max_connections' => $max_connections
+                    );
+                    wp_cache_set($cache_key, $cached_config, 'almgr_db_config', 300); // Cache for 5 minutes
+                } else {
+                    $buffer_size = $cached_config['buffer_size'];
+                    $key_buffer = $cached_config['key_buffer'];
+                    $max_packet = $cached_config['max_packet'];
+                    $max_connections = $cached_config['max_connections'];
+                }
+
+                if (isset($buffer_size) && $buffer_size) {
                     $env_data[] = array(
                         'name' => 'innodb_buffer_pool_size',
                         'value' => $buffer_size . ' (~' . round($buffer_size / 1024 / 1024 / 1024, 1) . ' GB)',
@@ -2800,8 +2712,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $key_buffer = $wpdb->get_var($wpdb->prepare('SELECT @@key_buffer_size'));
-                if ($key_buffer) {
+                if (isset($key_buffer) && $key_buffer) {
                     $env_data[] = array(
                         'name' => 'key_buffer_size',
                         'value' => $key_buffer . ' (~' . round($key_buffer / 1024 / 1024, 0) . ' MB)',
@@ -2810,8 +2721,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $max_packet = $wpdb->get_var($wpdb->prepare('SELECT @@max_allowed_packet'));
-                if ($max_packet) {
+                if (isset($max_packet) && $max_packet) {
                     $env_data[] = array(
                         'name' => 'max_allowed_packet',
                         'value' => $max_packet . ' (~' . round($max_packet / 1024 / 1024, 0) . ' MB)',
@@ -2820,8 +2730,7 @@ class WPDMGR_Perf_Monitor {
                     );
                 }
 
-                $max_connections = $wpdb->get_var($wpdb->prepare('SELECT @@max_connections'));
-                if ($max_connections) {
+                if (isset($max_connections) && $max_connections) {
                     $env_data[] = array(
                         'name' => 'max_connections',
                         'value' => $max_connections,
@@ -2833,14 +2742,12 @@ class WPDMGR_Perf_Monitor {
         }
 
         // WordPress Environment - Comprehensive
-        if (function_exists('get_bloginfo')) {
-            $env_data[] = array(
-                'name' => 'Version',
-                'value' => get_bloginfo('version'),
-                'category' => 'WordPress',
-                'help' => ''
-            );
-        }
+        $env_data[] = array(
+            'name' => 'Version',
+            'value' => get_bloginfo('version'),
+            'category' => 'WordPress',
+            'help' => ''
+        );
 
         $env_data[] = array(
             'name' => 'Environment Type',
@@ -2923,35 +2830,35 @@ class WPDMGR_Perf_Monitor {
         // Server Environment - Comprehensive
         $env_data[] = array(
             'name' => 'Software',
-            'value' => 'Hidden for security',
+            'value' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown',
             'category' => 'Server',
             'help' => ''
         );
 
         $env_data[] = array(
             'name' => 'Version',
-            'value' => 'Hidden for security',
+            'value' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown',
             'category' => 'Server',
             'help' => ''
         );
 
         $env_data[] = array(
             'name' => 'IP Address',
-            'value' => 'Hidden for security',
+            'value' => isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : (isset($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR'] : 'Unknown'),
             'category' => 'Server',
             'help' => ''
         );
 
         $env_data[] = array(
             'name' => 'Host',
-            'value' => 'Hidden for security',
+            'value' => isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'Unknown'),
             'category' => 'Server',
             'help' => ''
         );
 
         $env_data[] = array(
             'name' => 'OS',
-            'value' => php_uname('s r'),
+            'value' => php_uname('s') . ' ' . php_uname('r'),
             'category' => 'Server',
             'help' => ''
         );
@@ -2963,9 +2870,19 @@ class WPDMGR_Perf_Monitor {
             'help' => ''
         );
 
+        // Get authentication information
+        $auth_info = 'None';
+        if (isset($_SERVER['AUTH_TYPE'])) {
+            $auth_info = $_SERVER['AUTH_TYPE'];
+        } elseif (isset($_SERVER['REMOTE_USER'])) {
+            $auth_info = 'Basic Auth (User: ' . $_SERVER['REMOTE_USER'] . ')';
+        } elseif (isset($_SERVER['PHP_AUTH_USER'])) {
+            $auth_info = 'PHP Auth (User: ' . $_SERVER['PHP_AUTH_USER'] . ')';
+        }
+
         $env_data[] = array(
             'name' => 'Authentication',
-            'value' => 'Information hidden for security',
+            'value' => $auth_info,
             'category' => 'Server',
             'help' => ''
         );

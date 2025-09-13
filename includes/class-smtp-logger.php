@@ -3,17 +3,17 @@
  * SMTP Logger - Email logging with JSON Lines format
  * Enhanced to properly hook into wp_mail() and capture comprehensive email data
  *
- * @package WP Debug Manager
+ * @package Advance Log Manager -
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class WPDMGR_SMTP_Logger {
+class ALMGR_SMTP_Logger {
     private $log_directory;
     private $log_enabled;
     private $current_log_file;
@@ -25,9 +25,9 @@ class WPDMGR_SMTP_Logger {
     private $current_smtp_config; // Current SMTP configuration
 
     public function __construct() {
-        $this->log_directory = \trailingslashit(\WP_CONTENT_DIR) . 'wp-debug-manager/';
-        $this->log_enabled = (bool) \get_option('wpdmgr_smtp_logging_enabled', \get_option('wpdmgr_smtp_logging_enabled', false));
-        $this->log_ip_address = (bool) \get_option('wpdmgr_smtp_log_ip_address', \get_option('wpdmgr_smtp_log_ip_address', false));
+        $this->log_directory = \trailingslashit(\WP_CONTENT_DIR) . 'advanced-log-manager/';
+        $this->log_enabled = (bool) \get_option('almgr_smtp_logging_enabled', \get_option('almgr_smtp_logging_enabled', false));
+        $this->log_ip_address = (bool) \get_option('almgr_smtp_log_ip_address', \get_option('almgr_smtp_log_ip_address', false));
         $this->current_log_file = $this->get_current_log_file();
         $this->pending_emails = array();
         $this->email_counter = 0;
@@ -986,7 +986,7 @@ class WPDMGR_SMTP_Logger {
      */
     public function enable_ip_logging() {
         $this->log_ip_address = true;
-        update_option('wpdmgr_smtp_log_ip_address', true);
+        update_option('almgr_smtp_log_ip_address', true);
     }
 
     /**
@@ -994,7 +994,7 @@ class WPDMGR_SMTP_Logger {
      */
     public function disable_ip_logging() {
         $this->log_ip_address = false;
-        update_option('wpdmgr_smtp_log_ip_address', false);
+        update_option('almgr_smtp_log_ip_address', false);
     }
 
     /**
@@ -1002,7 +1002,7 @@ class WPDMGR_SMTP_Logger {
      */
     public function enable_logging() {
         $this->log_enabled = true;
-        update_option('wpdmgr_smtp_logging_enabled', true);
+        update_option('almgr_smtp_logging_enabled', true);
         $this->init_hooks();
     }
 
@@ -1011,7 +1011,7 @@ class WPDMGR_SMTP_Logger {
      */
     public function disable_logging() {
         $this->log_enabled = false;
-        update_option('wpdmgr_smtp_logging_enabled', false);
+        update_option('almgr_smtp_logging_enabled', false);
 
         // Remove hooks
         \remove_filter('pre_wp_mail', array($this, 'capture_email_data'));
@@ -1077,7 +1077,7 @@ class WPDMGR_SMTP_Logger {
                     'formatted_date' => date('d/m/Y', strtotime($date)),
                     'file' => $file,
                     'size' => filesize($file),
-                    'size_formatted' => wpdmgr_format_bytes(filesize($file))
+                    'size_formatted' => almgr_format_bytes(filesize($file))
                 );
             }
         }
@@ -1099,7 +1099,7 @@ class WPDMGR_SMTP_Logger {
             'current_log_file' => $this->current_log_file,
             'current_log_exists' => file_exists($this->current_log_file),
             'current_log_size' => file_exists($this->current_log_file) ?
-                wpdmgr_format_bytes(filesize($this->current_log_file)) : '0 B',
+                almgr_format_bytes(filesize($this->current_log_file)) : '0 B',
             'available_files' => $this->get_available_log_files()
         );
     }
@@ -1118,7 +1118,7 @@ class WPDMGR_SMTP_Logger {
             if (preg_match('/smtp-(\d{8})\.log/', $filename, $matches)) {
                 $file_date = $matches[1];
                 if ($file_date < $cutoff_date) {
-                    if (unlink($file)) {
+                    if (wp_delete_file($file)) {
                         $deleted++;
                     }
                 }
@@ -1148,7 +1148,7 @@ class WPDMGR_SMTP_Logger {
         // Skip internal functions and find the actual caller
         foreach ($trace as $call) {
             // Skip our own methods and WordPress internal functions
-            if (isset($call['class']) && $call['class'] === 'WPDMGR_SMTP_Logger') {
+            if (isset($call['class']) && $call['class'] === 'ALMGR_SMTP_Logger') {
                 continue;
             }
 
@@ -1224,8 +1224,8 @@ class WPDMGR_SMTP_Logger {
      * Process email content according to privacy settings
      */
     private function process_email_content($content) {
-        $privacy_mode = \get_option('wpdmgr_smtp_privacy_mode', 'full'); // full, truncated, obfuscated, none
-        $max_length = \get_option('wpdmgr_smtp_content_max_length', 1000);
+        $privacy_mode = \get_option('almgr_smtp_privacy_mode', 'full'); // full, truncated, obfuscated, none
+        $max_length = \get_option('almgr_smtp_content_max_length', 1000);
 
         switch ($privacy_mode) {
             case 'none':
@@ -1274,7 +1274,7 @@ class WPDMGR_SMTP_Logger {
         }
 
         // Truncate if still too long
-        $max_length = \get_option('wpdmgr_smtp_content_max_length', 500);
+        $max_length = \get_option('almgr_smtp_content_max_length', 500);
         if (strlen($obfuscated) > $max_length) {
             $obfuscated = substr($obfuscated, 0, $max_length) . ' [TRUNCATED]';
         }
@@ -1286,7 +1286,7 @@ class WPDMGR_SMTP_Logger {
      * Check if content should be logged based on privacy settings
      */
     private function should_log_content($content_type = 'email') {
-        $privacy_mode = \get_option('wpdmgr_smtp_privacy_mode', 'full');
+        $privacy_mode = \get_option('almgr_smtp_privacy_mode', 'full');
 
         if ($privacy_mode === 'none') {
             return false;

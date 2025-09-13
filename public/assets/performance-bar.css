@@ -2,7 +2,7 @@
  * Performance Bar Frontend Styles
  */
 
-.wpdmgr-performance-bar {
+.almgr-performance-bar {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -16,7 +16,7 @@
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-.wpdmgr-perf-container {
+.almgr-perf-container {
     display: flex !important;
     align-items: center !important;
     padding: 8px 20px !important;
@@ -24,34 +24,34 @@
     margin: 0 auto !important;
 }
 
-.wpdmgr-perf-item {
+.almgr-perf-item {
     display: flex !important;
     align-items: center !important;
     margin-right: 20px !important;
     white-space: nowrap !important;
 }
 
-.wpdmgr-perf-icon {
+.almgr-perf-icon {
     margin-right: 5px !important;
     font-size: 14px !important;
 }
 
-.wpdmgr-perf-value {
+.almgr-perf-value {
     font-weight: 600 !important;
     margin-right: 3px !important;
     color: #ffffff !important;
 }
 
-.wpdmgr-perf-label {
+.almgr-perf-label {
     color: #a0a5aa !important;
     font-size: 12px !important;
 }
 
-.wpdmgr-perf-toggle {
+.almgr-perf-toggle {
     margin-left: auto !important;
 }
 
-.wpdmgr-perf-toggle button {
+.almgr-perf-toggle button {
     background: none !important;
     border: none !important;
     color: #ffffff !important;
@@ -61,17 +61,17 @@
     transition: background 0.3s ease !important;
 }
 
-.wpdmgr-perf-toggle button:hover {
+.almgr-perf-toggle button:hover {
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.wpdmgr-perf-toggle .dashicons {
+.almgr-perf-toggle .dashicons {
     font-size: 16px !important;
     width: 16px !important;
     height: 16px !important;
 }
 
-.wpdmgr-perf-details {
+.almgr-perf-details {
     background: #32373c !important;
     border-top: 1px solid #464b50 !important;
     padding: 0 !important;
@@ -79,21 +79,22 @@
     z-index: 99999;
     bottom: 0;
     width: 100%;
-    min-height: 50vh;
+    max-height: 50vh;
+    height: 100%;
 }
 
-#wp-admin-bar-wpdmgr-performance-monitor .ab-icon {
+#wp-admin-bar-almgr-performance-monitor .ab-icon {
 	display: none !important;
 }
 
-.wpdmgr-perf-details-content {
+.almgr-perf-details-content {
     margin: 0 auto !important;
     display: flex !important;
-    max-height: 50vh !important;
+    height: 100%;
 }
 
 /* Sidebar Tabs */
-.wpdmgr-perf-sidebar {
+.almgr-perf-sidebar {
     width: 25% !important;
     background: #23282d !important;
     border-right: 1px solid #464b50 !important;
@@ -102,13 +103,13 @@
     overflow-x: hidden;
 }
 
-.wpdmgr-perf-tabs {
+.almgr-perf-tabs {
     list-style: none !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-.wpdmgr-perf-tab {
+.almgr-perf-tab {
     display: flex !important;
     align-items: center !important;
     padding: 12px 15px !important;
@@ -119,18 +120,18 @@
     font-size: 13px !important;
 }
 
-.wpdmgr-perf-tab:hover {
+.almgr-perf-tab:hover {
     background: #2c3338 !important;
     color: #ffffff !important;
 }
 
-.wpdmgr-perf-tab.active {
+.almgr-perf-tab.active {
     background: #0073aa !important;
     color: #ffffff !important;
     border-left: 3px solid #00a0d2 !important;
 }
 
-.wpdmgr-perf-tab .dashicons {
+.almgr-perf-tab .dashicons {
     margin-right: 8px !important;
     font-size: 16px !important;
     width: 16px !important;
@@ -138,129 +139,129 @@
 }
 
 /* Content Area */
-.wpdmgr-perf-content {
+.almgr-perf-content {
     flex: 1 !important;
     padding: 15px 20px !important;
     overflow-y: auto !important;
 }
 
-.wpdmgr-perf-tab-content {
+.almgr-perf-tab-content {
     display: none !important;
 }
 
-.wpdmgr-perf-tab-content.active {
+.almgr-perf-tab-content.active {
     display: block !important;
 }
 
-.wpdmgr-perf-details h4 {
+.almgr-perf-details h4 {
     margin: 0 0 10px 0 !important;
     color: #ffffff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
 }
 
-.wpdmgr-perf-table {
+.almgr-perf-table {
     width: 100% !important;
     max-width: 400px !important;
     border-collapse: collapse !important;
 }
 
-.wpdmgr-perf-table td {
+.almgr-perf-table td {
     padding: 3px 0 !important;
     color: #a0a5aa !important;
     font-size: 13px !important;
     border: none !important;
 }
 
-.wpdmgr-perf-table td:first-child {
+.almgr-perf-table td:first-child {
     width: 40% !important;
     font-weight: 500 !important;
 }
 
-.wpdmgr-perf-table td:last-child {
+.almgr-perf-table td:last-child {
     color: #ffffff !important;
     font-weight: 600 !important;
 }
 
 /* Performance status colors */
-.wpdmgr-performance-bar.good {
+.almgr-performance-bar.good {
     border-top-color: #00a32a !important;
 }
 
-.wpdmgr-performance-bar.warning {
+.almgr-performance-bar.warning {
     border-top-color: #dba617 !important;
 }
 
-.wpdmgr-performance-bar.poor {
+.almgr-performance-bar.poor {
     border-top-color: #d63638 !important;
 }
 
 /* Admin bar adjustment */
-body.admin-bar .wpdmgr-performance-bar {
+body.admin-bar .almgr-performance-bar {
     bottom: 32px !important;
 }
 
 /* Mobile responsive */
 @media screen and (max-width: 782px) {
-    body.admin-bar .wpdmgr-performance-bar {
+    body.admin-bar .almgr-performance-bar {
         bottom: 46px !important;
     }
 
-    .wpdmgr-perf-container {
+    .almgr-perf-container {
         flex-wrap: wrap !important;
         padding: 6px 15px !important;
     }
 
-    .wpdmgr-perf-item {
+    .almgr-perf-item {
         margin-right: 15px !important;
         margin-bottom: 2px !important;
     }
 
-    .wpdmgr-perf-details {
+    .almgr-perf-details {
         padding: 12px 15px !important;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .wpdmgr-perf-container {
+    .almgr-perf-container {
         padding: 6px 10px !important;
     }
 
-    .wpdmgr-perf-item {
+    .almgr-perf-item {
         margin-right: 10px !important;
         font-size: 12px !important;
     }
 
-    .wpdmgr-perf-icon {
+    .almgr-perf-icon {
         font-size: 12px !important;
     }
 
-    .wpdmgr-perf-value {
+    .almgr-perf-value {
         font-size: 12px !important;
     }
 
-    .wpdmgr-perf-label {
+    .almgr-perf-label {
         font-size: 11px !important;
     }
 
-    .wpdmgr-perf-table {
+    .almgr-perf-table {
         font-size: 12px !important;
     }
 }
 
 /* Ensure performance bar doesn't interfere with other elements */
-body.wpdmgr-perf-active {
+body.almgr-perf-active {
     padding-bottom: 42px !important;
 }
 
-body.admin-bar.wpdmgr-perf-active {
+body.admin-bar.almgr-perf-active {
     padding-bottom: 0 !important;
 }
 
 /* Tab Content Styling */
-.wpdmgr-queries-list,
-.wpdmgr-scripts-list,
-.wpdmgr-styles-list {
+.almgr-queries-list,
+.almgr-scripts-list,
+.almgr-styles-list {
     max-height: 400px !important;
     overflow-y: auto !important;
     display: flex !important;
@@ -268,9 +269,9 @@ body.admin-bar.wpdmgr-perf-active {
     gap: 8px !important;
 }
 
-.wpdmgr-query-item,
-.wpdmgr-script-item,
-.wpdmgr-style-item {
+.almgr-query-item,
+.almgr-script-item,
+.almgr-style-item {
     background: #23282d !important;
     border: 1px solid #464b50 !important;
     border-radius: 4px !important;
@@ -280,16 +281,16 @@ body.admin-bar.wpdmgr-perf-active {
     box-shadow: 0 1px 1px rgba(0,0,0,0.04) !important;
 }
 
-.wpdmgr-script-item:hover,
-.wpdmgr-style-item:hover {
+.almgr-script-item:hover,
+.almgr-style-item:hover {
     background: #2c3338 !important;
     border-color: #5a6066 !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
 }
 
-.wpdmgr-query-header,
-.wpdmgr-script-header,
-.wpdmgr-style-header {
+.almgr-query-header,
+.almgr-script-header,
+.almgr-style-header {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
@@ -297,9 +298,9 @@ body.admin-bar.wpdmgr-perf-active {
     gap: 8px !important;
 }
 
-.wpdmgr-query-type,
-.wpdmgr-script-handle,
-.wpdmgr-style-handle {
+.almgr-query-type,
+.almgr-script-handle,
+.almgr-style-handle {
     font-weight: 600 !important;
     color: #ffffff !important;
     font-size: 13px !important;
@@ -310,7 +311,7 @@ body.admin-bar.wpdmgr-perf-active {
     border: 1px solid #464b50 !important;
 }
 
-.wpdmgr-query-time {
+.almgr-query-time {
     font-size: 11px !important;
     padding: 2px 6px !important;
     border-radius: 3px !important;
@@ -318,20 +319,20 @@ body.admin-bar.wpdmgr-perf-active {
     color: #ffffff !important;
 }
 
-.wpdmgr-query-item.slow .wpdmgr-query-time {
+.almgr-query-item.slow .almgr-query-time {
     background: #d63638 !important;
 }
 
-.wpdmgr-query-item.medium .wpdmgr-query-time {
+.almgr-query-item.medium .almgr-query-time {
     background: #dba617 !important;
 }
 
-.wpdmgr-query-item.fast .wpdmgr-query-time {
+.almgr-query-item.fast .almgr-query-time {
     background: #00a32a !important;
 }
 
-.wpdmgr-script-version,
-.wpdmgr-style-version {
+.almgr-script-version,
+.almgr-style-version {
     background: #2271b1 !important;
     color: white !important;
     padding: 2px 8px !important;
@@ -341,7 +342,7 @@ body.admin-bar.wpdmgr-perf-active {
     letter-spacing: 0.3px !important;
 }
 
-.wpdmgr-style-media {
+.almgr-style-media {
     background: #646970 !important;
     color: white !important;
     padding: 2px 8px !important;
@@ -351,9 +352,9 @@ body.admin-bar.wpdmgr-perf-active {
     letter-spacing: 0.3px !important;
 }
 
-.wpdmgr-query-sql,
-.wpdmgr-script-src,
-.wpdmgr-style-src {
+.almgr-query-sql,
+.almgr-script-src,
+.almgr-style-src {
     font-family: 'SFMono-Regular', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace !important;
     font-size: 12px !important;
     color: #a0a5aa !important;
@@ -366,9 +367,9 @@ body.admin-bar.wpdmgr-perf-active {
     line-height: 1.4 !important;
 }
 
-.wpdmgr-query-stack,
-.wpdmgr-script-deps,
-.wpdmgr-style-deps {
+.almgr-query-stack,
+.almgr-script-deps,
+.almgr-style-deps {
     font-size: 11px !important;
     color: #a0a5aa !important;
     margin-top: 4px !important;
@@ -380,8 +381,8 @@ body.admin-bar.wpdmgr-perf-active {
 }
 
 /* Scripts and Styles Tab Content */
-.wpdmgr-scripts-container,
-.wpdmgr-styles-container {
+.almgr-scripts-container,
+.almgr-styles-container {
     padding: 15px !important;
     max-height: 400px !important;
     overflow-y: auto !important;
@@ -393,8 +394,8 @@ body.admin-bar.wpdmgr-perf-active {
 }
 
 /* Table styling for Scripts and Styles */
-.wpdmgr-scripts-container .query-log-table,
-.wpdmgr-styles-container .query-log-table {
+.almgr-scripts-container .query-log-table,
+.almgr-styles-container .query-log-table {
     width: 100% !important;
     border-collapse: collapse !important;
     background: #23282d !important;
@@ -404,8 +405,8 @@ body.admin-bar.wpdmgr-perf-active {
     table-layout: fixed !important;
 }
 
-.wpdmgr-scripts-container .query-log-table th,
-.wpdmgr-styles-container .query-log-table th {
+.almgr-scripts-container .query-log-table th,
+.almgr-styles-container .query-log-table th {
     background: #32373c !important;
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -416,8 +417,8 @@ body.admin-bar.wpdmgr-perf-active {
     letter-spacing: 0.5px !important;
 }
 
-.wpdmgr-scripts-container .query-log-table td,
-.wpdmgr-styles-container .query-log-table td {
+.almgr-scripts-container .query-log-table td,
+.almgr-styles-container .query-log-table td {
     padding: 10px 8px !important;
     border-bottom: 1px solid #464b50 !important;
     font-size: 12px !important;
@@ -426,46 +427,46 @@ body.admin-bar.wpdmgr-perf-active {
     word-wrap: break-word !important;
 }
 
-.wpdmgr-scripts-container .query-log-table tr:hover,
-.wpdmgr-styles-container .query-log-table tr:hover {
+.almgr-scripts-container .query-log-table tr:hover,
+.almgr-styles-container .query-log-table tr:hover {
     background-color: #2c3338 !important;
 }
 
-.wpdmgr-scripts-container .query-log-table .query-number,
-.wpdmgr-styles-container .query-log-table .query-number {
+.almgr-scripts-container .query-log-table .query-number,
+.almgr-styles-container .query-log-table .query-number {
     width: 40px !important;
     text-align: center !important;
     font-weight: 600 !important;
     color: #ffffff !important;
 }
 
-.wpdmgr-scripts-container .query-log-table .wpdmgr-script-handle,
-.wpdmgr-styles-container .query-log-table .wpdmgr-style-handle {
+.almgr-scripts-container .query-log-table .almgr-script-handle,
+.almgr-styles-container .query-log-table .almgr-style-handle {
     color: #0073aa !important;
     font-weight: 600 !important;
     width: 120px !important;
 }
 
-.wpdmgr-scripts-container .query-log-table .query-sql,
-.wpdmgr-styles-container .query-log-table .query-sql {
+.almgr-scripts-container .query-log-table .query-sql,
+.almgr-styles-container .query-log-table .query-sql {
     max-width: 30% !important;
     min-width: 200px !important;
 }
 
 /* File Size and Load Time columns */
-.wpdmgr-scripts-container .query-log-table th:nth-child(8),
-.wpdmgr-scripts-container .query-log-table td:nth-child(8),
-.wpdmgr-styles-container .query-log-table th:nth-child(8),
-.wpdmgr-styles-container .query-log-table td:nth-child(8) {
+.almgr-scripts-container .query-log-table th:nth-child(8),
+.almgr-scripts-container .query-log-table td:nth-child(8),
+.almgr-styles-container .query-log-table th:nth-child(8),
+.almgr-styles-container .query-log-table td:nth-child(8) {
     width: 80px !important;
     text-align: center !important;
     font-size: 11px !important;
 }
 
-.wpdmgr-scripts-container .query-log-table th:nth-child(9),
-.wpdmgr-scripts-container .query-log-table td:nth-child(9),
-.wpdmgr-styles-container .query-log-table th:nth-child(9),
-.wpdmgr-styles-container .query-log-table td:nth-child(9) {
+.almgr-scripts-container .query-log-table th:nth-child(9),
+.almgr-scripts-container .query-log-table td:nth-child(9),
+.almgr-styles-container .query-log-table th:nth-child(9),
+.almgr-styles-container .query-log-table td:nth-child(9) {
     width: 90px !important;
     text-align: center !important;
     font-size: 11px !important;
@@ -521,62 +522,62 @@ body.admin-bar.wpdmgr-perf-active {
 }
 
 /* File size styling - fallback for non-colored values */
-.wpdmgr-scripts-container .query-log-table td:nth-child(8),
-.wpdmgr-styles-container .query-log-table td:nth-child(8) {
+.almgr-scripts-container .query-log-table td:nth-child(8),
+.almgr-styles-container .query-log-table td:nth-child(8) {
     color: #00a32a !important;
     font-weight: 500 !important;
 }
 
 /* Load time styling - fallback for non-colored values */
-.wpdmgr-scripts-container .query-log-table td:nth-child(9),
-.wpdmgr-styles-container .query-log-table td:nth-child(9) {
+.almgr-scripts-container .query-log-table td:nth-child(9),
+.almgr-styles-container .query-log-table td:nth-child(9) {
     color: #dba617 !important;
     font-weight: 500 !important;
 }
 
 /* Position column width */
-.wpdmgr-scripts-container .query-log-table th:nth-child(2),
-.wpdmgr-scripts-container .query-log-table td:nth-child(2),
-.wpdmgr-styles-container .query-log-table th:nth-child(2),
-.wpdmgr-styles-container .query-log-table td:nth-child(2) {
+.almgr-scripts-container .query-log-table th:nth-child(2),
+.almgr-scripts-container .query-log-table td:nth-child(2),
+.almgr-styles-container .query-log-table th:nth-child(2),
+.almgr-styles-container .query-log-table td:nth-child(2) {
     width: 70px !important;
     text-align: center !important;
 }
 
 /* Hostname column width */
-.wpdmgr-scripts-container .query-log-table th:nth-child(4),
-.wpdmgr-scripts-container .query-log-table td:nth-child(4),
-.wpdmgr-styles-container .query-log-table th:nth-child(4),
-.wpdmgr-styles-container .query-log-table td:nth-child(4) {
+.almgr-scripts-container .query-log-table th:nth-child(4),
+.almgr-scripts-container .query-log-table td:nth-child(4),
+.almgr-styles-container .query-log-table th:nth-child(4),
+.almgr-styles-container .query-log-table td:nth-child(4) {
     width: 120px !important;
 }
 
 /* Component column width */
-.wpdmgr-scripts-container .query-log-table th:nth-child(6),
-.wpdmgr-scripts-container .query-log-table td:nth-child(6),
-.wpdmgr-styles-container .query-log-table th:nth-child(6),
-.wpdmgr-styles-container .query-log-table td:nth-child(6) {
+.almgr-scripts-container .query-log-table th:nth-child(6),
+.almgr-scripts-container .query-log-table td:nth-child(6),
+.almgr-styles-container .query-log-table th:nth-child(6),
+.almgr-styles-container .query-log-table td:nth-child(6) {
     width: 150px !important;
     font-size: 11px !important;
 }
 
 /* Version column width */
-.wpdmgr-scripts-container .query-log-table th:nth-child(7),
-.wpdmgr-scripts-container .query-log-table td:nth-child(7),
-.wpdmgr-styles-container .query-log-table th:nth-child(7),
-.wpdmgr-styles-container .query-log-table td:nth-child(7) {
+.almgr-scripts-container .query-log-table th:nth-child(7),
+.almgr-scripts-container .query-log-table td:nth-child(7),
+.almgr-styles-container .query-log-table th:nth-child(7),
+.almgr-styles-container .query-log-table td:nth-child(7) {
     width: 80px !important;
     text-align: center !important;
     font-size: 11px !important;
 }
 
-.wpdmgr-scripts-container .query-log-table .sql-container,
-.wpdmgr-styles-container .query-log-table .sql-container {
+.almgr-scripts-container .query-log-table .sql-container,
+.almgr-styles-container .query-log-table .sql-container {
     word-break: break-all !important;
 }
 
-.wpdmgr-scripts-container .query-log-table .sql-container code,
-.wpdmgr-styles-container .query-log-table .sql-container code {
+.almgr-scripts-container .query-log-table .sql-container code,
+.almgr-styles-container .query-log-table .sql-container code {
     background: #1e1e1e !important;
     padding: 2px 4px !important;
     border-radius: 3px !important;
@@ -587,7 +588,7 @@ body.admin-bar.wpdmgr-perf-active {
 }
 
 /* Query log table styling for Database Queries tab */
-.wpdmgr-perf-content .query-log-table {
+.almgr-perf-content .query-log-table {
     width: 100% !important;
     border-collapse: collapse !important;
     background: #23282d !important;
@@ -597,7 +598,7 @@ body.admin-bar.wpdmgr-perf-active {
     table-layout: fixed !important;
 }
 
-.wpdmgr-perf-content .query-log-table th {
+.almgr-perf-content .query-log-table th {
     background: #32373c !important;
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -608,7 +609,7 @@ body.admin-bar.wpdmgr-perf-active {
     letter-spacing: 0.5px !important;
 }
 
-.wpdmgr-perf-content .query-log-table td {
+.almgr-perf-content .query-log-table td {
     padding: 10px 8px !important;
     border-bottom: 1px solid #464b50 !important;
     font-size: 12px !important;
@@ -617,33 +618,33 @@ body.admin-bar.wpdmgr-perf-active {
     word-wrap: break-word !important;
 }
 
-.wpdmgr-perf-content .query-log-table tr:hover {
+.almgr-perf-content .query-log-table tr:hover {
     background-color: #2c3338 !important;
 }
 
-.wpdmgr-perf-content .query-log-table .query-number {
+.almgr-perf-content .query-log-table .query-number {
     width: 50px !important;
     text-align: center !important;
     font-weight: 600 !important;
     color: #ffffff !important;
 }
 
-.wpdmgr-perf-content .query-log-table .query-time {
+.almgr-perf-content .query-log-table .query-time {
     width: 80px !important;
     text-align: center !important;
     font-weight: 500 !important;
 }
 
-.wpdmgr-perf-content .query-log-table .query-sql {
+.almgr-perf-content .query-log-table .query-sql {
     max-width: 50% !important;
     min-width: 300px !important;
 }
 
-.wpdmgr-perf-content .query-log-table .sql-container {
+.almgr-perf-content .query-log-table .sql-container {
     word-break: break-all !important;
 }
 
-.wpdmgr-perf-content .query-log-table .sql-container code {
+.almgr-perf-content .query-log-table .sql-container code {
     background: #1e1e1e !important;
     padding: 4px 6px !important;
     border-radius: 3px !important;
@@ -656,7 +657,7 @@ body.admin-bar.wpdmgr-perf-active {
     overflow-y: auto !important;
 }
 
-.wpdmgr-perf-content .query-log-table .query-caller {
+.almgr-perf-content .query-log-table .query-caller {
     width: 200px !important;
     font-size: 11px !important;
     color: #a0a5aa !important;
@@ -723,23 +724,23 @@ body.admin-bar.wpdmgr-perf-active {
 }
 
 /* Slow query styling */
-.wpdmgr-perf-content .query-log-table .slow-query {
+.almgr-perf-content .query-log-table .slow-query {
     background-color: rgba(214, 54, 56, 0.1) !important;
 }
 
-.wpdmgr-perf-content .query-log-table .slow-query .query-time {
+.almgr-perf-content .query-log-table .slow-query .query-time {
     color: #d63638 !important;
     font-weight: 600 !important;
 }
 
-.wpdmgr-perf-content .query-log-table .slow-indicator {
+.almgr-perf-content .query-log-table .slow-indicator {
     color: #d63638 !important;
     font-size: 14px !important;
     margin-right: 3px !important;
 }
 
 /* Copy SQL button */
-.wpdmgr-perf-content .query-log-table .copy-sql {
+.almgr-perf-content .query-log-table .copy-sql {
     background: none !important;
     border: none !important;
     color: #0073aa !important;
@@ -750,20 +751,20 @@ body.admin-bar.wpdmgr-perf-active {
     transition: background 0.2s ease !important;
 }
 
-.wpdmgr-perf-content .query-log-table .copy-sql:hover {
+.almgr-perf-content .query-log-table .copy-sql:hover {
     background: rgba(0, 115, 170, 0.1) !important;
 }
 
-.wpdmgr-perf-content .query-log-table .copy-sql .dashicons {
+.almgr-perf-content .query-log-table .copy-sql .dashicons {
     font-size: 14px !important;
     width: 14px !important;
     height: 14px !important;
 }
 
 /* Empty state styling */
-.wpdmgr-scripts-container p,
-.wpdmgr-styles-container p,
-.wpdmgr-perf-content p {
+.almgr-scripts-container p,
+.almgr-styles-container p,
+.almgr-perf-content p {
     text-align: center !important;
     color: #a0a5aa !important;
     font-style: italic !important;
@@ -775,24 +776,22 @@ body.admin-bar.wpdmgr-perf-active {
 
 /* Mobile responsive for tabs */
 @media screen and (max-width: 782px) {
-    .wpdmgr-perf-details-content {
+    .almgr-perf-details-content {
         flex-direction: column !important;
-        min-height: auto !important;
-        max-height: 50vh !important;
     }
 
-    .wpdmgr-perf-sidebar {
+    .almgr-perf-sidebar {
         width: 100% !important;
         border-right: none !important;
         border-bottom: 1px solid #464b50 !important;
     }
 
-    .wpdmgr-perf-tabs {
+    .almgr-perf-tabs {
         display: flex !important;
         overflow-x: auto !important;
     }
 
-    .wpdmgr-perf-tab {
+    .almgr-perf-tab {
         white-space: nowrap !important;
         border-bottom: none !important;
         border-right: 1px solid #464b50 !important;
@@ -801,33 +800,33 @@ body.admin-bar.wpdmgr-perf-active {
         padding: 8px 10px !important;
     }
 
-    .wpdmgr-perf-tab:last-child {
+    .almgr-perf-tab:last-child {
         border-right: none !important;
     }
 
-    .wpdmgr-perf-content {
+    .almgr-perf-content {
         max-height: 250px !important;
         padding: 10px 15px !important;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .wpdmgr-perf-tab {
+    .almgr-perf-tab {
         font-size: 11px !important;
         padding: 6px 8px !important;
     }
 
-    .wpdmgr-perf-tab .dashicons {
+    .almgr-perf-tab .dashicons {
         display: none !important;
     }
 
-    .wpdmgr-perf-content {
+    .almgr-perf-content {
         padding: 8px 10px !important;
     }
 
-    .wpdmgr-query-item,
-    .wpdmgr-script-item,
-    .wpdmgr-style-item {
+    .almgr-query-item,
+    .almgr-script-item,
+    .almgr-style-item {
         padding: 8px !important;
         margin-bottom: 6px !important;
     }
@@ -835,20 +834,20 @@ body.admin-bar.wpdmgr-perf-active {
 
 /* Hide on very small screens if needed */
 @media screen and (max-width: 320px) {
-    .wpdmgr-performance-bar {
+    .almgr-performance-bar {
         display: none !important;
     }
 
-    body.wpdmgr-perf-active {
+    body.almgr-perf-active {
         padding-bottom: 0 !important;
     }
 }
 
 /* --- Consolidated: Moved from admin/assets/css/query-monitor.css --- */
 /* Tab Filters (used within Performance Panel) */
-.wpdmgr-tab-filters { margin-bottom: 15px; padding: 10px; background: #2c3338; border-radius: 4px; }
-.wpdmgr-tab-filters label { display: inline-block; margin-right: 20px; color: #a0a5aa; font-size: 12px; }
-.wpdmgr-tab-filters select { margin-left: 8px; padding: 4px 8px; background: #32373c; border: 1px solid #555; color: #ffffff; border-radius: 3px; font-size: 12px; }
+.almgr-tab-filters { margin-bottom: 15px; padding: 10px; background: #2c3338; border-radius: 4px; }
+.almgr-tab-filters label { display: inline-block; margin-right: 20px; color: #a0a5aa; font-size: 12px; }
+.almgr-tab-filters select { margin-left: 8px; padding: 4px 8px; background: #32373c; border: 1px solid #555; color: #ffffff; border-radius: 3px; font-size: 12px; }
 
 /* Sortable Column Headers (used across panel tables) */
 .sortable { cursor: pointer; position: relative; padding-right: 20px !important; user-select: none; transition: background-color 0.2s ease; }
@@ -866,20 +865,20 @@ body.admin-bar.wpdmgr-perf-active {
 /* Environment Tab */
 .env-category { background: #23282d !important; border-left: 3px solid #0073aa; font-weight: bold; vertical-align: top; padding: 10px !important; }
 .env-category-section { margin-bottom: 25px; flex: 0 0 calc(50% - 1rem); }
-.wpdmgr-env-container { display: flex; flex-wrap: wrap; gap: 1rem; }
+.almgr-env-container { display: flex; flex-wrap: wrap; gap: 1rem; }
 .env-category-section:last-child { margin-bottom: 0; }
 .env-category-title { margin: 0 0 10px 0; padding: 8px 12px; background: #0073aa; color: #ffffff; font-size: 13px; font-weight: 600; border-radius: 4px 4px 0 0; text-transform: uppercase; letter-spacing: 0.5px; }
 .env-category-table { margin-top: 0 !important; border-top: none; }
 
 /* Hooks Tab Specific */
-.wpdmgr-hook-handle { vertical-align: top; font-weight: 500; }
-.wpdmgr-hooks-table .query-sql code { display: inline-block; margin: 2px 0; padding: 2px 4px; background: #f0f0f0; border-radius: 2px; font-size: 11px; }
-.wpdmgr-hooks-table .sql-container { line-height: 1.4; }
-.wpdmgr-hooks-table tr[data-hook]:not([data-hook=""]) + tr[data-hook]:not([data-hook=""]) { border-top: 2px solid #e0e0e0; }
-.wpdmgr-hooks-table .wpdmgr-hook-handle[rowspan] { border-right: 3px solid #0073aa; }
+.almgr-hook-handle { vertical-align: top; font-weight: 500; }
+.almgr-hooks-table .query-sql code { display: inline-block; margin: 2px 0; padding: 2px 4px; background: #f0f0f0; border-radius: 2px; font-size: 11px; }
+.almgr-hooks-table .sql-container { line-height: 1.4; }
+.almgr-hooks-table tr[data-hook]:not([data-hook=""]) + tr[data-hook]:not([data-hook=""]) { border-top: 2px solid #e0e0e0; }
+.almgr-hooks-table .almgr-hook-handle[rowspan] { border-right: 3px solid #0073aa; }
 
 /* Real-time Hooks */
-.wpdmgr-realtime-hooks-table .query-number { font-weight: bold; color: #0073aa; }
+.almgr-realtime-hooks-table .query-number { font-weight: bold; color: #0073aa; }
 .phase-badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
 .phase-mu-plugins { background: #8b4513; color: #ffffff; }
 .phase-plugins { background: #2e8b57; color: #ffffff; }
@@ -904,17 +903,17 @@ body.admin-bar.wpdmgr-perf-active {
 
 .caller-frame { font-size: 11px; margin: 1px 0; padding: 2px; background: #f8f9fa; border-radius: 2px; }
 
-.wpdmgr-realtime-summary { margin-top: 15px; padding: 10px; border-left: 4px solid #0073aa; }
-.wpdmgr-realtime-summary h5 { margin: 0 0 8px 0; color: #0073aa; }
-.wpdmgr-realtime-summary ul { margin: 0; padding-left: 20px; }
+.almgr-realtime-summary { margin-top: 15px; padding: 10px; border-left: 4px solid #0073aa; color: #fff;}
+.almgr-realtime-summary h5 { margin: 0 0 8px 0; color: #0073aa; }
+.almgr-realtime-summary ul { margin: 0; padding-left: 20px; }
 
 /* Real-time Controls */
-.wpdmgr-realtime-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; border-radius: 4px; border-left: 4px solid #0073aa; }
-.wpdmgr-realtime-actions { display: flex; align-items: center; gap: 10px; }
-.wpdmgr-realtime-status { font-size: 12px; color: #666; }
-#wpdmgr-status-text { font-weight: bold; }
-#wpdmgr-status-text.active { color: #28a745; }
-#wpdmgr-status-text.error { color: #dc3545; }
+.almgr-realtime-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; border-radius: 4px; border-left: 4px solid #0073aa; }
+.almgr-realtime-actions { display: flex; align-items: center; gap: 10px; }
+.almgr-realtime-status { font-size: 12px; color: #666; }
+#almgr-status-text { font-weight: bold; }
+#almgr-status-text.active { color: #28a745; }
+#almgr-status-text.error { color: #dc3545; }
 .status-good { color: #28a745; font-weight: bold; }
 .status-warning { color: #ffc107; font-weight: bold; }
 .status-danger { color: #dc3545; font-weight: bold; }
@@ -926,11 +925,11 @@ body.admin-bar.wpdmgr-perf-active {
 .toggle-bootstrap-details { color: #007cba; text-decoration: none; border: none; background: none; cursor: pointer; font-size: 12px; }
 .toggle-bootstrap-details:hover { text-decoration: underline; }
 .bootstrap-details { margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 3px; font-size: 11px; line-height: 1.4; }
-.wpdmgr-bootstrap-summary { margin-top: 15px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; }
+.almgr-bootstrap-summary { margin-top: 15px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; }
 
 /* Domain Panels */
-.wpdmgr-domain-panels { display: grid; gap: 15px; }
-.wpdmgr-domain-panel { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+.almgr-domain-panels { display: grid; gap: 15px; }
+.almgr-domain-panel { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
 .domain-panel-title { background: #f8f9fa; padding: 10px 15px; margin: 0; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; }
 .domain-icon { width: 16px; height: 16px; display: inline-block; margin-right: 8px; border-radius: 2px; }
 .domain-icon-database { background: #dc3545; }
@@ -952,15 +951,15 @@ body.admin-bar.wpdmgr-perf-active {
 /* Responsive Adjustments */
 @media (min-width: 1200px) { .env-category-section { flex: 0 0 calc(25% - 1rem); } }
 @media (max-width: 768px) {
-  .wpdmgr-realtime-controls { flex-direction: column; align-items: stretch; gap: 10px; }
-  .wpdmgr-tab-filters { display: flex; flex-wrap: wrap; gap: 10px; }
-  .wpdmgr-realtime-actions { justify-content: center; }
+  .almgr-realtime-controls { flex-direction: column; align-items: stretch; gap: 10px; }
+  .almgr-tab-filters { display: flex; flex-wrap: wrap; gap: 10px; }
+  .almgr-realtime-actions { justify-content: center; }
 }
 
 /* Utility */
 .hide { display: none !important; }
 
 /* Link style for anchors used in tables */
-.wpdmgr-link { color: #0073aa; text-decoration: none; }
-.wpdmgr-link:hover, .wpdmgr-link:focus { text-decoration: underline; color: #006ba1; }
+.almgr-link { color: #0073aa; text-decoration: none; }
+.almgr-link:hover, .almgr-link:focus { text-decoration: underline; color: #006ba1; }
 /* --- End Consolidated from query-monitor.css --- */

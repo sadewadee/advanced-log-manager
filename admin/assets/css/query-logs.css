@@ -1,13 +1,13 @@
 /* Query Logs Specific Styles - Extensions to admin.css */
 
-.wpdmgr-query-logs-container {
+.almgr-query-logs-container {
     margin-top: 20px;
 }
 
 /* Enhanced log info styling for query logs */
-.wpdmgr-log-size,
-.wpdmgr-log-total-size,
-.wpdmgr-log-max-size {
+.almgr-log-size,
+.almgr-log-total-size,
+.almgr-log-max-size {
     background: #f0f0f1;
     padding: 4px 8px;
     border-radius: 3px;
@@ -15,23 +15,23 @@
     white-space: nowrap;
 }
 
-.wpdmgr-log-total-size {
+.almgr-log-total-size {
     background: #fff3cd;
     color: #856404;
 }
 
-.wpdmgr-log-max-size {
+.almgr-log-max-size {
     background: #e1ecf4;
     color: #0073aa;
 }
 
 /* Query-specific filters extension */
-.wpdmgr-query-logs-filters {
+.almgr-query-logs-filters {
     flex-wrap: wrap;
 }
 
-/* Query log entries - extends .wpdmgr-log-entry */
-.wpdmgr-query-log-entry {
+/* Query log entries - extends .almgr-log-entry */
+.almgr-query-log-entry {
     border: 1px solid #ddd;
     border-radius: 4px;
     background: #ffffff;
@@ -165,7 +165,7 @@
     color: #646970;
 }
 
-.query-loading .wpdmgr-spinner {
+.query-loading .almgr-spinner {
     width: 20px;
     height: 20px;
     border-width: 2px;

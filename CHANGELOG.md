@@ -1,16 +1,44 @@
 # Changelog
 
-All notable changes to WP Debug Manager will be documented in this file.
+All notable changes to Advanced Log Manager will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.29] - 2025-01-15
+
+### Fixed
+- Memperbaiki syntax error di class-query-monitor.php akibat kurung kurawal yang tidak seimbang
+- Memperbaiki parameter php_uname() yang menggunakan multiple characters menjadi single character
+- Mengatasi "unexpected variable $env_data, expecting function" error di baris 2742
+- Memastikan struktur kurung kurawal yang benar untuk blok kode database caching configuration
+
+## [1.2.28] - 2025-01-15
+
+### Changed
+- Refactored page-all-logs-activity.php untuk konsistensi kode dengan mengganti direct include dengan method calls
+- Mengganti `include ALMGR_PLUGIN_DIR . 'admin/views/page-logs.php'` dengan `$plugin->render_logs_page()`
+- Mengganti `include ALMGR_PLUGIN_DIR . 'admin/views/page-query-logs.php'` dengan `$plugin->render_query_logs_page()`
+- Mengganti `include ALMGR_PLUGIN_DIR . 'admin/views/page-smtp-logs.php'` dengan `$plugin->render_smtp_logs_page()`
+- Meningkatkan maintainability dan konsistensi dengan menggunakan method yang sudah tersedia di plugin class
+
+### Fixed
+- Memperbaiki use statement ReflectionClass yang tidak efektif di class-query-monitor.php
+- Menghapus use statement yang tidak diperlukan dan menggunakan fully qualified name \ReflectionClass
+- Memperbaiki class_exists check untuk menggunakan fully qualified name
+
+### Security
+- Memperbaiki WordPress.Security.EscapeOutput issues dengan menambahkan proper escaping
+- Menambahkan esc_url() untuk semua admin_url() output di view files
+- Menambahkan esc_html() untuk almgr_format_bytes() dan date_i18n() output
+- Menambahkan esc_attr() untuk data attributes dalam HTML
 
 ## [1.2.27] - 2025-09-12
 
 ### Changed
 - Updated version to 1.2.27 with proper zip structure for WordPress installation
 - Git tag v1.2.27 created for release management
-- Created clean distribution zip (wp-debug-manager.zip) with only essential files
+- Created clean distribution zip (advanced-log-manager.zip) with only essential files
 - Removed development files (.trae, .vscode, Error folder) from distribution package
 
 ## [1.2.25] - 2025-09-13
@@ -36,40 +64,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.23] - 2025-09-11
 
 ### Fixed
-- Konsistensi perilaku toggle Performance Monitor: klik `#wp-admin-bar-wpdmgr-performance-monitor` di frontend kini membuka `#wpdmgr-perf-details` seperti di admin (mencegah outside-click handler menutup panel segera, menggunakan computed style untuk deteksi visibilitas, dan melonggarkan ketergantungan pada tombol `#wpdmgr-perf-details-btn`).
+- Konsistensi perilaku toggle Performance Monitor: klik `#wp-admin-bar-almgr-performance-monitor` di frontend kini membuka `#almgr-perf-details` seperti di admin (mencegah outside-click handler menutup panel segera, menggunakan computed style untuk deteksi visibilitas, dan melonggarkan ketergantungan pada tombol `#almgr-perf-details-btn`).
 
 ## [1.2.22] - 2025-09-10
 
 ### Added
-- Menambahkan style badge generik `.wpdmgr-log-size` di admin.css untuk menampilkan ukuran log "Today: <size>" secara konsisten di semua halaman logs
+- Menambahkan style badge generik `.almgr-log-size` di admin.css untuk menampilkan ukuran log "Today: <size>" secara konsisten di semua halaman logs
 
 ### Changed
 - SMTP Logs: Layout dan desain dimodernisasi mengikuti gaya Debug Logs (header, filter cards, spacing, dan spinner konsisten)
-  - Migrasi kelas HTML spesifik halaman (mt-logs-*) ke kelas bersama wpdmgr-logs-* (header, filters, actions, loading/spinner)
-  - Menyamakan container utama menjadi `wpdmgr-logs-container` agar mewarisi style global admin.css
+  - Migrasi kelas HTML spesifik halaman (mt-logs-*) ke kelas bersama almgr-logs-* (header, filters, actions, loading/spinner)
+  - Menyamakan container utama menjadi `almgr-logs-container` agar mewarisi style global admin.css
   - Mengganti selector JS/CSS ke kelas bersama untuk perilaku UI yang konsisten, termasuk state disabled dan responsive
   - Menyamakan responsive behavior pada breakpoint kecil agar susunan elemen bertumpuk rapi seperti Debug Logs
-  - Menyatukan kelas badge header menjadi `.wpdmgr-log-size` dan pesan tidak ada log menjadi `.wpdmgr-no-logs` pada SMTP Logs
+  - Menyatukan kelas badge header menjadi `.almgr-log-size` dan pesan tidak ada log menjadi `.almgr-no-logs` pada SMTP Logs
 
 ### Fixed
-- Konsolidasi loading indicator di SMTP Logs untuk menggunakan `.wpdmgr-logs-loading` + `.wpdmgr-spinner` (menghapus sisa referensi mt-*)
+- Konsolidasi loading indicator di SMTP Logs untuk menggunakan `.almgr-logs-loading` + `.almgr-spinner` (menghapus sisa referensi mt-*)
 - Perapihan minor style agar tidak ada duplikasi/konflik dengan admin.css ketika filter/aksi dinonaktifkan
 - Memperbaiki PHP syntax error pada header info SMTP Logs akibat duplikasi blok `if/else` di `admin/views/page-smtp-logs.php`
 - Memperbaiki tombol Performance Monitor (id="perf-monitor-toggle") tidak berfungsi: menambahkan handler klik visual, memperbaiki chain AJAX dan state revert di admin/assets/admin.js
 - Memperbaiki error linter PHP: prefix global `\ReflectionClass` dan `\Exception` di `includes/class-query-monitor.php` dan `includes/class-plugin.php`; gunakan `constant()` untuk `WP_ENVIRONMENT_TYPE` dan `WP_DEVELOPMENT_MODE`
 - Menampilkan tab granular (Realtime Hooks, Bootstrap, Domains) secara kondisional berdasarkan opsi: update `<li>` dan `<div>` konten di `includes/class-query-monitor.php`
-- Membersihkan opsi granular baru di `uninstall.php` (`wpdmgr_perf_realtime_enabled`, `wpdmgr_perf_bootstrap_enabled`, `wpdmgr_perf_domains_enabled`)
+- Membersihkan opsi granular baru di `uninstall.php` (`almgr_perf_realtime_enabled`, `almgr_perf_bootstrap_enabled`, `almgr_perf_domains_enabled`)
 - Memperbaiki JavaScript syntax error "missing ) after argument list" di admin.js baris 664
 
 ## [1.2.21] - 2025-09-09
 
 ### Changed
-- Rebranded admin views (SMTP Logs, Query Logs) from mt* to wpdmgr* for consistency across the codebase
-  - JS globals: window.mtShowNotice → window.wpdmgrShowNotice; window.mtUtils → window.wpdmgrUtils
-  - Toolkit object: mtToolkit → wpdmgrToolkit
-  - Admin slug: tools.php?page=mt → tools.php?page=wpdmgr
-  - AJAX action names: mt_* → wpdmgr_*
-  - Updated docblock metadata and text domain to 'wp-debug-manager' where applicable
+- Rebranded admin views (SMTP Logs, Query Logs) from mt* to almgr* for consistency across the codebase
+  - JS globals: window.mtShowNotice → window.almgrShowNotice; window.mtUtils → window.almgrUtils
+  - Toolkit object: mtToolkit → almgrToolkit
+  - Admin slug: tools.php?page=mt → tools.php?page=almgr
+  - AJAX action names: mt_* → almgr_*
+  - Updated docblock metadata and text domain to 'advanced-log-manager' where applicable
 - Normalized "Enable SAVEQUERIES" links in Query Logs to use the new admin slug
 
 ### Fixed
@@ -93,11 +121,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.19] - 2025-01-18
 
 ### Changed
-- **Plugin Rename**: Plugin name changed from "WP Debug Manager" to "WP Debug Manager"
-- **Text Domain**: Updated text domain from 'wpdmgr-toolkit' to 'wp-debug-manager'
-- **File Structure**: Main plugin file renamed from wpdmgr-toolkit.php to wp-debug-manager.php
-- **Language Files**: Language file renamed from wpdmgr-toolkit.pot to wp-debug-manager.pot
-- **Directory References**: Updated log directory references from 'wp-content/wpdmgr-toolkit/' to 'wp-content/wp-debug-manager/'
+- **Plugin Rename**: Plugin name changed from "Advance Log Manager" to "Advance Log Manager"
+- **Text Domain**: Updated text domain from 'almgr-toolkit' to 'advanced-log-manager'
+- **File Structure**: Main plugin file renamed from almgr-toolkit.php to advanced-log-manager.php
+- **Language Files**: Language file renamed from almgr-toolkit.pot to advanced-log-manager.pot
+- **Directory References**: Updated log directory references from 'wp-content/almgr-toolkit/' to 'wp-content/advanced-log-manager/'
 - **GitHub URLs**: Updated repository URLs to reflect new plugin name
 - **Documentation**: Updated README.md and all documentation to reflect new plugin name
 
@@ -105,7 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **SMTP Logger**: Fitur baru untuk mencatat (log) semua email yang dikirim melalui `wp_mail`. Berguna untuk men-debug masalah pengiriman email.
-- **Internal Logging**: Mekanisme logging internal untuk WP Debug Manager, dapat diaktifkan melalui `wp-config.php` untuk membantu proses debug plugin.
+- **Internal Logging**: Mekanisme logging internal untuk Advance Log Manager, dapat diaktifkan melalui `wp-config.php` untuk membantu proses debug plugin.
 
 ### Changed
 - Cleaned up unnecessary comments throughout the codebase for better code readability
@@ -127,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.14] - 2024-12-19
 
 ### Fixed
-- Fixed debug settings toggle buttons not clickable - toggle buttons with id ending in '-toggle' inside wpdmgr-debug-settings can now be clicked to enable/disable debug constants
+- Fixed debug settings toggle buttons not clickable - toggle buttons with id ending in '-toggle' inside almgr-debug-settings can now be clicked to enable/disable debug constants
 - Added proper click event handlers for debug constant toggle buttons (WP_DEBUG_LOG, WP_DEBUG_DISPLAY, SCRIPT_DEBUG, SAVEQUERIES, display_errors)
 - Improved visual feedback for toggle state changes with immediate UI updates
 - Added proper error handling and state reversion for failed toggle operations
@@ -200,23 +228,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added item count display next to tab titles (e.g., "Styles (26)", "Scripts (15)")
 - Implemented external source classification for fonts.googleapis.com as WordPress Core Component
 - Enhanced Query tab caller stack display with improved formatting showing function name above and file:line below
-- Reverted caller stack format to default simple text display for wpdmgr-query-logs compatibility
+- Reverted caller stack format to default simple text display for almgr-query-logs compatibility
 - Fixed PHP syntax error in class-query-monitor.php line 328 caused by malformed HTML structure
 - Fixed PHP Fatal error: Cannot declare class WPConfigTransformer due to missing class_exists() check
 - Fixed query count inconsistency between WordPress admin bar and performance monitor tabs by unifying counting logic
 - Fixed Scripts (%d) and Styles (%d) tab labels showing placeholder instead of actual counts
 
 ### Changed
-- Mengubah format tampilan tab "Scripts" dan "Styles" dari list menjadi tabel yang mengikuti format `wpdmgr-query-logs`
+- Mengubah format tampilan tab "Scripts" dan "Styles" dari list menjadi tabel yang mengikuti format `almgr-query-logs`
 - Menambahkan kolom tabel: No, Position, Handle, Hostname, Source, Komponen, Version untuk tab Scripts dan Styles
-- Updated Database Queries layout in wpdmgr-perf-details-content to match wpdmgr-query-logs table structure
+- Updated Database Queries layout in almgr-perf-details-content to match almgr-query-logs table structure
 - Enhanced Scripts and Styles tabs with File Size and Load Time columns for better performance analysis
 - Improved component classification to identify external sources like Google Fonts as WordPress Core Components loaded by Herald theme
 - Implementasi parsing komponen untuk mendeteksi apakah script/style berasal dari Plugin, Theme, atau WordPress Core
 - Peningkatan styling tabel dengan tema dark yang konsisten dengan UI existing
 - Added dynamic item counting for all performance tabs with real-time updates
-- Performance Panel CSS consolidated: set performance-bar.css as single source of truth; removed duplicated `.wpdmgr-perf-*` blocks from query-monitor.css; kept only page-specific UI styles
-- Align asset versions for admin/frontend enqueues to `WPDMGR_VERSION` for consistent cache-busting
+- Performance Panel CSS consolidated: set performance-bar.css as single source of truth; removed duplicated `.almgr-perf-*` blocks from query-monitor.css; kept only page-specific UI styles
+- Align asset versions for admin/frontend enqueues to `ALMGR_VERSION` for consistent cache-busting
 
 ### Improved
 - Enhanced styling for Scripts and Styles tabs with hover effects
@@ -234,7 +262,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed performance metrics calculation inconsistency between admin bar and details panel by implementing unified calculation logic
 - Added accurate query count method that prioritizes SAVEQUERIES data for better precision
 - Enhanced performance metrics with database query time tracking for comprehensive performance analysis
-- Improved consistency between wp-admin-bar-wpdmgr-performance-monitor and wpdmgr-perf-details displays
+- Improved consistency between wp-admin-bar-almgr-performance-monitor and almgr-perf-details displays
 - Added safe HTML escaping fallback when window.mtUtils is not available
 - Enhanced error handling in parseUrlSource and formatCaller functions
 - Improved timestamp parsing with multiple format support
@@ -245,7 +273,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed WordPress constants format in wp-config.php - removed unnecessary double quotes that caused malformed output like `define( 'WP_MEMORY_LIMIT', '\'512M\'' );`
 - WordPress constants now use proper format: `define( 'WP_MEMORY_LIMIT', '512M' );` instead of malformed format with escaped quotes
 - Updated WPConfigTransformer integration to use `raw => false` parameter for proper constant value formatting
-- Resolved conflicting tab hover/active states due to duplicate `.wpdmgr-perf-tab` definitions across CSS files
+- Resolved conflicting tab hover/active states due to duplicate `.almgr-perf-tab` definitions across CSS files
 
 ## [1.0.6] - 2025-01-18
 
@@ -276,7 +304,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implementasi tab sidebar di Performance Bar dengan 4 tab: Overview, Queries, Scripts, Styles
 - Tab "Scripts" menampilkan daftar script yang di-load dalam format tabel (berdasarkan SCRIPT_DEBUG)
 - Tab "Styles" menampilkan daftar CSS yang di-load dalam format tabel (berdasarkan SCRIPT_DEBUG)
-- Format tabel yang sama dengan wpdmgr-query-logs untuk konsistensi UI
+- Format tabel yang sama dengan almgr-query-logs untuk konsistensi UI
 - Kolom tabel baru: No, Position, Handle, Hostname, Source, Komponen, Version
 - Implementasi parsing komponen untuk mendeteksi sumber script/style (Plugin, Theme, WordPress Core)
 - Styling tabel dengan tema gelap yang konsisten
@@ -311,7 +339,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.11] - 2024-01-17
 
 ### Fixed
-- **CRITICAL:** Fixed double execution bug in toggle functions (wpdmgr_toggle_debug, wpdmgr_toggle_query_monitor)
+- **CRITICAL:** Fixed double execution bug in toggle functions (almgr_toggle_debug, almgr_toggle_query_monitor)
 - Resolved conflicting event handlers causing duplicate notifications
 - Modified initializeToggles() to exclude toggles with specific handlers
 - Removed duplicate toggleDebugSettings() function definition
@@ -370,15 +398,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **STRATEGY PRIORITY CHANGE**: Modified configuration priority from `.htaccess` → `wp-config.php` → `php.ini` to `wp-config.php` → `php.ini` → `.htaccess` (as last resort) to prevent 500 errors
   - Enhanced logging for debugging configuration issues and improved error handling
 - **PHP Configuration Constants Implementation**
-  - Fixed WPDMGR_UPLOAD_MAX_FILESIZE, WPDMGR_POST_MAX_SIZE, WPDMGR_MAX_INPUT_VARS, and WPDMGR_MAX_INPUT_TIME constants not taking effect
+  - Fixed ALMGR_UPLOAD_MAX_FILESIZE, ALMGR_POST_MAX_SIZE, ALMGR_MAX_INPUT_VARS, and ALMGR_MAX_INPUT_TIME constants not taking effect
   - Removed ini_set() approach which doesn't work on many hosting providers
   - Constants now properly applied through robust methods: .htaccess (Apache), php.ini (CGI/FastCGI), or wp-config.php constants
-  - WPDMGR_PHP_Config class automatically detects best available method for each hosting environment
+  - ALMGR_PHP_Config class automatically detects best available method for each hosting environment
   - Added comprehensive fallback system with validation and rollback capabilities
   - Enhanced hosting compatibility by avoiding ini_set() restrictions
 - **PHP Configuration Method Improvement**
   - Replaced .user.ini with php.ini for better compatibility and universal support
-  - Updated WPDMGR_PHP_Config class to use php.ini instead of .user.ini for CGI/FastCGI environments
+  - Updated ALMGR_PHP_Config class to use php.ini instead of .user.ini for CGI/FastCGI environments
   - Enhanced configuration detection to prioritize php.ini as more standard approach
   - Updated cleanup procedures to handle php.ini files instead of .user.ini
 
@@ -398,7 +426,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Implemented PHP syntax validation to prevent broken configurations
   - Added site accessibility testing after modifications
   - Enhanced rollback mechanism with automatic restoration on errors
-  - Added filter hook `wpdmgr_debug_constants` for extensibility
+  - Added filter hook `almgr_debug_constants` for extensibility
   - Improved logging with detailed error messages and success confirmations
   - Added backup management system (keeps last 5 backups automatically)
   - Added manual backup restoration functionality
@@ -413,9 +441,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Code Cleanup and Internationalization**
   - Removed unnecessary comments from PHP files
   - Translated remaining comments to English
-  - Updated text domain from 'mt' to 'wpdmgr-toolkit' across all files
-  - Regenerated wpdmgr-toolkit.pot file according to WordPress standards
-  - Added Indonesian language support (wpdmgr-toolkit-id_ID.po)
+  - Updated text domain from 'mt' to 'almgr-toolkit' across all files
+  - Regenerated almgr-toolkit.pot file according to WordPress standards
+  - Added Indonesian language support (almgr-toolkit-id_ID.po)
   - Improved plugin internationalization structure
 - **Code Comment Cleanup**
   - Removed redundant and unnecessary comments from all PHP files
@@ -441,7 +469,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Htaccess Editor Escape Characters Bug**
   - Fixed excessive escape characters (\\\\) being added every time .htaccess file is saved
   - Replaced inappropriate `sanitize_textarea_field()` with proper `wp_unslash()` + `wp_kses()` sanitization
-  - Updated `wpdmgr_sanitize_file_content()` to validate without modifying .htaccess content
+  - Updated `almgr_sanitize_file_content()` to validate without modifying .htaccess content
   - Improved pattern matching to only block actual malicious code, not legitimate .htaccess directives
   - Prevents corruption of Apache directives like RewriteRule, ExpiresByType, and other configurations
 - **Custom PHP Configuration Preset**
@@ -454,7 +482,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added reset functionality to restore custom preset to default values
   - Enhanced UI with proper styling and user feedback for custom preset management
 - **wp-config.php Analysis Documentation**
-  - Created comprehensive analysis comparing WP Debug Manager with WP Debugging plugin
+  - Created comprehensive analysis comparing Advance Log Manager with WP Debugging plugin
   - Documented implementation differences and recommendations
   - Added risk assessment and WordPress.org submission guidelines
   - Provided roadmap for potential wp-cli/wp-config-transformer adoption

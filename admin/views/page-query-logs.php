@@ -2,10 +2,10 @@
 /**
  * Query Logs Page Template
  *
- * @package WP Debug Manager
+ * @package Advance Log Manager -
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
@@ -13,142 +13,142 @@ if (!defined('ABSPATH')) {
 }
 
 
-$plugin = WPDMGR_Plugin::get_instance();
+$plugin = ALMGR_Plugin::get_instance();
 $debug_service = $plugin->get_service('debug');
 $debug_status = $debug_service->get_debug_status();
 ?>
 
 <div class="wrap">
-    <h1><?php esc_html_e('Query Logs', 'wp-debug-manager'); ?></h1>
+    <h1><?php esc_html_e('Query Logs', 'advanced-log-manager'); ?></h1>
     <p class="description">
-        <?php esc_html_e('View database query logs. SAVEQUERIES must be enabled to record queries.', 'wp-debug-manager'); ?>
+        <?php esc_html_e('View database query logs. SAVEQUERIES must be enabled to record queries.', 'advanced-log-manager'); ?>
     </p>
 
     <?php if (!$debug_status['savequeries']): ?>
     <div class="notice notice-warning">
         <p>
-            <strong><?php esc_html_e('SAVEQUERIES is not enabled!', 'wp-debug-manager'); ?></strong>
-            <?php esc_html_e('Database queries are not being recorded. ', 'wp-debug-manager'); ?>
-            <a href="<?php echo admin_url('tools.php?page=wpdmgr'); ?>" class="button button-primary">
-                <?php esc_html_e('Enable SAVEQUERIES', 'wp-debug-manager'); ?>
+            <strong><?php esc_html_e('SAVEQUERIES is not enabled!', 'advanced-log-manager'); ?></strong>
+            <?php esc_html_e('Database queries are not being recorded. ', 'advanced-log-manager'); ?>
+            <a href="<?php echo esc_url(admin_url('tools.php?page=almgr')); ?>" class="button button-primary">
+                <?php esc_html_e('Enable SAVEQUERIES', 'advanced-log-manager'); ?>
             </a>
         </p>
     </div>
     <?php endif; ?>
 
-    <div class="wpdmgr-logs-header">
-        <div class="wpdmgr-logs-actions">
+    <div class="almgr-logs-header">
+        <div class="almgr-logs-actions">
             <button type="button" id="refresh-query-logs" class="button">
                 <span class="dashicons dashicons-update"></span>
-                <?php esc_html_e('Refresh', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Refresh', 'advanced-log-manager'); ?>
             </button>
-            <button type="button" id="clear-query-logs" class="button" title="<?php esc_attr_e('Clear active query log content (empties query.log)', 'wp-debug-manager'); ?>">
+            <button type="button" id="clear-query-logs" class="button" title="<?php esc_attr_e('Clear active query log content (empties query.log)', 'advanced-log-manager'); ?>">
                 <span class="dashicons dashicons-trash"></span>
-                <?php esc_html_e('Clear', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Clear', 'advanced-log-manager'); ?>
             </button>
-            <button type="button" id="cleanup-query-logs" class="button" title="<?php esc_attr_e('Remove rotation/archived files (query.log.1, query.log.2, etc.)', 'wp-debug-manager'); ?>">
+            <button type="button" id="cleanup-query-logs" class="button" title="<?php esc_attr_e('Remove rotation/archived files (query.log.1, query.log.2, etc.)', 'advanced-log-manager'); ?>">
                 <span class="dashicons dashicons-admin-tools"></span>
-                <?php esc_html_e('Cleanup', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Cleanup', 'advanced-log-manager'); ?>
             </button>
             <button type="button" id="download-query-logs" class="button">
                 <span class="dashicons dashicons-download"></span>
-                <?php esc_html_e('Download', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Download', 'advanced-log-manager'); ?>
             </button>
         </div>
 
-        <div class="wpdmgr-logs-info">
+        <div class="almgr-logs-info">
             <?php if ($debug_status['query_log_file_exists']): ?>
-            <span class="wpdmgr-log-size">
+            <span class="almgr-log-size">
                 <span class="dashicons dashicons-media-text"></span>
-                <?php esc_html_e('Current:', 'wp-debug-manager'); ?> <?php echo esc_html($debug_status['query_log_file_size']); ?>
+                <?php esc_html_e('Current:', 'advanced-log-manager'); ?> <?php echo esc_html($debug_status['query_log_file_size']); ?>
             </span>
             <?php if (isset($debug_status['query_log_total_size'])): ?>
-            <span class="wpdmgr-log-total-size">
+            <span class="almgr-log-total-size">
                 <span class="dashicons dashicons-database"></span>
-                <?php esc_html_e('Total (with backups):', 'wp-debug-manager'); ?> <?php echo esc_html($debug_status['query_log_total_size']); ?>
+                <?php esc_html_e('Total (with backups):', 'advanced-log-manager'); ?> <?php echo esc_html($debug_status['query_log_total_size']); ?>
             </span>
             <?php endif; ?>
             <?php if (isset($debug_status['query_log_max_size'])): ?>
-            <span class="wpdmgr-log-max-size">
+            <span class="almgr-log-max-size">
                 <span class="dashicons dashicons-info"></span>
-                <?php esc_html_e('Rotation at:', 'wp-debug-manager'); ?> <?php echo esc_html($debug_status['query_log_max_size']); ?>
+                <?php esc_html_e('Rotation at:', 'advanced-log-manager'); ?> <?php echo esc_html($debug_status['query_log_max_size']); ?>
             </span>
             <?php endif; ?>
             <?php else: ?>
-            <span class="wpdmgr-no-logs">
+            <span class="almgr-no-logs">
                 <span class="dashicons dashicons-info"></span>
-                <?php esc_html_e('No query log file found', 'wp-debug-manager'); ?>
+                <?php esc_html_e('No query log file found', 'advanced-log-manager'); ?>
             </span>
             <?php endif; ?>
         </div>
     </div>
 
-    <div class="wpdmgr-logs-filters">
-        <div class="wpdmgr-filter-group">
-            <label for="query-time-filter"><?php esc_html_e('Time:', 'wp-debug-manager'); ?></label>
+    <div class="almgr-logs-filters">
+        <div class="almgr-filter-group">
+            <label for="query-time-filter"><?php esc_html_e('Time:', 'advanced-log-manager'); ?></label>
             <select id="query-time-filter">
-                <option value=""><?php esc_html_e('All Time', 'wp-debug-manager'); ?></option>
-                <option value="1h"><?php esc_html_e('Last Hour', 'wp-debug-manager'); ?></option>
-                <option value="24h" selected><?php esc_html_e('Last 24 Hours', 'wp-debug-manager'); ?></option>
-                <option value="7d"><?php esc_html_e('Last 7 Days', 'wp-debug-manager'); ?></option>
+                <option value=""><?php esc_html_e('All Time', 'advanced-log-manager'); ?></option>
+                <option value="1h"><?php esc_html_e('Last Hour', 'advanced-log-manager'); ?></option>
+                <option value="24h" selected><?php esc_html_e('Last 24 Hours', 'advanced-log-manager'); ?></option>
+                <option value="7d"><?php esc_html_e('Last 7 Days', 'advanced-log-manager'); ?></option>
             </select>
         </div>
 
-        <div class="wpdmgr-filter-group">
-            <label for="query-type-filter"><?php esc_html_e('Query Type:', 'wp-debug-manager'); ?></label>
+        <div class="almgr-filter-group">
+            <label for="query-type-filter"><?php esc_html_e('Query Type:', 'advanced-log-manager'); ?></label>
             <select id="query-type-filter">
-                <option value=""><?php esc_html_e('All Types', 'wp-debug-manager'); ?></option>
-                <option value="SELECT"><?php esc_html_e('SELECT', 'wp-debug-manager'); ?></option>
-                <option value="INSERT"><?php esc_html_e('INSERT', 'wp-debug-manager'); ?></option>
-                <option value="UPDATE"><?php esc_html_e('UPDATE', 'wp-debug-manager'); ?></option>
-                <option value="DELETE"><?php esc_html_e('DELETE', 'wp-debug-manager'); ?></option>
+                <option value=""><?php esc_html_e('All Types', 'advanced-log-manager'); ?></option>
+                <option value="SELECT"><?php esc_html_e('SELECT', 'advanced-log-manager'); ?></option>
+                <option value="INSERT"><?php esc_html_e('INSERT', 'advanced-log-manager'); ?></option>
+                <option value="UPDATE"><?php esc_html_e('UPDATE', 'advanced-log-manager'); ?></option>
+                <option value="DELETE"><?php esc_html_e('DELETE', 'advanced-log-manager'); ?></option>
             </select>
         </div>
 
-        <div class="wpdmgr-filter-group">
-            <label for="query-slow-filter"><?php esc_html_e('Performance:', 'wp-debug-manager'); ?></label>
+        <div class="almgr-filter-group">
+            <label for="query-slow-filter"><?php esc_html_e('Performance:', 'advanced-log-manager'); ?></label>
             <select id="query-slow-filter">
-                <option value=""><?php esc_html_e('All Queries', 'wp-debug-manager'); ?></option>
-                <option value="slow"><?php esc_html_e('Slow Queries Only', 'wp-debug-manager'); ?></option>
-                <option value="fast"><?php esc_html_e('Fast Queries Only', 'wp-debug-manager'); ?></option>
+                <option value=""><?php esc_html_e('All Queries', 'advanced-log-manager'); ?></option>
+                <option value="slow"><?php esc_html_e('Slow Queries Only', 'advanced-log-manager'); ?></option>
+                <option value="fast"><?php esc_html_e('Fast Queries Only', 'advanced-log-manager'); ?></option>
             </select>
         </div>
 
-        <div class="wpdmgr-filter-group">
-            <label for="query-search"><?php esc_html_e('Search:', 'wp-debug-manager'); ?></label>
-            <input type="text" id="query-search" placeholder="<?php esc_attr_e('Search in SQL or caller stack...', 'wp-debug-manager'); ?>">
+        <div class="almgr-filter-group">
+            <label for="query-search"><?php esc_html_e('Search:', 'advanced-log-manager'); ?></label>
+            <input type="text" id="query-search" placeholder="<?php esc_attr_e('Search in SQL or caller stack...', 'advanced-log-manager'); ?>">
         </div>
 
-        <div class="wpdmgr-filter-group">
+        <div class="almgr-filter-group">
             <button type="button" id="clear-query-filters" class="button">
-                <?php esc_html_e('Clear Filters', 'wp-debug-manager'); ?>
+                <?php esc_html_e('Clear Filters', 'advanced-log-manager'); ?>
             </button>
         </div>
     </div>
 
-    <div class="wpdmgr-query-logs-container">
-        <div id="wpdmgr-query-logs-viewer" class="wpdmgr-logs-viewer">
+    <div class="almgr-query-logs-container">
+        <div id="almgr-query-logs-viewer" class="almgr-logs-viewer">
             <?php if (!$debug_status['query_log_file_exists'] || !$debug_status['savequeries']): ?>
-            <div class="wpdmgr-no-logs-message">
+            <div class="almgr-no-logs-message">
                 <div class="dashicons dashicons-info"></div>
-                <h3><?php esc_html_e('No Query Logs Found', 'wp-debug-manager'); ?></h3>
+                <h3><?php esc_html_e('No Query Logs Found', 'advanced-log-manager'); ?></h3>
                 <?php if (!$debug_status['savequeries']): ?>
-                <p><?php esc_html_e('SAVEQUERIES is not enabled. Database queries are not being recorded.', 'wp-debug-manager'); ?></p>
+                <p><?php esc_html_e('SAVEQUERIES is not enabled. Database queries are not being recorded.', 'advanced-log-manager'); ?></p>
                 <p>
-                    <a href="<?php echo admin_url('tools.php?page=wpdmgr'); ?>" class="button button-primary">
-                        <?php esc_html_e('Enable SAVEQUERIES', 'wp-debug-manager'); ?>
+                    <a href="<?php echo esc_url(admin_url('tools.php?page=almgr')); ?>" class="button button-primary">
+                        <?php esc_html_e('Enable SAVEQUERIES', 'advanced-log-manager'); ?>
                     </a>
                 </p>
                 <?php else: ?>
-                <p><?php esc_html_e('No database queries have been logged yet. Try visiting some pages first.', 'wp-debug-manager'); ?></p>
+                <p><?php esc_html_e('No database queries have been logged yet. Try visiting some pages first.', 'advanced-log-manager'); ?></p>
                 <?php endif; ?>
             </div>
             <?php else: ?>
-            <div class="wpdmgr-logs-loading">
-                <div class="wpdmgr-spinner"></div>
-                <p><?php esc_html_e('Loading query logs...', 'wp-debug-manager'); ?></p>
+            <div class="almgr-logs-loading">
+                <div class="almgr-spinner"></div>
+                <p><?php esc_html_e('Loading query logs...', 'advanced-log-manager'); ?></p>
             </div>
-            <div id="wpdmgr-query-logs-content" style="display: none;"></div>
+            <div id="almgr-query-logs-content" style="display: none;"></div>
             <?php endif; ?>
         </div>
     </div>
@@ -197,8 +197,8 @@ function formatCaller(caller) {
 
     // Safe HTML escape function
     function safeEscapeHtml(text) {
-        if (window.wpdmgrUtils && window.wpdmgrUtils.escapeHtml) {
-            return window.wpdmgrUtils.escapeHtml(text);
+        if (window.almgrUtils && window.almgrUtils.escapeHtml) {
+            return window.almgrUtils.escapeHtml(text);
         }
         // Fallback HTML escape
         const div = document.createElement('div');
@@ -247,35 +247,35 @@ function formatCaller(caller) {
  */
 function updateLogInfo() {
     jQuery.post(ajaxurl, {
-        action: 'wpdmgr_get_log_info',
-        nonce: wpdmgrToolkit.nonce
+        action: 'almgr_get_log_info',
+        nonce: almgrToolkit.nonce
     }, function(response) {
         if (response.success && response.data) {
             const logInfo = response.data;
-            const infoElement = document.querySelector('.wpdmgr-logs-info');
+            const infoElement = document.querySelector('.almgr-logs-info');
 
             if (infoElement && logInfo.query_log_file_exists) {
                 infoElement.innerHTML = `
-                    <span class="wpdmgr-log-size">
+                    <span class="almgr-log-size">
                         <span class="dashicons dashicons-media-text"></span>
-                        ${<?php echo wp_json_encode(__('Current:', 'wp-debug-manager')); ?>} ${logInfo.query_log_file_size}
+                        ${<?php echo wp_json_encode(__('Current:', 'advanced-log-manager')); ?>} ${logInfo.query_log_file_size}
                     </span>
                     ${logInfo.query_log_total_size ? `
-                    <span class="wpdmgr-log-total-size">
+                    <span class="almgr-log-total-size">
                         <span class="dashicons dashicons-database"></span>
-                        ${<?php echo wp_json_encode(__('Total (with backups):', 'wp-debug-manager')); ?>} ${logInfo.query_log_total_size}
+                        ${<?php echo wp_json_encode(__('Total (with backups):', 'advanced-log-manager')); ?>} ${logInfo.query_log_total_size}
                     </span>` : ''}
                     ${logInfo.query_log_max_size ? `
-                    <span class="wpdmgr-log-max-size">
+                    <span class="almgr-log-max-size">
                         <span class="dashicons dashicons-info"></span>
-                        ${<?php echo wp_json_encode(__('Rotation at:', 'wp-debug-manager')); ?>} ${logInfo.query_log_max_size}
+                        ${<?php echo wp_json_encode(__('Rotation at:', 'advanced-log-manager')); ?>} ${logInfo.query_log_max_size}
                     </span>` : ''}
                 `;
             } else if (infoElement) {
                 infoElement.innerHTML = `
-                    <span class="wpdmgr-no-logs">
+                    <span class="almgr-no-logs">
                         <span class="dashicons dashicons-info"></span>
-                        ${<?php echo wp_json_encode(__('No query log file found', 'wp-debug-manager')); ?>}
+                        ${<?php echo wp_json_encode(__('No query log file found', 'advanced-log-manager')); ?>}
                     </span>
                 `;
             }
@@ -285,7 +285,7 @@ function updateLogInfo() {
 
 // Auto-load query logs when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('wpdmgr-query-logs-content')) {
+    if (document.getElementById('almgr-query-logs-content')) {
         loadQueryLogs();
         initializeQueryLogsPage();
     }
@@ -299,67 +299,67 @@ function initializeQueryLogsPage() {
 
     // Clear query logs (empties active query.log content)
     document.getElementById('clear-query-logs').addEventListener('click', function() {
-        if (!confirm(<?php echo wp_json_encode(__('Are you sure you want to clear the active query log? This will delete all recorded logs in query.log but keep rotation files (query.log.1, etc.).', 'wp-debug-manager')); ?>)) {
+        if (!confirm(<?php echo wp_json_encode(__('Are you sure you want to clear the active query log? This will delete all recorded logs in query.log but keep rotation files (query.log.1, etc.).', 'advanced-log-manager')); ?>)) {
             return;
         }
 
-        const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
+        const logsLoading = document.querySelector('#almgr-query-logs-viewer .almgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'wpdmgr_clear_query_log',
-            nonce: wpdmgrToolkit.nonce
+            action: 'almgr_clear_query_log',
+            nonce: almgrToolkit.nonce
         }, function(response) {
             logsLoading.style.display = 'none';
 
             if (response.success) {
-                window.wpdmgrShowNotice(response.data, 'success');
+                window.almgrShowNotice(response.data, 'success');
 
                 // Clear the logs display immediately
-                const logsContent = document.getElementById('wpdmgr-query-logs-content');
+                const logsContent = document.getElementById('almgr-query-logs-content');
                 if (logsContent) {
-                    logsContent.innerHTML = '<div class="wpdmgr-no-logs-message"><p>' + <?php echo wp_json_encode(__('No query log entries found.', 'wp-debug-manager')); ?> + '</p></div>';
+                    logsContent.innerHTML = '<div class="almgr-no-logs-message"><p>' + <?php echo wp_json_encode(__('No query log entries found.', 'advanced-log-manager')); ?> + '</p></div>';
                 }
 
                 // Update log info immediately, then reload for complete refresh
                 updateLogInfo();
                 setTimeout(() => location.reload(), 1500);
             } else {
-                window.wpdmgrShowNotice(response.data || <?php echo wp_json_encode(__('Error occurred', 'wp-debug-manager')); ?>, 'error');
+                window.almgrShowNotice(response.data || <?php echo wp_json_encode(__('Error occurred', 'advanced-log-manager')); ?>, 'error');
             }
         });
     });
 
     // Cleanup old query logs (removes rotation/archived files like query.log.1, query.log.2, etc.)
     document.getElementById('cleanup-query-logs').addEventListener('click', function() {
-        if (!confirm(<?php echo wp_json_encode(__('Are you sure you want to cleanup rotation/archived log files? This will remove query.log.1, query.log.2, etc. but keep the active query.log file.', 'wp-debug-manager')); ?>)) {
+        if (!confirm(<?php echo wp_json_encode(__('Are you sure you want to cleanup rotation/archived log files? This will remove query.log.1, query.log.2, etc. but keep the active query.log file.', 'advanced-log-manager')); ?>)) {
             return;
         }
 
-        const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
+        const logsLoading = document.querySelector('#almgr-query-logs-viewer .almgr-logs-loading');
         logsLoading.style.display = 'block';
 
         jQuery.post(ajaxurl, {
-            action: 'wpdmgr_cleanup_query_logs',
-            nonce: wpdmgrToolkit.nonce
+            action: 'almgr_cleanup_query_logs',
+            nonce: almgrToolkit.nonce
         }, function(response) {
             logsLoading.style.display = 'none';
 
             if (response.success) {
-                window.wpdmgrShowNotice(response.data, 'success');
+                window.almgrShowNotice(response.data, 'success');
 
                 // Update log info immediately, then reload for complete refresh
                 updateLogInfo();
                 setTimeout(() => location.reload(), 1500);
             } else {
-                window.wpdmgrShowNotice(response.data || <?php echo wp_json_encode(__('Error occurred', 'wp-debug-manager')); ?>, 'error');
+                window.almgrShowNotice(response.data || <?php echo wp_json_encode(__('Error occurred', 'advanced-log-manager')); ?>, 'error');
             }
         });
     });
 
     // Download query logs
     document.getElementById('download-query-logs').addEventListener('click', function() {
-        const downloadUrl = ajaxurl + '?action=wpdmgr_download_query_logs&nonce=' + wpdmgrToolkit.nonce;
+        const downloadUrl = ajaxurl + '?action=almgr_download_query_logs&nonce=' + almgrToolkit.nonce;
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = 'query-logs-' + new Date().toISOString().slice(0, 10) + '.txt';
@@ -370,7 +370,7 @@ function initializeQueryLogsPage() {
     document.getElementById('query-time-filter').addEventListener('change', filterQueryLogs);
     document.getElementById('query-type-filter').addEventListener('change', filterQueryLogs);
     document.getElementById('query-slow-filter').addEventListener('change', filterQueryLogs);
-    document.getElementById('query-search').addEventListener('input', window.wpdmgrUtils.debounce(filterQueryLogs, 300));
+    document.getElementById('query-search').addEventListener('input', window.almgrUtils.debounce(filterQueryLogs, 300));
 
     // Clear filters
     document.getElementById('clear-query-filters').addEventListener('click', function() {
@@ -383,8 +383,8 @@ function initializeQueryLogsPage() {
 }
 
 function loadQueryLogs() {
-    const logsContent = document.getElementById('wpdmgr-query-logs-content');
-    const logsLoading = document.querySelector('#wpdmgr-query-logs-viewer .wpdmgr-logs-loading');
+    const logsContent = document.getElementById('almgr-query-logs-content');
+    const logsLoading = document.querySelector('#almgr-query-logs-viewer .almgr-logs-loading');
 
     if (!logsContent) return;
 
@@ -392,8 +392,8 @@ function loadQueryLogs() {
     logsContent.style.display = 'none';
 
     jQuery.post(ajaxurl, {
-        action: 'wpdmgr_get_query_logs',
-        nonce: wpdmgrToolkit.nonce
+        action: 'almgr_get_query_logs',
+        nonce: almgrToolkit.nonce
     }, function(response) {
         logsLoading.style.display = 'none';
 
@@ -401,21 +401,21 @@ function loadQueryLogs() {
             displayQueryLogs(response.data);
             logsContent.style.display = 'block';
         } else {
-            logsContent.innerHTML = '<div class="notice notice-error"><p>' + <?php echo wp_json_encode(__('Error occurred', 'wp-debug-manager')); ?> + '</p></div>';
+            logsContent.innerHTML = '<div class="notice notice-error"><p>' + <?php echo wp_json_encode(__('Error occurred', 'advanced-log-manager')); ?> + '</p></div>';
             logsContent.style.display = 'block';
         }
     });
 }
 
 function displayQueryLogs(logEntries) {
-    const logsContent = document.getElementById('wpdmgr-query-logs-content');
+    const logsContent = document.getElementById('almgr-query-logs-content');
 
     if (!logEntries || logEntries.length === 0) {
-        logsContent.innerHTML = '<div class="wpdmgr-no-logs-message"><p>' + <?php echo wp_json_encode(__('No query log entries found.', 'wp-debug-manager')); ?> + '</p></div>';
+        logsContent.innerHTML = '<div class="almgr-no-logs-message"><p>' + <?php echo wp_json_encode(__('No query log entries found.', 'advanced-log-manager')); ?> + '</p></div>';
         return;
     }
 
-    let html = '<div class="wpdmgr-logs-list">';
+    let html = '<div class="almgr-logs-list">';
 
     logEntries.forEach(function(entry, index) {
         // Safe timestamp formatting
@@ -441,7 +441,7 @@ function displayQueryLogs(logEntries) {
         }
         const entryId = 'query-entry-' + index;
 
-        html += '<div class="wpdmgr-query-log-entry" data-entry="' + index + '">';
+        html += '<div class="almgr-query-log-entry" data-entry="' + index + '">';
 
         // Collapsible header
         html += '<div class="query-log-header" data-toggle="' + entryId + '">';
@@ -452,8 +452,8 @@ function displayQueryLogs(logEntries) {
         // Parse URL source
         const urlSource = parseUrlSource(entry.url);
         html += '<div class="query-log-url">';
-        html += '<span class="source-name">' + window.wpdmgrUtils.escapeHtml(urlSource.name) + '</span>';
-        html += '<span class="source-path">' + window.wpdmgrUtils.escapeHtml(urlSource.path) + '</span>';
+        html += '<span class="source-name">' + window.almgrUtils.escapeHtml(urlSource.name) + '</span>';
+        html += '<span class="source-path">' + window.almgrUtils.escapeHtml(urlSource.path) + '</span>';
         html += '</div>';
 
         html += '</div>';
@@ -467,7 +467,7 @@ function displayQueryLogs(logEntries) {
         // Collapsible content (initially hidden)
         html += '<div class="query-log-details" id="' + entryId + '" style="display: none;">';
         html += '<div class="query-loading" style="display: none;">';
-        html += '<div class="wpdmgr-spinner"></div>';
+        html += '<div class="almgr-spinner"></div>';
         html += '<p>Loading query details...</p>';
         html += '</div>';
         html += '</div>';
@@ -514,8 +514,8 @@ function loadQueryDetails(entryIndex, targetId) {
 
     // Get entry data from global variable or reload
     jQuery.post(ajaxurl, {
-        action: 'wpdmgr_get_query_logs',
-        nonce: wpdmgrToolkit.nonce
+        action: 'almgr_get_query_logs',
+        nonce: almgrToolkit.nonce
     }, function(response) {
         if (response.success && response.data && response.data[entryIndex]) {
             const entry = response.data[entryIndex];
@@ -560,7 +560,7 @@ function displayQueryDetailsTable(entry, targetId) {
         html += query.time + '</td>';
         html += '<td class="query-sql">';
         html += '<div class="sql-container">';
-        html += '<code>' + window.wpdmgrUtils.escapeHtml(query.sql) + '</code>';
+        html += '<code>' + window.almgrUtils.escapeHtml(query.sql) + '</code>';
         html += '<button type="button" class="button-link copy-sql" title="Copy SQL">';
         html += '<span class="dashicons dashicons-admin-page"></span>';
         html += '</button>';
@@ -580,7 +580,7 @@ function displayQueryDetailsTable(entry, targetId) {
         button.addEventListener('click', function() {
             const sql = this.previousElementSibling.textContent;
             navigator.clipboard.writeText(sql).then(function() {
-                window.wpdmgrShowNotice('SQL copied to clipboard', 'success');
+                window.almgrShowNotice('SQL copied to clipboard', 'success');
             });
         });
     });
@@ -601,7 +601,7 @@ function filterQueryLogs() {
     const slowFilter = document.getElementById('query-slow-filter').value;
     const searchTerm = document.getElementById('query-search').value.toLowerCase();
 
-    document.querySelectorAll('.wpdmgr-query-log-entry').forEach(function(entry) {
+    document.querySelectorAll('.almgr-query-log-entry').forEach(function(entry) {
         let show = true;
 
         // Time filter (would require more complex logic with actual timestamps)

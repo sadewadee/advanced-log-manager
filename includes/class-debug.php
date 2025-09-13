@@ -2,17 +2,17 @@
 /**
  * Debug Service - WP_DEBUG management
  *
- * @package WP Debug Manager
+ * @package Advanced Log Manager
  * @author Morden Team
  * @license GPL v3 or later
- * @link https://github.com/sadewadee/wp-debug-manager
+ * @link https://github.com/sadewadee/advanced-log-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class WPDMGR_Debug {
+class ALMGR_Debug {
 
     public function __construct() {
         $this->sync_debug_status();
@@ -27,9 +27,9 @@ class WPDMGR_Debug {
     public function sync_debug_status() {
         $actual_wp_debug = defined('WP_DEBUG') && WP_DEBUG;
 
-        $stored_option = get_option('wpdmgr_debug_enabled', null);
+        $stored_option = get_option('almgr_debug_enabled', null);
         if ($stored_option === null || $stored_option !== $actual_wp_debug) {
-            update_option('wpdmgr_debug_enabled', $actual_wp_debug);
+            update_option('almgr_debug_enabled', $actual_wp_debug);
         }
     }
 
@@ -54,7 +54,7 @@ class WPDMGR_Debug {
             }
         }
 
-        return WPDMGR_WP_Config_Integration::apply_debug_constants_enhanced($debug_settings, $enable);
+        return ALMGR_WP_Config_Integration::apply_debug_constants_enhanced($debug_settings, $enable);
     }
 
     public function enable_debug() {
@@ -64,7 +64,7 @@ class WPDMGR_Debug {
     public function disable_debug() {
         $result = $this->toggle_debug(false);
 
-        $auto_cleanup = apply_filters('wpdmgr_debug_auto_cleanup_on_disable', false);
+        $auto_cleanup = apply_filters('almgr_debug_auto_cleanup_on_disable', false);
 
         if ($auto_cleanup && $result) {
             $this->cleanup_debug_logs();
@@ -86,7 +86,7 @@ class WPDMGR_Debug {
             $debug_settings[$constant] = $enable;
         }
 
-        return WPDMGR_WP_Config_Integration::apply_debug_constants_enhanced($debug_settings, true);
+        return ALMGR_WP_Config_Integration::apply_debug_constants_enhanced($debug_settings, true);
     }
 
     /**
@@ -200,7 +200,7 @@ class WPDMGR_Debug {
      * Clear debug log file
      */
     public function clear_debug_log() {
-        $log_path = wpdmgr_get_debug_log_path();
+        $log_path = almgr_get_debug_log_path();
 
         if (!file_exists($log_path)) {
             return true; // Already cleared
@@ -237,7 +237,7 @@ class WPDMGR_Debug {
             $results['old_query_logs_cleaned'] = $this->cleanup_old_query_logs();
         }
 
-        // Remove custom log files in wp-debug-manager directory
+        // Remove custom log files in advanced-log-manager directory
         if ($options['remove_custom_log_files']) {
             $results['custom_logs_removed'] = $this->remove_custom_debug_files();
         }
@@ -265,13 +265,13 @@ class WPDMGR_Debug {
         );
 
         // Main debug log
-        $main_log_path = wpdmgr_get_debug_log_path();
+        $main_log_path = almgr_get_debug_log_path();
         if (file_exists($main_log_path)) {
             $size = filesize($main_log_path);
             $info['main_debug_log'] = array(
                 'path' => $main_log_path,
                 'size' => $size,
-                'size_formatted' => wpdmgr_format_bytes($size),
+                'size_formatted' => almgr_format_bytes($size),
                 'modified' => filemtime($main_log_path),
                 'modified_formatted' => date('Y-m-d H:i:s', filemtime($main_log_path))
             );
@@ -279,8 +279,8 @@ class WPDMGR_Debug {
             $info['total_files']++;
         }
 
-        // Custom debug logs in wp-debug-manager directory
-        $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+        // Custom debug logs in advanced-log-manager directory
+        $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
         if (is_dir($log_directory)) {
             // Debug logs
             $debug_pattern = $log_directory . 'wp-errors-*.log';
@@ -293,7 +293,7 @@ class WPDMGR_Debug {
                         'path' => $log_file,
                         'filename' => basename($log_file),
                         'size' => $size,
-                        'size_formatted' => wpdmgr_format_bytes($size),
+                        'size_formatted' => almgr_format_bytes($size),
                         'modified' => filemtime($log_file),
                         'modified_formatted' => date('Y-m-d H:i:s', filemtime($log_file))
                     );
@@ -313,7 +313,7 @@ class WPDMGR_Debug {
                         'path' => $log_file,
                         'filename' => basename($log_file),
                         'size' => $size,
-                        'size_formatted' => wpdmgr_format_bytes($size),
+                        'size_formatted' => almgr_format_bytes($size),
                         'modified' => filemtime($log_file),
                         'modified_formatted' => date('Y-m-d H:i:s', filemtime($log_file))
                     );
@@ -324,13 +324,13 @@ class WPDMGR_Debug {
         }
 
         // Query logs
-        $query_log_path = wpdmgr_get_query_log_path();
+        $query_log_path = almgr_get_query_log_path();
         if (file_exists($query_log_path)) {
             $size = filesize($query_log_path);
             $info['query_logs']['main'] = array(
                 'path' => $query_log_path,
                 'size' => $size,
-                'size_formatted' => wpdmgr_format_bytes($size),
+                'size_formatted' => almgr_format_bytes($size),
                 'modified' => filemtime($query_log_path),
                 'modified_formatted' => date('Y-m-d H:i:s', filemtime($query_log_path))
             );
@@ -351,7 +351,7 @@ class WPDMGR_Debug {
                     'path' => $backup_log,
                     'filename' => basename($backup_log),
                     'size' => $size,
-                    'size_formatted' => wpdmgr_format_bytes($size),
+                    'size_formatted' => almgr_format_bytes($size),
                     'modified' => filemtime($backup_log),
                     'modified_formatted' => date('Y-m-d H:i:s', filemtime($backup_log))
                 );
@@ -360,21 +360,21 @@ class WPDMGR_Debug {
             }
         }
 
-        $info['total_size_formatted'] = wpdmgr_format_bytes($info['total_size']);
+        $info['total_size_formatted'] = almgr_format_bytes($info['total_size']);
 
         return $info;
     }
 
     /**
-     * Remove custom debug log files from wp-debug-manager directory
+     * Remove custom debug log files from advanced-log-manager directory
      *
      * @return int Number of files removed
      */
     private function remove_custom_debug_files() {
         $removed_count = 0;
 
-        // Look for wp-errors-*.log and wp-queries-*.log files in wp-debug-manager directory
-        $log_directory = ABSPATH . 'wp-content/wp-debug-manager/';
+        // Look for wp-errors-*.log and wp-queries-*.log files in advanced-log-manager directory
+        $log_directory = ABSPATH . 'wp-content/advanced-log-manager/';
 
         if (!is_dir($log_directory)) {
             return 0;
@@ -391,9 +391,9 @@ class WPDMGR_Debug {
             $log_files = glob($pattern);
 
             foreach ($log_files as $log_file) {
-                if (file_exists($log_file) && unlink($log_file)) {
+                if (file_exists($log_file) && wp_delete_file($log_file)) {
                     $removed_count++;
-                    wpdmgr_debug_log('Removed custom log file: ' . basename($log_file));
+                    almgr_debug_log('Removed custom log file: ' . basename($log_file));
                 }
             }
         }
@@ -416,7 +416,7 @@ class WPDMGR_Debug {
             'SAVEQUERIES' => false
         );
 
-        return WPDMGR_WP_Config_Integration::apply_debug_constants($debug_settings);
+        return ALMGR_WP_Config_Integration::apply_debug_constants($debug_settings);
     }
 
     /**
@@ -426,7 +426,7 @@ class WPDMGR_Debug {
      * @return bool Success status
      */
     public function toggle_custom_query_log_path($enable = true) {
-        return WPDMGR_WP_Config_Integration::apply_custom_query_log_path($enable);
+        return ALMGR_WP_Config_Integration::apply_custom_query_log_path($enable);
     }
 
     /**
@@ -451,7 +451,7 @@ class WPDMGR_Debug {
      * Get debug log entries (latest 50)
      */
     public function get_debug_log_entries($limit = 50) {
-        $log_path = wpdmgr_get_debug_log_path();
+        $log_path = almgr_get_debug_log_path();
 
         if (!file_exists($log_path)) {
             return array();
@@ -603,9 +603,9 @@ class WPDMGR_Debug {
 
         // Sync option with actual status if different
         if (function_exists('get_option') && function_exists('update_option')) {
-            $stored_option = get_option('wpdmgr_debug_enabled', false);
+            $stored_option = get_option('almgr_debug_enabled', false);
             if ($stored_option !== $actual_wp_debug) {
-                update_option('wpdmgr_debug_enabled', $actual_wp_debug);
+                update_option('almgr_debug_enabled', $actual_wp_debug);
             }
         }
 
@@ -626,7 +626,7 @@ class WPDMGR_Debug {
             } else {
                 // Boolean value
                 $wp_debug_log_enabled = (bool) WP_DEBUG_LOG;
-                $wp_debug_log_path = wpdmgr_get_debug_log_path();
+                $wp_debug_log_path = almgr_get_debug_log_path();
             }
         }
 
@@ -640,14 +640,14 @@ class WPDMGR_Debug {
             'script_debug' => defined('SCRIPT_DEBUG') && SCRIPT_DEBUG,
             'savequeries' => defined('SAVEQUERIES') && constant('SAVEQUERIES'),
             'display_errors' => $display_errors,
-            'log_file_exists' => file_exists(wpdmgr_get_debug_log_path()),
-            'log_file_size' => file_exists(wpdmgr_get_debug_log_path()) ?
-                wpdmgr_format_bytes(filesize(wpdmgr_get_debug_log_path())) : '0 B',
-            'query_log_file_exists' => file_exists(wpdmgr_get_query_log_path()),
-            'query_log_file_size' => file_exists(wpdmgr_get_query_log_path()) ?
-                wpdmgr_format_bytes(filesize(wpdmgr_get_query_log_path())) : '0 B',
-            'query_log_total_size' => wpdmgr_format_bytes($this->get_query_log_total_size()),
-            'query_log_max_size' => wpdmgr_format_bytes(wpdmgr_get_query_log_max_size())
+            'log_file_exists' => file_exists(almgr_get_debug_log_path()),
+            'log_file_size' => file_exists(almgr_get_debug_log_path()) ?
+                almgr_format_bytes(filesize(almgr_get_debug_log_path())) : '0 B',
+            'query_log_file_exists' => file_exists(almgr_get_query_log_path()),
+            'query_log_file_size' => file_exists(almgr_get_query_log_path()) ?
+                almgr_format_bytes(filesize(almgr_get_query_log_path())) : '0 B',
+            'query_log_total_size' => almgr_format_bytes($this->get_query_log_total_size()),
+            'query_log_max_size' => almgr_format_bytes(almgr_get_query_log_max_size())
         );
     }
 
@@ -746,7 +746,7 @@ class WPDMGR_Debug {
             return false;
         }
 
-        $query_log_path = wpdmgr_get_query_log_path();
+        $query_log_path = almgr_get_query_log_path();
 
         // Check and rotate log if needed before writing
         $this->rotate_query_log_if_needed($query_log_path);
@@ -763,7 +763,7 @@ class WPDMGR_Debug {
             $total_time += $query[1];
         }
         $log_content .= "Total Time: " . round($total_time * 1000, 2) . "ms\n";
-        $log_content .= "Memory Usage: " . wpdmgr_format_bytes(memory_get_peak_usage()) . "\n";
+        $log_content .= "Memory Usage: " . almgr_format_bytes(memory_get_peak_usage()) . "\n";
         $log_content .= "----------------------------------------\n";
 
         // Detail setiap query dengan enhanced caller stack
@@ -804,7 +804,7 @@ class WPDMGR_Debug {
         }
 
         // Default max size: 10MB (dapat dikonfigurasi melalui filter)
-        $max_size = wpdmgr_get_query_log_max_size();
+        $max_size = almgr_get_query_log_max_size();
         $current_size = filesize($log_path);
 
         if ($current_size <= $max_size) {
@@ -816,7 +816,7 @@ class WPDMGR_Debug {
 
         // Remove old backup if exists
         if (file_exists($backup_path)) {
-            unlink($backup_path);
+            wp_delete_file($backup_path);
         }
 
         // Move current log to backup
@@ -826,7 +826,7 @@ class WPDMGR_Debug {
         file_put_contents($log_path, '');
 
         // Log rotation info
-        wpdmgr_debug_log("Query log rotated. Size was " . wpdmgr_format_bytes($current_size));
+        almgr_debug_log("Query log rotated. Size was " . almgr_format_bytes($current_size));
     }
 
     /**
@@ -834,7 +834,7 @@ class WPDMGR_Debug {
      * This removes retention/rotation/archived logs but keeps the active query.log
      */
     public function cleanup_old_query_logs() {
-        $log_path = wpdmgr_get_query_log_path();
+        $log_path = almgr_get_query_log_path();
         $log_dir = dirname($log_path);
         $log_name = basename($log_path);
 
@@ -846,9 +846,9 @@ class WPDMGR_Debug {
         foreach ($old_logs as $old_log) {
             // Remove ALL rotation files (.1, .2, .3, etc.) - this is what cleanup should do
             if (preg_match('/\.\d+$/', $old_log)) {
-                if (file_exists($old_log) && unlink($old_log)) {
+                if (file_exists($old_log) && wp_delete_file($old_log)) {
                     $cleaned++;
-                    wpdmgr_debug_log('Cleaned up rotation log file: ' . basename($old_log));
+                    almgr_debug_log('Cleaned up rotation log file: ' . basename($old_log));
                 }
             }
         }
@@ -860,7 +860,7 @@ class WPDMGR_Debug {
      * Get total query log size including backups
      */
     public function get_query_log_total_size() {
-        $log_path = wpdmgr_get_query_log_path();
+        $log_path = almgr_get_query_log_path();
         $log_dir = dirname($log_path);
         $log_name = basename($log_path);
 
@@ -1049,7 +1049,7 @@ class WPDMGR_Debug {
 
         // Plugin functions (non-core, non-vendor)
         $plugin_patterns = array(
-            '/^WPDMGR_/', '/^wpdmgr_/', '/wp-debug-manager/', '/class-.*\.php/',
+            '/^ALMGR_/', '/^almgr_/', '/advanced-log-manager/', '/class-.*\.php/',
             '/^wpforms/', '/^woocommerce/', '/^yoast/', '/^elementor/',
             '/^jetpack/', '/^gravityforms/', '/^acf/', '/^bbpress/',
             '/^buddypress/', '/^wpcf7/', '/^wp_/', '/^WP_/',
@@ -1233,14 +1233,14 @@ class WPDMGR_Debug {
 
         $aliases = array(
             // Plugin namespace aliases
-            'WPDMGR_Plugin' => 'Plugin',
-            'WPDMGR_Debug' => 'Debug',
-            'WPDMGR_Perf_Monitor' => 'PerfMonitor',
-            'WPDMGR_Htaccess' => 'Htaccess',
-            'WPDMGR_PHP_Config' => 'PhpConfig',
-            'WPDMGR_SMTP_Logger' => 'SmtpLogger',
-            'WPDMGR_WP_Config_Integration' => 'WpConfigIntegration',
-            'WPDMGR_File_Manager' => 'FileManager',
+            'ALMGR_Plugin' => 'Plugin',
+            'ALMGR_Debug' => 'Debug',
+            'ALMGR_Perf_Monitor' => 'PerfMonitor',
+            'ALMGR_Htaccess' => 'Htaccess',
+            'ALMGR_PHP_Config' => 'PhpConfig',
+            'ALMGR_SMTP_Logger' => 'SmtpLogger',
+            'ALMGR_WP_Config_Integration' => 'WpConfigIntegration',
+            'ALMGR_File_Manager' => 'FileManager',
 
             // WordPress core aliases
             'WP_Hook->do_action' => 'Hook::do_action',
@@ -1258,7 +1258,7 @@ class WPDMGR_Debug {
         }
 
         // Shorten long file paths
-        $function_name = str_replace('/wp-content/plugins/wp-debug-manager/', 'MT/', $function_name);
+        $function_name = str_replace('/wp-content/plugins/advanced-log-manager/', 'MT/', $function_name);
         $function_name = str_replace('/wp-includes/', 'WP/', $function_name);
         $function_name = str_replace('/wp-admin/', 'Admin/', $function_name);
         $function_name = str_replace('/wp-content/plugins/', 'Plugin/', $function_name);
@@ -1273,14 +1273,14 @@ class WPDMGR_Debug {
     private function is_plugin_entry_point($function_name, $file_path = null) {
         $entry_patterns = array(
             // Plugin initialization functions
-            'wpdmgr_init', 'WPDMGR_Plugin::get_instance', 'register_activation_hook',
+            'almgr_init', 'ALMGR_Plugin::get_instance', 'register_activation_hook',
             'register_deactivation_hook', 'add_action', 'add_filter',
 
             // AJAX handlers
             'wp_ajax_', 'wp_ajax_nopriv_',
 
             // Plugin class constructors
-            'WPDMGR_Plugin->__construct', 'WPDMGR_Debug->__construct'
+            'ALMGR_Plugin->__construct', 'ALMGR_Debug->__construct'
         );
 
         foreach ($entry_patterns as $pattern) {
@@ -1290,8 +1290,8 @@ class WPDMGR_Debug {
         }
 
         // Check file path for plugin entry
-        if ($file_path && strpos($file_path, 'wp-debug-manager') !== false) {
-            $entry_files = array('wp-debug-manager.php', 'class-plugin.php');
+        if ($file_path && strpos($file_path, 'advanced-log-manager') !== false) {
+            $entry_files = array('advanced-log-manager.php', 'class-plugin.php');
             foreach ($entry_files as $file) {
                 if (strpos($file_path, $file) !== false) {
                     return true;
@@ -1385,12 +1385,12 @@ class WPDMGR_Debug {
         // This extends the original get_file_info_for_function with more complete mapping
         $enhanced_map = array(
             // Plugin functions with line numbers
-            'wpdmgr_init' => array('file' => 'wp-debug-manager.php', 'line' => 45),
-            'WPDMGR_Plugin::get_instance' => array('file' => 'includes/class-plugin.php', 'line' => 26),
-            'WPDMGR_Plugin->__construct' => array('file' => 'includes/class-plugin.php', 'line' => 35),
-            'WPDMGR_Plugin->init_services' => array('file' => 'includes/class-plugin.php', 'line' => 72),
-            'WPDMGR_Debug->__construct' => array('file' => 'includes/class-debug.php', 'line' => 23),
-            'WPDMGR_Perf_Monitor->__construct' => array('file' => 'includes/class-query-monitor.php', 'line' => 23),
+            'almgr_init' => array('file' => 'almgr.php', 'line' => 45),
+            'ALMGR_Plugin::get_instance' => array('file' => 'includes/class-plugin.php', 'line' => 26),
+            'ALMGR_Plugin->__construct' => array('file' => 'includes/class-plugin.php', 'line' => 35),
+            'ALMGR_Plugin->init_services' => array('file' => 'includes/class-plugin.php', 'line' => 72),
+            'ALMGR_Debug->__construct' => array('file' => 'includes/class-debug.php', 'line' => 23),
+            'ALMGR_Perf_Monitor->__construct' => array('file' => 'includes/class-query-monitor.php', 'line' => 23),
 
             // WordPress core functions
             'update_meta_cache' => array('file' => 'wp-includes/meta.php', 'line' => 1189),
@@ -1555,11 +1555,11 @@ class WPDMGR_Debug {
             'load_default_textdomain' => 'wp-includes/l10n.php:954',
 
             // Common plugin functions
-            'wpdmgr_init' => 'wp-debug-manager/wp-debug-manager.php:45',
-            'WPDMGR_Plugin::get_instance' => 'wp-debug-manager/includes/class-plugin.php:26',
-            'WPDMGR_Plugin->__construct' => 'wp-debug-manager/includes/class-plugin.php:35',
-            'WPDMGR_Plugin->init_services' => 'wp-debug-manager/includes/class-plugin.php:72',
-            'WPDMGR_Perf_Monitor->__construct' => 'wp-debug-manager/includes/class-query-monitor.php:23',
+            'almgr_init' => 'advanced-log-manager/almgr.php:45',
+            'ALMGR_Plugin::get_instance' => 'advanced-log-manager/includes/class-plugin.php:26',
+            'ALMGR_Plugin->__construct' => 'advanced-log-manager/includes/class-plugin.php:35',
+            'ALMGR_Plugin->init_services' => 'advanced-log-manager/includes/class-plugin.php:72',
+            'ALMGR_Perf_Monitor->__construct' => 'advanced-log-manager/includes/class-query-monitor.php:23',
         );
 
         // Exact match first
@@ -1582,7 +1582,7 @@ class WPDMGR_Debug {
      * This deletes all recorded logs in the active query.log file
      */
     public function clear_query_log() {
-        $log_path = wpdmgr_get_query_log_path();
+        $log_path = almgr_get_query_log_path();
 
         if (!file_exists($log_path)) {
             return true; // Already cleared
@@ -1607,7 +1607,7 @@ class WPDMGR_Debug {
      * Get query log entries from file
      */
     public function get_query_log_entries($limit = 50) {
-        $log_path = wpdmgr_get_query_log_path();
+        $log_path = almgr_get_query_log_path();
 
         if (!file_exists($log_path)) {
             return array();
@@ -1762,7 +1762,7 @@ class WPDMGR_Debug {
             'memory' => memory_get_usage(),
             'peak_memory' => memory_get_peak_usage(),
             'php_version' => PHP_VERSION,
-            'wp_version' => function_exists('get_bloginfo') ? get_bloginfo('version') : 'unknown'
+            'wp_version' => get_bloginfo('version')
         );
 
         if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
