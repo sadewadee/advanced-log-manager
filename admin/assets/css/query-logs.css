@@ -8,7 +8,7 @@
 .almgr-log-size,
 .almgr-log-total-size,
 .almgr-log-max-size {
-    background: #f0f0f1;
+    background: var(--almgr-gray-200, #f0f0f1);
     padding: 4px 8px;
     border-radius: 3px;
     font-size: 12px;
@@ -22,7 +22,7 @@
 
 .almgr-log-max-size {
     background: #e1ecf4;
-    color: #0073aa;
+    color: var(--almgr-primary, #0073aa);
 }
 
 /* Query-specific filters extension */
@@ -181,18 +181,18 @@
 }
 
 .query-log-table th {
-    background: #f0f0f1;
+    background: var(--almgr-gray-200, #f0f0f1);
     padding: 12px 15px;
     text-align: left;
     font-weight: 600;
-    color: #1d2327;
-    border-bottom: 1px solid #ccd0d4;
+    color: var(--almgr-text-primary, #1d2327);
+    border-bottom: 1px solid var(--almgr-gray-300, #ccd0d4);
     font-size: 13px;
 }
 
 .query-log-table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #f0f0f1;
+    border-bottom: 1px solid var(--almgr-gray-200, #f0f0f1);
     vertical-align: top;
     font-size: 13px;
 }
@@ -339,4 +339,100 @@
     color: #646970;
     font-size: 10px;
     margin-left: 10px;
+}
+
+/* ===== RESPONSIVE DESIGN FOR QUERY LOGS ===== */
+
+/* Tablet (768px and below) */
+@media screen and (max-width: 768px) {
+    .almgr-query-logs-filters {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .query-log-table {
+        font-size: 12px;
+    }
+
+    .query-log-table th,
+    .query-log-table td {
+        padding: 8px 6px;
+    }
+
+    .query-log-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .query-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .query-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* Mobile (480px and below) */
+@media screen and (max-width: 480px) {
+    .almgr-query-logs-container {
+        margin-top: 16px;
+    }
+
+    .query-log-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .query-log-table {
+        min-width: 600px;
+        font-size: 11px;
+    }
+
+    .query-log-table th,
+    .query-log-table td {
+        padding: 6px 4px;
+        white-space: nowrap;
+    }
+
+    .query-sql {
+        width: 40%;
+        font-size: 10px;
+        max-height: 80px;
+    }
+
+    .query-caller {
+        width: 30%;
+        font-size: 10px;
+        max-height: 100px;
+        padding: 6px 8px;
+    }
+
+    .query-caller .file-path {
+        font-size: 9px;
+        margin-left: 8px;
+    }
+
+    .copy-sql {
+        padding: 4px;
+        min-width: 28px;
+        height: 28px;
+    }
+
+    .copy-sql .dashicons {
+        font-size: 14px;
+    }
+
+    .almgr-log-size,
+    .almgr-log-total-size,
+    .almgr-log-max-size {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
 }

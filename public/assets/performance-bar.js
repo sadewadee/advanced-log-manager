@@ -50,22 +50,20 @@
         // Add class to body for styling adjustments
         document.body.classList.add('almgr-perf-active');
 
-        // Frontend admin-bar toggle support (admin.js is not loaded on frontend)
-        // Only add event listener if jQuery/admin.js is not present to avoid conflicts
-        if (typeof jQuery === 'undefined' || typeof window.almgrAdminInitialized === 'undefined') {
-            document.addEventListener('click', function(e) {
-                const adminBarItem = e.target.closest('#wp-admin-bar-almgr-performance-monitor .ab-item');
-                const adminPerfToggle = e.target.closest('.almgr-admin-perf-toggle');
-                if (adminBarItem || adminPerfToggle) {
-                    e.preventDefault();
-                    e.stopPropagation(); // Prevent outside click handler from immediately closing the panel
-                    // Ensure panel exists (it is rendered late in wp_footer)
-                    ensureDetailsPanelReady(function() {
-                        toggleDetails();
-                    });
-                }
-            });
-        }
+        // Admin bar toggle support for both frontend and admin areas
+        // Use event delegation to handle dynamically added elements
+        document.addEventListener('click', function(e) {
+            const adminBarItem = e.target.closest('#wp-admin-bar-almgr-performance-monitor .ab-item');
+            const adminPerfToggle = e.target.closest('.almgr-admin-perf-toggle');
+            if (adminBarItem || adminPerfToggle) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent outside click handler from immediately closing the panel
+                // Ensure panel exists (it is rendered late in wp_footer)
+                ensureDetailsPanelReady(function() {
+                    toggleDetails();
+                });
+            }
+        });
     }
 
     /**
@@ -208,9 +206,13 @@
     }
 
     /**
-     * Format numbers for display
+     * Format numbers for display - menggunakan shared utility
      */
     function formatNumber(num) {
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.formatNumber) {
+            return window.ALMGRSharedUtils.formatNumber(num);
+        }
+        // Fallback
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
         } else if (num >= 1000) {
@@ -220,9 +222,13 @@
     }
 
     /**
-     * Format bytes for display
+     * Format bytes for display - menggunakan shared utility
      */
     function formatBytes(bytes) {
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.formatBytes) {
+            return window.ALMGRSharedUtils.formatBytes(bytes);
+        }
+        // Fallback
         if (bytes === 0) return '0 B';
 
         const k = 1024;
@@ -233,9 +239,13 @@
     }
 
     /**
-     * Format time for display
+     * Format time for display - menggunakan shared utility
      */
     function formatTime(seconds) {
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.formatTime) {
+            return window.ALMGRSharedUtils.formatTime(seconds * 1000); // Convert to ms for shared util
+        }
+        // Fallback
         if (seconds < 1) {
             return Math.round(seconds * 1000) + 'ms';
         }
@@ -251,18 +261,28 @@
     }
 
     /**
-     * Initialize tab functionality
+     * Initialize tab functionality - menggunakan shared utility
      */
     function initializeTabs() {
-        const tabs = document.querySelectorAll('.almgr-perf-tab');
-        const tabContents = document.querySelectorAll('.almgr-perf-tab-content');
-
-        tabs.forEach(function(tab) {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                switchTab(this.getAttribute('data-tab'));
+        // Gunakan shared utility untuk tab navigation
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.initializeTabs) {
+            window.ALMGRSharedUtils.initializeTabs({
+                tabSelector: '.almgr-perf-tab',
+                contentSelector: '.almgr-perf-tab-content',
+                useJQuery: false
             });
-        });
+        } else {
+            // Fallback jika shared utils belum loaded
+            const tabs = document.querySelectorAll('.almgr-perf-tab');
+            const tabContents = document.querySelectorAll('.almgr-perf-tab-content');
+
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab(this.getAttribute('data-tab'));
+                });
+            });
+        }
     }
 
     /**

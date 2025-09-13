@@ -156,10 +156,21 @@ class ALMGR_Plugin {
             );
         }
 
+        // Simple editor - no external dependencies needed
+
+        // Enqueue shared utilities first
+        wp_enqueue_script(
+            'almgr-shared-utils',
+            ALMGR_PLUGIN_URL . 'public/assets/almgr-shared-utils.js',
+            array('jquery'),
+            ALMGR_VERSION,
+            false
+        );
+
         wp_enqueue_script(
             'almgr-admin',
             ALMGR_PLUGIN_URL . 'admin/assets/admin.js',
-            array('jquery'),
+            array('jquery', 'almgr-shared-utils'),
             ALMGR_VERSION,
             false
         );
@@ -197,10 +208,19 @@ class ALMGR_Plugin {
         }
 
         if (function_exists('wp_enqueue_script')) {
+            // Enqueue shared utilities first
+            wp_enqueue_script(
+                'almgr-shared-utils',
+                ALMGR_PLUGIN_URL . 'public/assets/almgr-shared-utils.js',
+                array(),
+                ALMGR_VERSION,
+                true
+            );
+
             wp_enqueue_script(
                 'almgr-performance-bar',
                 ALMGR_PLUGIN_URL . 'public/assets/performance-bar.js',
-                array(),
+                array('almgr-shared-utils'),
                 ALMGR_VERSION,
                 true
             );
@@ -209,10 +229,34 @@ class ALMGR_Plugin {
             wp_enqueue_script(
                 'almgr-performance-tabs',
                 ALMGR_PLUGIN_URL . 'public/assets/performance-tabs.js',
-                array('almgr-performance-bar'),
+                array('almgr-performance-bar', 'almgr-shared-utils'),
                 ALMGR_VERSION,
                 true
             );
+
+            // Localize script for front-end functionality
+            wp_localize_script('almgr-performance-tabs', 'mtQueryMonitorL10n', array(
+                'enableRealTimeUpdates' => __('Enable Real-time Updates', 'advanced-log-manager'),
+                'stopRealTimeUpdates' => __('Stop Real-time Updates', 'advanced-log-manager'),
+                'statusActive' => __('Active', 'advanced-log-manager'),
+                'statusStatic' => __('Static View', 'advanced-log-manager'),
+                'statusRefreshing' => __('Refreshing...', 'advanced-log-manager'),
+                'statusUpdated' => __('Updated', 'advanced-log-manager'),
+                'statusError' => __('Error', 'advanced-log-manager'),
+                'viewDetails' => __('View Details', 'advanced-log-manager'),
+                'hideDetails' => __('Hide Details', 'advanced-log-manager'),
+                'toggle' => __('Toggle', 'advanced-log-manager'),
+                'hide' => __('Hide', 'advanced-log-manager'),
+                'nonce' => wp_create_nonce('almgr_monitor_hooks_nonce')
+            ));
+
+            // Pass AJAX data for front-end
+            wp_localize_script('almgr-performance-tabs', 'mtHookMonitor', array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('almgr_monitor_hooks_nonce'),
+                'isActive' => false,
+                'interval' => null
+            ));
         }
     }
 
@@ -753,9 +797,13 @@ class ALMGR_Plugin {
         $test_result = $this->services['debug']->test_wp_config_transformer();
 
 
-        /** @var \ReflectionClass $reflection */
-        // @phpstan-ignore-next-line
-        $reflection = new \ReflectionClass($this->services['debug']);
+        // Using ReflectionClass to access private method
+         // @phpstan-ignore-next-line
+         if (!class_exists('\ReflectionClass')) {
+             return false;
+         }
+         /** @var \ReflectionClass $reflection */
+         $reflection = new \ReflectionClass($this->services['debug']);
         $method = $reflection->getMethod('get_custom_debug_log_path');
         $method->setAccessible(true);
         $custom_path = $method->invoke($this->services['debug']);
@@ -795,16 +843,20 @@ class ALMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
-            /** @var \ReflectionClass $reflection */
-            // @phpstan-ignore-next-line
-            $reflection = new \ReflectionClass($this->services['smtp_logger']);
+            // Using ReflectionClass to access private properties and methods
+             // @phpstan-ignore-next-line
+             if (!class_exists('\ReflectionClass')) {
+                 return;
+             }
+             /** @var \ReflectionClass $reflection */
+             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_enabled');
             $property->setAccessible(true);
             $property->setValue($this->services['smtp_logger'], $enabled);
 
 
             if ($enabled) {
-                /** @var \ReflectionMethod $init_method */
+                // Get init_hooks method via reflection
                 $init_method = $reflection->getMethod('init_hooks');
                 $init_method->setAccessible(true);
                 $init_method->invoke($this->services['smtp_logger']);
@@ -830,9 +882,13 @@ class ALMGR_Plugin {
 
 
         if (isset($this->services['smtp_logger'])) {
-            /** @var \ReflectionClass $reflection */
-            // @phpstan-ignore-next-line
-            $reflection = new \ReflectionClass($this->services['smtp_logger']);
+            // Using ReflectionClass to access private property
+             // @phpstan-ignore-next-line
+             if (!class_exists('\ReflectionClass')) {
+                 return;
+             }
+             /** @var \ReflectionClass $reflection */
+             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_ip_address');
             $property->setAccessible(true);
             $property->setValue($this->services['smtp_logger'], $enabled);

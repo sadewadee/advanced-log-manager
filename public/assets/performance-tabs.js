@@ -351,6 +351,11 @@ var ALMGR_Images = {
     },
 
     debounce: function(fn, delay) {
+        // Gunakan shared utility jika tersedia
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.debounce) {
+            return window.ALMGRSharedUtils.debounce(fn, delay);
+        }
+        // Fallback
         var t;
         return function() {
             var ctx = this, args = arguments;
@@ -476,6 +481,11 @@ var ALMGR_Hooks = {
     },
 
     debounce: function(fn, delay) {
+        // Gunakan shared utility jika tersedia
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.debounce) {
+            return window.ALMGRSharedUtils.debounce(fn, delay);
+        }
+        // Fallback
         var t;
         return function() {
             var ctx = this, args = arguments;
@@ -528,6 +538,11 @@ var ALMGR_Queries = {
         });
     },
     debounce: function(fn, delay) {
+        // Gunakan shared utility jika tersedia
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.debounce) {
+            return window.ALMGRSharedUtils.debounce(fn, delay);
+        }
+        // Fallback
         var t; return function(){ clearTimeout(t); var ctx=this, args=arguments; t=setTimeout(function(){ fn.apply(ctx,args); }, delay); };
     }
 };
@@ -629,10 +644,216 @@ var ALMGR_Styles = {
     },
     debounce: function(fn, delay) { var t; return function(){ clearTimeout(t); var ctx=this, a=arguments; t=setTimeout(function(){ fn.apply(ctx,a); }, delay); }; }
 };
+/**
+ * Initialize toggle functionality for domain panels and bootstrap details
+ * This ensures the toggles work in both admin and front-end
+ */
+function initializeToggleFunctionality() {
+    // Toggle bootstrap details
+    document.querySelectorAll('.toggle-bootstrap-details').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var phase = this.getAttribute('data-phase');
+            var details = document.getElementById('bootstrap-details-' + phase);
+            if (details) {
+                details.style.display = details.style.display === 'none' ? 'block' : 'none';
+                // Use fallback text if localization is not available
+                var viewText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.viewDetails) ? window.mtQueryMonitorL10n.viewDetails : 'View Details';
+                var hideText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.hideDetails) ? window.mtQueryMonitorL10n.hideDetails : 'Hide Details';
+                this.textContent = details.style.display === 'none' ? viewText : hideText;
+            }
+        });
+    });
+
+    // Toggle domain panels
+    document.querySelectorAll('.toggle-domain-panel').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var domain = this.getAttribute('data-domain');
+            var content = document.getElementById('domain-content-' + domain);
+            if (content) {
+                content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                // Use fallback text if localization is not available
+                var toggleText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.toggle) ? window.mtQueryMonitorL10n.toggle : 'Toggle';
+                var hideText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.hide) ? window.mtQueryMonitorL10n.hide : 'Hide';
+                this.textContent = content.style.display === 'none' ? toggleText : hideText;
+            }
+        });
+    });
+
+    // Initialize real-time hooks container functionality
+    var realtimeContainer = document.querySelector('.almgr-realtime-hooks-container');
+    if (realtimeContainer) {
+        initializeRealTimeMonitoring();
+    }
+}
+
+/**
+ * Initialize real-time monitoring functionality
+ */
+function initializeRealTimeMonitoring() {
+    const toggleButton = document.getElementById('almgr-toggle-realtime');
+    const refreshButton = document.getElementById('almgr-refresh-hooks');
+    const statusText = document.getElementById('almgr-status-text');
+    const hooksCount = document.getElementById('hooks-count');
+    const memoryUsage = document.getElementById('memory-usage');
+
+    if (toggleButton) {
+        toggleButton.addEventListener('click', function() {
+            if (!window.mtHookMonitor) {
+                console.warn('MT Hook Monitor not initialized');
+                return;
+            }
+
+            if (window.mtHookMonitor.isActive) {
+                stopRealTimeMonitoring();
+            } else {
+                startRealTimeMonitoring();
+            }
+        });
+    }
+
+    if (refreshButton) {
+        refreshButton.addEventListener('click', function() {
+            refreshHookData();
+        });
+    }
+
+    function startRealTimeMonitoring() {
+        if (!window.mtHookMonitor) return;
+
+        window.mtHookMonitor.isActive = true;
+        var stopText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.stopRealTimeUpdates) ? window.mtQueryMonitorL10n.stopRealTimeUpdates : 'Stop Real-time Updates';
+        var statusActiveText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusActive) ? window.mtQueryMonitorL10n.statusActive : 'Active';
+        
+        toggleButton.textContent = stopText;
+        toggleButton.classList.remove('button-primary');
+        toggleButton.classList.add('button-secondary');
+        
+        if (statusText) {
+            statusText.textContent = statusActiveText;
+            statusText.classList.add('active');
+        }
+
+        // Poll for updates every 5 seconds
+        window.mtHookMonitor.interval = setInterval(function() {
+            refreshHookData();
+        }, 5000);
+
+        console.log('Real-time hook monitoring started (every 5 seconds)');
+    }
+
+    function stopRealTimeMonitoring() {
+        if (!window.mtHookMonitor) return;
+
+        window.mtHookMonitor.isActive = false;
+
+        if (window.mtHookMonitor.interval) {
+            clearInterval(window.mtHookMonitor.interval);
+            window.mtHookMonitor.interval = null;
+        }
+
+        var enableText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.enableRealTimeUpdates) ? window.mtQueryMonitorL10n.enableRealTimeUpdates : 'Enable Real-time Updates';
+        var statusStaticText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusStatic) ? window.mtQueryMonitorL10n.statusStatic : 'Static';
+        
+        toggleButton.textContent = enableText;
+        toggleButton.classList.add('button-primary');
+        toggleButton.classList.remove('button-secondary');
+        
+        if (statusText) {
+            statusText.textContent = statusStaticText;
+            statusText.classList.remove('active');
+        }
+
+        console.log('Real-time hook monitoring stopped');
+    }
+
+    function refreshHookData() {
+        if (!window.mtHookMonitor) return;
+
+        var refreshingText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusRefreshing) ? window.mtQueryMonitorL10n.statusRefreshing : 'Refreshing...';
+        var originalText = statusText ? statusText.textContent : '';
+        
+        if (statusText) {
+            statusText.textContent = refreshingText;
+        }
+
+        // Send AJAX request for updated hook data
+        const formData = new FormData();
+        formData.append('action', 'almgr_monitor_hooks');
+        formData.append('nonce', window.mtHookMonitor.nonce);
+
+        fetch(window.mtHookMonitor.ajaxUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateHookDisplay(data);
+                var statusActiveText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusActive) ? window.mtQueryMonitorL10n.statusActive : 'Active';
+                var statusUpdatedText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusUpdated) ? window.mtQueryMonitorL10n.statusUpdated : 'Updated';
+                
+                if (statusText) {
+                    statusText.textContent = window.mtHookMonitor.isActive ? statusActiveText : statusUpdatedText;
+                    statusText.classList.remove('error');
+                }
+            } else {
+                console.error('Failed to fetch hook data:', data);
+                var errorText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusError) ? window.mtQueryMonitorL10n.statusError : 'Error';
+                
+                if (statusText) {
+                    statusText.textContent = errorText;
+                    statusText.classList.add('error');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('AJAX error:', error);
+            var errorText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusError) ? window.mtQueryMonitorL10n.statusError : 'Error';
+            
+            if (statusText) {
+                statusText.textContent = errorText;
+                statusText.classList.add('error');
+            }
+        });
+    }
+
+    function updateHookDisplay(data) {
+        // Update summary statistics
+        if (hooksCount && data.hooks_captured !== undefined) {
+            hooksCount.textContent = data.hooks_captured;
+        }
+
+        if (memoryUsage && data.memory_usage) {
+            memoryUsage.textContent = data.memory_usage;
+        }
+
+        // Update real-time hooks table if present
+        var realtimeTable = document.querySelector('.almgr-realtime-hooks-table tbody');
+        if (realtimeTable && data.hooks_html) {
+            realtimeTable.innerHTML = data.hooks_html;
+        }
+
+        console.log('Hook display updated with new data');
+    }
+}
+
 // Auto-initialize when performance monitor is shown
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize mtHookMonitor object if not exists
+    if (typeof window.mtHookMonitor === 'undefined') {
+        window.mtHookMonitor = {
+            isActive: false,
+            interval: null,
+            ajaxUrl: (typeof ajaxurl !== 'undefined') ? ajaxurl : '/wp-admin/admin-ajax.php',
+            nonce: (typeof window.mtQueryMonitorL10n !== 'undefined' && window.mtQueryMonitorL10n.nonce) ? window.mtQueryMonitorL10n.nonce : ''
+        };
+    }
+
     // Initialize universal sortable functionality
     ALMGR_Sortable.init();
+
+    // Initialize toggle functionality
+    initializeToggleFunctionality();
 
     var checkForTabs = setInterval(function() {
         var hasAnyTable = document.querySelector('.query-log-table, .almgr-images-table, .almgr-hooks-table, .almgr-queries-table, .almgr-scripts-table, .almgr-styles-table');
@@ -666,6 +887,7 @@ if (typeof window.mtPerformanceBar !== 'undefined') {
         originalToggle.call(this);
         setTimeout(function() {
             ALMGR_Sortable.init();
+            initializeToggleFunctionality();
             if (document.querySelector('.almgr-images-table')) ALMGR_Images.init();
             if (document.querySelector('.almgr-hooks-table')) ALMGR_Hooks.init();
             if (document.querySelector('.almgr-queries-table')) ALMGR_Queries.init();

@@ -84,20 +84,29 @@ class ALMGR_Perf_Monitor {
 			ALMGR_VERSION
 		);
 
-		// Ensure performance-bar.js is loaded in admin for unified panel handling
-		wp_enqueue_script(
-			'almgr-performance-bar',
-			$plugin_url . 'public/assets/performance-bar.js',
-			array(),
-			ALMGR_VERSION,
-			true
-		);
+		// Enqueue shared utilities first
+        wp_enqueue_script(
+            'almgr-shared-utils',
+            $plugin_url . 'public/assets/almgr-shared-utils.js',
+            array(),
+            ALMGR_VERSION,
+            true
+        );
+
+        // Ensure performance-bar.js is loaded in admin for unified panel handling
+        wp_enqueue_script(
+            'almgr-performance-bar',
+            $plugin_url . 'public/assets/performance-bar.js',
+            array('almgr-shared-utils'),
+            ALMGR_VERSION,
+            true
+        );
 
         // Tabs enhancements for filtering, sorting, ARIA, shortcuts, and export
         wp_enqueue_script(
             'almgr-performance-tabs',
             $plugin_url . 'public/assets/performance-tabs.js',
-            array('almgr-performance-bar'),
+            array('almgr-performance-bar', 'almgr-shared-utils'),
             ALMGR_VERSION,
             true
         );
@@ -1632,6 +1641,7 @@ class ALMGR_Perf_Monitor {
                 if (class_exists('\ReflectionClass')) {
                     /** @var \ReflectionClass $reflection */
                     // @phpstan-ignore-next-line
+                    /** @phpstan-ignore-next-line */
                     $reflection = new \ReflectionClass($debug_instance);
                     $method = $reflection->getMethod('format_caller_stack');
                     $method->setAccessible(true);
@@ -2539,13 +2549,15 @@ class ALMGR_Perf_Monitor {
         if (extension_loaded('posix')) {
             // @phpstan-ignore-next-line
             if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
-                // @phpstan-ignore-next-line  
+                // @phpstan-ignore-next-line
+                /** @phpstan-ignore-next-line */
                 $user_data = function_exists('posix_getpwuid') ? @posix_getpwuid(@posix_geteuid()) : null;
                 if ($user_data && is_array($user_data) && isset($user_data['name'])) {
                     $user_info = $user_data['name'];
                     // @phpstan-ignore-next-line
                     if (function_exists('posix_getgrgid') && function_exists('posix_getegid')) {
                         // @phpstan-ignore-next-line
+                        /** @phpstan-ignore-next-line */
                         $group_data = function_exists('posix_getgrgid') ? @posix_getgrgid(@posix_getegid()) : null;
                         if ($group_data && is_array($group_data) && isset($group_data['name'])) {
                             $user_info .= ':' . $group_data['name'];

@@ -1,17 +1,17 @@
 /* Advance Log Manager Admin Bar Styles */
 
 #wpadminbar .almgr-performance-bar .ab-item {
-    color: #00a0d2 !important;
+    color: var(--almgr-primary, #00a0d2) !important;
     font-weight: 500;
 }
 
 #wpadminbar .almgr-performance-bar:hover .ab-item {
     color: #fff !important;
-    background-color: #00a0d2 !important;
+    background-color: var(--almgr-primary, #00a0d2) !important;
 }
 
 #wpadminbar .almgr-admin-bar-icon {
-    color: #46b450;
+    color: var(--almgr-success, #46b450);
     margin-right: 5px;
 }
 
@@ -19,7 +19,7 @@
 .almgr-performance-details {
     padding: 10px 15px;
     min-width: 280px;
-    background: #23282d;
+    background: var(--almgr-gray-800, #23282d);
     color: #eee;
     border-radius: 3px;
     font-size: 13px;
@@ -30,7 +30,7 @@
     display: flex;
     align-items: center;
     padding: 4px 0;
-    border-bottom: 1px solid #32373c;
+    border-bottom: 1px solid var(--almgr-gray-700, #32373c);
 }
 
 .almgr-perf-row:last-child {
@@ -42,7 +42,7 @@
     height: 16px;
     font-size: 16px;
     margin-right: 8px;
-    color: #00a0d2;
+    color: var(--almgr-primary, #00a0d2);
 }
 
 .almgr-perf-row strong {
@@ -56,7 +56,7 @@
 .almgr-debug-status {
     padding: 10px 15px;
     min-width: 250px;
-    background: #23282d;
+    background: var(--almgr-gray-800, #23282d);
     color: #eee;
     border-radius: 3px;
     font-size: 13px;
@@ -67,7 +67,7 @@
     display: flex;
     align-items: center;
     padding: 4px 0;
-    border-bottom: 1px solid #32373c;
+    border-bottom: 1px solid var(--almgr-gray-700, #32373c);
 }
 
 .almgr-debug-row:last-child {
@@ -79,7 +79,7 @@
     height: 16px;
     font-size: 16px;
     margin-right: 8px;
-    color: #00a0d2;
+    color: var(--almgr-primary, #00a0d2);
 }
 
 .almgr-debug-row strong {
@@ -91,16 +91,16 @@
 
 /* Quick Actions Header */
 #wpadminbar .almgr-quick-actions-header .ab-item {
-    background-color: #32373c !important;
-    color: #00a0d2 !important;
+    background-color: var(--almgr-gray-700, #32373c) !important;
+    color: var(--almgr-primary, #00a0d2) !important;
     font-weight: 600;
-    border-top: 1px solid #464b50;
+    border-top: 1px solid var(--almgr-gray-600, #464b50);
 }
 
 /* Performance indicators */
-.almgr-perf-indicator-good { color: #46b450 !important; }
-.almgr-perf-indicator-warning { color: #ffb900 !important; }
-.almgr-perf-indicator-critical { color: #dc3232 !important; }
+.almgr-perf-indicator-good { color: var(--almgr-success, #46b450) !important; }
+.almgr-perf-indicator-warning { color: var(--almgr-warning, #ffb900) !important; }
+.almgr-perf-indicator-critical { color: var(--almgr-danger, #dc3232) !important; }
 
 /* Responsive adjustments */
 @media screen and (max-width: 782px) {
@@ -527,4 +527,119 @@
 .almgr-no-queries-message h3 {
     margin: 15px 0 10px;
     color: #23282d;
+}
+
+/* ===== RESPONSIVE DESIGN FOR ADMIN BAR ===== */
+
+/* Mobile (782px and below - WordPress admin bar breakpoint) */
+@media screen and (max-width: 782px) {
+    /* Admin Bar Performance Monitor Mobile */
+    #wpadminbar .almgr-performance-bar {
+        position: relative;
+    }
+
+    .almgr-perf-dropdown {
+        position: fixed;
+        top: 46px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .almgr-perf-section {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .almgr-perf-item {
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--almgr-gray-700, #32373c);
+    }
+
+    .almgr-perf-item:last-child {
+        border-bottom: none;
+    }
+
+    .almgr-perf-label {
+        font-size: 12px;
+    }
+
+    .almgr-perf-value {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Query Filters Mobile */
+    .almgr-query-filters {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .almgr-filter-group {
+        width: 100%;
+    }
+
+    .almgr-filter-group select,
+    .almgr-filter-group input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* Query Viewer Mobile */
+    .almgr-query-viewer {
+        min-height: 300px;
+    }
+
+    .almgr-query-list {
+        padding: 10px;
+    }
+
+    .almgr-query-item {
+        margin-bottom: 8px;
+    }
+}
+
+/* Small Mobile (480px and below) */
+@media screen and (max-width: 480px) {
+    .almgr-perf-dropdown {
+        top: 46px;
+        padding: 8px;
+    }
+
+    .almgr-perf-section {
+        padding: 8px;
+    }
+
+    .almgr-perf-item {
+        padding: 6px 0;
+    }
+
+    .almgr-perf-label {
+        font-size: 11px;
+    }
+
+    .almgr-perf-value {
+        font-size: 12px;
+    }
+
+    .almgr-query-list {
+        padding: 8px;
+    }
+
+    .almgr-no-logs-message,
+    .almgr-no-queries-message {
+        padding: 40px 15px;
+    }
+
+    .almgr-no-logs-message .dashicons,
+    .almgr-no-queries-message .dashicons {
+        font-size: 36px;
+    }
 }

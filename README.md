@@ -1,55 +1,223 @@
-# Dokumentasi Lengkap Komponen Advanced Log Manager
+# Advance Log Manager -
 
-## Panel Performance
-Panel Performance dalam plugin ini mengelola konfigurasi debugging WordPress melalui kelas `ALMGR_Debug` di file `includes/class-debug.php`. Fungsinya mencakup sinkronisasi status debug, toggle WP_DEBUG constants, dan pembersihan log otomatis.
+Contributors: sadewadee
+Tags: debug, performance, monitoring, htaccess, php-config, developer-tools
+Requires at least: 5.0
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 1.2.26
+License: GPL v3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-### Fungsi Utama:
-- **sync_debug_status()**: Memeriksa dan menyimpan status aktual WP_DEBUG ke opsi database untuk konsistensi.
-- **toggle_debug($enable)**: Mengaktifkan/menonaktifkan semua constants debug seperti WP_DEBUG, WP_DEBUG_LOG, dll., dengan integrasi wp-config.php.
-- **enable_debug() / disable_debug()**: Wrapper untuk toggle, dengan cleanup log opsional saat disable.
+Lightweight developer tools for WordPress: Debug Manager, Query Monitor, Htaccess Editor, PHP Config presets.
 
-### Cara Kerja:
-Plugin memodifikasi wp-config.php secara aman menggunakan regex untuk menambahkan atau mengubah define statements. Contoh: Saat enable, menambahkan `define('WP_DEBUG', true);` sebelum komentar '/* That's all */'. Interaksi dengan komponen lain: Status debug memengaruhi visibilitas tab di All Log Activity.
+== Description ==
 
-**Contoh Konkret:** Jika WP_DEBUG_LOG=false, panel Performance akan menampilkan tombol 'Enable Debug' yang memanggil `toggle_debug(true)`, menghasilkan wp-config.php dengan constants aktif, dan log file mulai terisi di `/wp-content/debug.log`.
+Advance Log Manager is a WordPress plugin that provides essential developer tools with a simple UI and safety-first approach. This plugin is designed to provide easy access to debugging, performance monitoring, configuration file editing, and PHP settings management with automatic backup systems.
 
-## All Log Activity
-Halaman ini di `admin/views/page-all-logs-activity.php` menyajikan unified tabs untuk Debug Log, Query Log, dan SMTP Log. Akses memerlukan WP_DEBUG_LOG=true.
+### Features
 
-### Fungsi Utama:
-- **Tabs Dinamis:** Debug selalu visible; Query jika SAVEQUERIES=true; SMTP jika enabled via service.
-- **Rendering:** Memanggil `$plugin->render_logs_page()`, `render_query_logs_page()`, `render_smtp_logs_page()` untuk konten tab.
-- **JavaScript Tab Switching:** Event listener pada nav-tab untuk toggle display tanpa reload.
+#### 🔧 Debug Management
+- **One-click debug mode toggle** - Enable/disable WP_DEBUG, WP_DEBUG_LOG, etc.
+- **Advanced log viewer** - Filter by level, time, file path with real-time filtering
+- **Smart search functionality** - Text search with regex support and case-sensitive options
+- **Search highlighting** - Visual highlighting of search terms in log entries
+- **Export filtered logs** - Export only the filtered results
+- **Real-time filter counter** - Live count of matching log entries
+- **Safe configuration** - Auto-backup wp-config.php before modifications
+- **Clear debug logs** - Clean logs with one click
 
-### Cara Kerja:
-Halaman memvalidasi tab dari $_GET['tab'], fallback ke 'debug'. Jika kondisi tidak terpenuhi, tampilkan notice warning. Interaksi: Status dari `ALMGR_Debug` menentukan akses; log dibaca dari file sistem WP.
+#### 📊 Query Monitor & Performance
+- **Admin bar integration** - Performance metrics integrated with WordPress admin bar
+- **Unified display** - Execution time, memory usage, and query count in one indicator
+- **Query Monitor style** - Visual design consistent with popular developer tools
+- **Click-to-expand details** - Detail panel appears from bottom of screen when clicked
+- **Real-time monitoring** - Database queries, execution time, memory usage
+- **Detailed metrics** - PHP version, WordPress version, peak memory
+- **Mobile responsive** - Optimal display on all device sizes
+- **SMTP Logging** - Log all outgoing emails sent via `wp_mail` for easy debugging.
 
-**Ilustrasi:**
+#### 📝 File Editor
+- **Safe .htaccess editing** - Built-in syntax validation with CodeMirror syntax highlighting
+- **Auto-save functionality** - Automatic saving with debouncing and toggle control
+- **Advanced editor** - Syntax highlighting, line numbers, and code folding
+- **Auto-backup system** - Max 3 backups with timestamp
+- **One-click restore** - Rollback to previous backup
+- **Common snippets** - WordPress rewrite, caching, compression, security headers
+- **Site accessibility test** - Auto-restore if site breaks
+- **Duplicate prevention** - Prevents adding the same snippet twice
+- **503 Error protection** - Enhanced validation to prevent service unavailable errors
+- **Editor controls** - Status indicators, auto-save notifications, and unsaved changes warning
+
+#### ⚙️ PHP Configuration
+- **Preset-based config** - Basic, Medium, High performance presets
+- **Multiple methods** - .htaccess, wp-config.php, .user.ini support
+- **Auto-detection** - Smart method selection based on server environment
+- **Current config display** - View active PHP settings
+- **Visual comparison** - Compare current vs preset values
+
+### Security Features
+
+- **Capability checking** - Requires `manage_options`
+- **Nonce verification** - All AJAX requests protected
+- **Content validation** - Block malicious code patterns
+- **Advanced fail-safe mechanism** - Multi-layer protection for wp-config.php modifications
+- **Atomic operations** - Safe file operations with rollback and emergency recovery
+- **Comprehensive validation** - PHP syntax, site accessibility, and WordPress constants validation
+- **Multiple backup points** - Enhanced backup system with pre-restore emergency backups
+- **Post-rollback validation** - Ensures site accessibility after recovery operations
+- **Site monitoring** - Test accessibility after .htaccess changes
+- **Clean uninstall** - Remove all modifications on plugin deletion
+
+## Installation
+
+### Via WordPress Admin
+1. Download plugin zip file
+2. Upload via Plugins → Add New → Upload Plugin
+3. Activate plugin
+4. Access via Tools → Advance Log Manager -
+
+### Via FTP
+1. Extract plugin files
+2. Upload `advanced-log-manager` folder to `/wp-content/plugins/`
+3. Activate via WordPress admin
+
+### Via WP-CLI
+```bash
+wp plugin install advanced-log-manager.zip --activate
 ```
-<h2 class="nav-tab-wrapper">
-  <a href="#" class="nav-tab" data-target="almgr-tab-debug">Debug Log</a>
-  <!-- Query/SMTP tabs kondisional -->
-</h2>
-<div id="almgr-tab-debug">... konten debug ...</div>
-```
-Klik tab memicu JS untuk hide/show panels, memastikan UX smooth.
 
-## Panel Dashboard
-Berdasarkan struktur plugin, panel dashboard kemungkinan di `admin/views/page-dashboard.php` (meski file tidak ditemukan saat ini, diasumsikan dari pola umum). Ini overview utama dengan metrik log, status debug, dan quick actions.
+## Usage
 
-### Fungsi Utama:
-- **Overview Metrics:** Statistik log size, error count, recent activity.
-- **Status Indicators:** Badge untuk WP_DEBUG status dari `ALMGR_Debug::can_detect_debug_status()`.
-- **Quick Actions:** Tombol toggle debug, clear logs, linking ke All Log Activity.
+### Debug Management
+1. Go to **Tools → Advance Log Manager**
+2. Click **Debug Management** tab
+3. Toggle debug mode ON/OFF
+4. View current debug settings status
+5. Use advanced filtering:
+   - Filter by log level (Error, Warning, Notice, Deprecated)
+   - Filter by time range (Last Hour, 24 Hours, 7 Days, 30 Days)
+   - Search logs with text or regex patterns
+   - Filter by specific file paths
+   - Enable case-sensitive search
+6. Export filtered results
+7. Clear logs or view detailed logs with real-time counter
 
-### Cara Kerja:
-Dashboard mengintegrasikan data dari services (debug, query, smtp). Contoh: Menampilkan 'Debug: Active' jika WP_DEBUG=true, dengan link ke performance panel. Interaksi antar komponen: Navigasi ke All Log Activity via menu; performance changes update dashboard real-time via AJAX.
+### Query Monitor
+1. Enable **Performance Bar** in Query Monitor tab
+2. Performance bar will appear at bottom of page for logged-in users
+3. Click info icon for detailed metrics
+4. Monitor database queries, execution time, memory usage
 
-**Contoh Konkret:** Widget menunjukkan 'Log Size: 2.5MB' dengan tombol 'View All Logs' yang redirect ke ?page=all-logs-activity&tab=debug, memastikan flow seamless dari overview ke detail.
+### File Editor
+1. Access **.htaccess Editor** tab
+2. Edit file content with advanced CodeMirror editor:
+   - Syntax highlighting for Apache configuration
+   - Line numbers and code folding
+   - Auto-save functionality with toggle control
+   - Status indicators for editor state
+3. File is automatically backed up before save
+4. Auto-save notifications and unsaved changes warning
+5. Restore from backup if needed
+6. Insert common snippets with one-click
+7. Duplicate snippets are automatically prevented
+8. Enhanced 503 error protection ensures site stability
 
-### Interaksi Antar Komponen:
-- **Performance → All Log Activity:** Toggle debug memengaruhi visibilitas tabs dan akses log.
-- **Dashboard → Performance/All Log:** Quick actions redirect/link ke panels spesifik.
-- **All Log Activity → Dashboard:** Kembali via breadcrumb; changes (clear log) update dashboard metrics.
+### PHP Config
+1. Select **PHP Config** tab
+2. Choose preset: Basic, Medium, or High Performance
+3. Preview setting changes
+4. Apply configuration
+5. System auto-detects best method (.htaccess, wp-config, .user.ini)
 
-Semua komponen menggunakan WordPress hooks dan nonce untuk security, dengan i18n support via esc_html__(). Plugin mengikuti WP standards untuk performa dan aksesibilitas.
+## Screenshots
+
+1. **Main Dashboard** - Overview of all tools and current status
+2. **Debug Management** - Toggle debug settings and view logs
+3. **Query Monitor** - Performance metrics and database monitoring
+4. **Htaccess Editor** - Safe file editing with backup system
+5. **PHP Configuration** - Preset-based PHP settings management
+
+== Frequently Asked Questions ==
+
+= Is this plugin safe to use on production sites? =
+Yes, this plugin includes multiple safety features:
+- Automatic backups before any file modifications
+- Content validation to prevent malicious code
+- Site accessibility testing after changes
+- One-click restore functionality
+- Capability checking and nonce verification
+
+= What happens if I break my site? =
+The plugin includes comprehensive fail-safe mechanisms:
+- Automatic backup creation before any changes
+- Site accessibility testing after modifications
+- One-click restore to previous working state
+- Emergency recovery procedures
+
+= Can I use this with other debugging plugins? =
+Yes, Advance Log Manager is designed to work alongside other debugging tools. It focuses on providing essential developer tools in one lightweight package.
+
+= Does this plugin modify my theme files? =
+No, this plugin only modifies configuration files (wp-config.php, .htaccess) and creates its own database tables for logging. Your theme files remain untouched.
+
+== Changelog ==
+
+= 1.3.0 =
+* Added CodeMirror syntax highlighting to .htaccess File Editor
+* Implemented auto-save functionality with debouncing and toggle control
+* Added advanced search and filtering for debug logs viewer
+* Enhanced log filtering with regex support and case-sensitive options
+* Added real-time filter counter and search term highlighting
+* Implemented export filtered logs functionality
+* Added file path filtering for debug logs
+* Enhanced editor with status indicators and unsaved changes warning
+* Improved responsive design for mobile devices
+* Added comprehensive editor controls and notifications
+
+= 1.2.26 =
+* Fixed performance tabs filter, sort, and search functionality not working on frontend
+* Fixed admin bar performance monitor toggle conflict causing double open/close behavior
+* Added conditional event listener registration to prevent admin bar toggle conflicts
+* Enhanced frontend script loading for complete performance monitoring functionality
+* Added tabbed sidebar interface to Performance Details panel with Overview, Queries, Scripts, and Styles tabs
+* Enhanced Performance Bar with modern tabbed navigation and responsive design
+
+= 1.2.18 =
+* Code cleanup and optimization
+* Enhanced code maintainability
+* Improved WordPress coding standards compliance
+* Bug fixes and performance improvements
+
+= 1.2.16 =
+* Enhanced htaccess validation with duplicate snippet prevention
+* 503 error protection for site stability
+* Improved performance monitoring with real-time updates
+* Better error handling and user feedback
+
+= 1.0.0 =
+* Initial release
+* Debug management with wp-config.php integration
+* Query monitor with performance bar
+* Safe .htaccess editor with auto-backup
+* PHP configuration presets with multi-method support
+* Comprehensive admin interface with tabbed navigation
+* Security features and permission checking
+* Complete test suite
+* Translation support
+
+## License
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, see <https://www.gnu.org/licenses/>.
+
+## Credits
+
+Developed by [MordenHost Team](https://mordenhost.com) with focus on simplicity, safety, and developer experience.
+
+---
+
+**This plugin is designed for developers who need essential WordPress tools in one lightweight and safe package.**

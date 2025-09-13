@@ -36,7 +36,7 @@
         initializeHtaccessEditor();
         initializePHPConfig();
         initializeLogsPage();
-        initializeAdminBarPerformance();
+        // Performance bar is handled by performance-bar.js to avoid conflicts
 
         // Initialize debug settings state based on master toggle
         const debugEnabled = $('#debug-mode-toggle').is(':checked');
@@ -44,23 +44,41 @@
 
         // Set flag to indicate admin.js is initialized
         window.almgrAdminInitialized = true;
+
+        // Initialize collapsible sections
+        initializeCollapsibleSections();
+
+        // Initialize card toggle buttons
+        initializeCardToggleButtons();
+
+        // Initialize clickable status cards
+        initializeClickableStatusCards();
+
+        // Initialize performance monitor
+        initializePerformanceMonitor();
     });
 
     /**
-     * Initialize tab navigation
+     * Initialize tab navigation - menggunakan shared utility
      */
     function initializeTabs() {
-        $('.almgr-tab-btn').on('click', function() {
-            const tabId = $(this).data('tab');
-
-            // Update tab buttons
-            $('.almgr-tab-btn').removeClass('active');
-            $(this).addClass('active');
-
-            // Update tab contents
-            $('.almgr-tab-content').removeClass('active');
-            $('#tab-' + tabId).addClass('active');
-        });
+        // Gunakan shared utility untuk tab navigation
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.initializeTabs) {
+            window.ALMGRSharedUtils.initializeTabs({
+                tabSelector: '.almgr-tab-btn',
+                contentSelector: '.almgr-tab-content',
+                useJQuery: true
+            });
+        } else {
+            // Fallback jika shared utils belum loaded
+            $('.almgr-tab-btn').on('click', function() {
+                const tabId = $(this).data('tab');
+                $('.almgr-tab-btn').removeClass('active');
+                $(this).addClass('active');
+                $('.almgr-tab-content').removeClass('active');
+                $('#tab-' + tabId).addClass('active');
+            });
+        }
     }
 
     /**
@@ -682,74 +700,104 @@
         });
     }
 
-    /**
-     * Initialize admin bar performance toggle
-     */
-    function initializeAdminBarPerformance() {
-        // Handle admin bar performance metrics clicks
-        $(document).on('click', '#wp-admin-bar-almgr-performance-monitor .ab-item, .almgr-admin-perf-toggle', function(e) {
-            e.preventDefault();
-
-            const $detailsPanel = $('#almgr-perf-details');
-
-            if ($detailsPanel.length) {
-                if ($detailsPanel.is(':visible')) {
-                    $detailsPanel.fadeOut(200);
-                } else {
-                    $detailsPanel.fadeIn(200);
-                }
-            }
-
-            return false;
-        });
-
-        // Handle performance tab clicks
-        $(document).on('click', '.almgr-perf-tab', function(e) {
-            e.preventDefault();
-            const tabName = $(this).data('tab');
-
-            // Remove active class from all tabs
-            $('.almgr-perf-tab').removeClass('active');
-            $('.almgr-perf-tab-content').removeClass('active');
-
-            // Add active class to selected tab and content
-            $(this).addClass('active');
-            $('#almgr-perf-tab-' + tabName).addClass('active');
-
-            return false;
-        });
-
-        // Close details panel when clicking outside
-        $(document).on('click', function(e) {
-            const $detailsPanel = $('#almgr-perf-details');
-
-            if ($detailsPanel.length && $detailsPanel.is(':visible')) {
-                if (!$(e.target).closest('#almgr-perf-details, #wp-admin-bar-almgr-performance-monitor, .almgr-admin-perf-toggle').length) {
-                    $detailsPanel.fadeOut(200);
-                }
-            }
-        });
-
-        // Close details panel on Escape key
-        $(document).on('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const $detailsPanel = $('#almgr-perf-details');
-                if ($detailsPanel.length && $detailsPanel.is(':visible')) {
-                    $detailsPanel.fadeOut(200);
-                }
-            }
-        });
-    }
+    // Performance bar functionality moved to performance-bar.js to avoid conflicts
+    // This ensures consistent behavior across frontend and admin areas
 
     /**
-     * Initialize .htaccess editor
+     * Initialize .htaccess editor with simple textarea and auto-save
      */
     function initializeHtaccessEditor() {
         let originalContent = $('#htaccess-editor').val();
+        let autoSaveTimeout;
+        let hasUnsavedChanges = false;
+        const $editor = $('#htaccess-editor');
+
+        // Simple textarea editor with keyboard shortcuts
+        $editor.on('keydown', function(e) {
+            // Ctrl+S or Cmd+S to save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                $('#save-htaccess').click();
+            }
+
+            // Tab key for indentation
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const value = this.value;
+                this.value = value.substring(0, start) + '    ' + value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+            }
+        });
+
+        // Auto-save functionality with debouncing
+        $editor.on('input', function() {
+            hasUnsavedChanges = true;
+            updateSaveButtonState();
+
+            // Clear existing timeout
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+
+            // Set new timeout for auto-save (5 seconds after last change)
+            autoSaveTimeout = setTimeout(function() {
+                if (hasUnsavedChanges && $('#auto-save-enabled').is(':checked')) {
+                    autoSaveContent();
+                }
+            }, 5000);
+        });
+
+        // Auto-save function
+        function autoSaveContent() {
+            const content = $editor.val();
+
+            if (content === originalContent) {
+                return; // No changes to save
+            }
+
+            $.post(almgrToolkit.ajaxurl, {
+                action: 'almgr_auto_save_htaccess',
+                content: content,
+                nonce: almgrToolkit.nonce
+            }, function(response) {
+                if (response.success) {
+                    hasUnsavedChanges = false;
+                    updateSaveButtonState();
+                    showAutoSaveNotice('Auto-saved successfully', 'success');
+                } else {
+                    showAutoSaveNotice('Auto-save failed', 'error');
+                }
+            }).fail(function() {
+                showAutoSaveNotice('Auto-save failed', 'error');
+            });
+        }
+
+        // Update save button state
+        function updateSaveButtonState() {
+            const $saveBtn = $('#save-htaccess');
+            if (hasUnsavedChanges) {
+                $saveBtn.addClass('has-changes').text($saveBtn.data('unsaved-text') || 'Save Changes*');
+            } else {
+                $saveBtn.removeClass('has-changes').text($saveBtn.data('saved-text') || 'Backup & Save');
+            }
+        }
+
+        // Show auto-save notification
+        function showAutoSaveNotice(message, type) {
+            const $notice = $('<div class="almgr-auto-save-notice ' + type + '">' + message + '</div>');
+            $('.almgr-editor-section').prepend($notice);
+            setTimeout(function() {
+                $notice.fadeOut(function() {
+                    $(this).remove();
+                });
+            }, 3000);
+        }
 
         // Save .htaccess
         $('#save-htaccess').on('click', function() {
-            const content = $('#htaccess-editor').val();
+            const content = $editor.val();
 
             showLoading();
 
@@ -763,6 +811,8 @@
                 if (response.success) {
                     showNotice(response.data, 'success');
                     originalContent = content;
+                    hasUnsavedChanges = false;
+                    updateSaveButtonState();
                     // Refresh page to update backup info
                     setTimeout(function() {
                         location.reload();
@@ -805,19 +855,51 @@
 
         // Cancel changes
         $('#cancel-htaccess').on('click', function() {
-            $('#htaccess-editor').val(originalContent);
+            $editor.val(originalContent);
+            hasUnsavedChanges = false;
+            updateSaveButtonState();
         });
 
         // Insert snippets
         $('.almgr-snippet-btn').on('click', function() {
             const snippet = $(this).data('snippet');
-            const $editor = $('#htaccess-editor');
             const currentContent = $editor.val();
+            const cursorPos = $editor.get(0).selectionStart;
 
-            if (currentContent && !currentContent.endsWith('\n')) {
-                $editor.val(currentContent + '\n\n' + snippet);
+            let insertText = snippet;
+            if (currentContent && !currentContent.endsWith('\n') && cursorPos === currentContent.length) {
+                insertText = '\n\n' + snippet;
+            }
+
+            // Insert at cursor position
+            const beforeCursor = currentContent.substring(0, cursorPos);
+            const afterCursor = currentContent.substring(cursorPos);
+            const newContent = beforeCursor + insertText + afterCursor;
+
+            $editor.val(newContent);
+
+            // Set cursor position after inserted text
+            const newCursorPos = cursorPos + insertText.length;
+            $editor.get(0).setSelectionRange(newCursorPos, newCursorPos);
+            $editor.focus();
+        });
+
+        // Auto-save toggle
+        $('#auto-save-enabled').on('change', function() {
+            if ($(this).is(':checked')) {
+                showAutoSaveNotice('Auto-save enabled', 'success');
             } else {
-                $editor.val(currentContent + snippet);
+                showAutoSaveNotice('Auto-save disabled', 'info');
+                if (autoSaveTimeout) {
+                    clearTimeout(autoSaveTimeout);
+                }
+            }
+        });
+
+        // Warn before leaving with unsaved changes
+        $(window).on('beforeunload', function() {
+            if (hasUnsavedChanges) {
+                return 'You have unsaved changes. Are you sure you want to leave?';
             }
         });
     }
@@ -937,14 +1019,44 @@
             link.click();
         });
 
-        // Filter logs
-        $('#log-level-filter, #log-time-filter').on('change', function() {
+        // Advanced filter logs with real-time filtering
+        $('#log-level-filter, #log-time-filter, #log-file-filter').on('change', function() {
             filterLogs();
         });
 
         $('#log-search').on('input', debounce(function() {
             filterLogs();
-        }, 300));
+        }, 150)); // Faster response for real-time filtering
+
+        // Advanced search options
+        $('#regex-search-toggle, #case-sensitive-toggle').on('change', function() {
+            filterLogs();
+        });
+
+        // Clear all filters
+        $('#clear-filters').on('click', function() {
+            $('#log-level-filter').val('');
+            $('#log-time-filter').val('24h');
+            $('#log-search').val('');
+            $('#log-file-filter').val('');
+            $('#regex-search-toggle').prop('checked', false);
+            $('#case-sensitive-toggle').prop('checked', false);
+            filterLogs();
+        });
+
+        // Export filtered results
+        $('#export-filtered').on('click', function() {
+            exportFilteredLogs();
+        });
+
+        // Real-time filter status update
+        setInterval(function() {
+            if ($('#almgr-logs-content .almgr-log-entry').length > 0) {
+                const visible = $('#almgr-logs-content .almgr-log-entry:visible').length;
+                const total = $('#almgr-logs-content .almgr-log-entry').length;
+                updateFilterResults(visible, total);
+            }
+        }, 1000);
     }
 
     /**
@@ -1017,30 +1129,222 @@
     }
 
     /**
-     * Filter logs based on level, time and search
+     * Advanced filter logs with real-time filtering
      */
     function filterLogs() {
         const level = $('#log-level-filter').val();
         const timeFilter = $('#log-time-filter').val();
-        const searchTerm = $('#log-search').val().toLowerCase();
+        const searchTerm = $('#log-search').val();
+        const fileFilter = $('#log-file-filter').val();
+        const regexMode = $('#regex-search-toggle').is(':checked');
+        const caseSensitive = $('#case-sensitive-toggle').is(':checked');
+
+        let visibleCount = 0;
+        let totalCount = 0;
 
         $('.almgr-log-entry').each(function() {
+            totalCount++;
             let show = true;
+            const $entry = $(this);
+            const entryText = caseSensitive ? $entry.text() : $entry.text().toLowerCase();
+            const logTime = $entry.find('.log-time').text();
+            const logFile = $entry.find('.log-file').text();
 
             // Level filter
-            if (level && !$(this).hasClass('log-level-' + level.toLowerCase())) {
+            if (level && !$entry.hasClass('log-level-' + level.toLowerCase())) {
                 show = false;
             }
 
-            // Search filter
-            if (searchTerm && $(this).text().toLowerCase().indexOf(searchTerm) === -1) {
-                show = false;
+            // Advanced search filter
+            if (searchTerm && show) {
+                const searchText = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+
+                if (regexMode) {
+                    try {
+                        const regex = new RegExp(searchText, caseSensitive ? 'g' : 'gi');
+                        if (!regex.test(entryText)) {
+                            show = false;
+                        }
+                    } catch (e) {
+                        // Invalid regex, fall back to normal search
+                        if (entryText.indexOf(searchText) === -1) {
+                            show = false;
+                        }
+                    }
+                } else {
+                    if (entryText.indexOf(searchText) === -1) {
+                        show = false;
+                    }
+                }
             }
 
-            // Time filter would require more complex logic with actual timestamps
+            // File path filter
+            if (fileFilter && show) {
+                const fileText = caseSensitive ? logFile : logFile.toLowerCase();
+                const filterText = caseSensitive ? fileFilter : fileFilter.toLowerCase();
+                if (fileText.indexOf(filterText) === -1) {
+                    show = false;
+                }
+            }
 
-            $(this).toggle(show);
+            // Time filter
+            if (timeFilter && show && logTime) {
+                const entryDate = new Date(logTime);
+                const now = new Date();
+                let cutoffTime;
+
+                switch (timeFilter) {
+                    case '1h':
+                        cutoffTime = new Date(now.getTime() - (60 * 60 * 1000));
+                        break;
+                    case '24h':
+                        cutoffTime = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+                        break;
+                    case '7d':
+                        cutoffTime = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+                        break;
+                    case '30d':
+                        cutoffTime = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+                        break;
+                    default:
+                        cutoffTime = null;
+                }
+
+                if (cutoffTime && entryDate < cutoffTime) {
+                    show = false;
+                }
+            }
+
+            if (show) {
+                visibleCount++;
+                // Highlight search terms
+                highlightSearchTerms($entry, searchTerm, regexMode, caseSensitive);
+            } else {
+                // Remove highlights when hidden
+                removeHighlights($entry);
+            }
+
+            $entry.toggle(show);
         });
+
+        // Update filter results counter
+        updateFilterResults(visibleCount, totalCount);
+    }
+
+    /**
+     * Highlight search terms in log entries
+     */
+    function highlightSearchTerms($entry, searchTerm, regexMode, caseSensitive) {
+        if (!searchTerm) {
+            removeHighlights($entry);
+            return;
+        }
+
+        const $message = $entry.find('.log-message');
+        let originalText = $message.data('original-text');
+
+        if (!originalText) {
+            originalText = $message.text();
+            $message.data('original-text', originalText);
+        }
+
+        let highlightedText = originalText;
+
+        if (regexMode) {
+            try {
+                const regex = new RegExp(searchTerm, caseSensitive ? 'g' : 'gi');
+                highlightedText = originalText.replace(regex, '<mark class="almgr-highlight">$&</mark>');
+            } catch (e) {
+                // Invalid regex, fall back to normal highlighting
+                const flags = caseSensitive ? 'g' : 'gi';
+                const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapedTerm, flags);
+                highlightedText = originalText.replace(regex, '<mark class="almgr-highlight">$&</mark>');
+            }
+        } else {
+            const flags = caseSensitive ? 'g' : 'gi';
+            const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedTerm, flags);
+            highlightedText = originalText.replace(regex, '<mark class="almgr-highlight">$&</mark>');
+        }
+
+        $message.html(highlightedText);
+    }
+
+    /**
+     * Remove highlights from log entry
+     */
+    function removeHighlights($entry) {
+        const $message = $entry.find('.log-message');
+        const originalText = $message.data('original-text');
+
+        if (originalText) {
+            $message.text(originalText);
+        }
+    }
+
+    /**
+     * Update filter results counter
+     */
+    function updateFilterResults(visible, total) {
+        const $counter = $('#filter-results-counter');
+        if ($counter.length) {
+            if (visible === total) {
+                $counter.text(`Showing all ${total} entries`);
+                $counter.removeClass('filtered');
+            } else {
+                $counter.text(`Showing ${visible} of ${total} entries`);
+                $counter.addClass('filtered');
+            }
+        }
+    }
+
+    /**
+     * Export filtered log results
+     */
+    function exportFilteredLogs() {
+        const visibleEntries = [];
+
+        $('.almgr-log-entry:visible').each(function() {
+            const $entry = $(this);
+            const level = $entry.find('.log-level').text();
+            const time = $entry.find('.log-time').text();
+            const message = $entry.find('.log-message').data('original-text') || $entry.find('.log-message').text();
+            const file = $entry.find('.log-file').text();
+
+            visibleEntries.push({
+                level: level,
+                time: time,
+                message: message,
+                file: file
+            });
+        });
+
+        if (visibleEntries.length === 0) {
+            showNotice('No entries to export', 'warning');
+            return;
+        }
+
+        // Create CSV content
+        let csvContent = 'Level,Time,Message,File\n';
+        visibleEntries.forEach(function(entry) {
+            const escapedMessage = '"' + entry.message.replace(/"/g, '""') + '"';
+            const escapedFile = '"' + entry.file.replace(/"/g, '""') + '"';
+            csvContent += `${entry.level},${entry.time},${escapedMessage},${escapedFile}\n`;
+        });
+
+        // Download CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'filtered-debug-logs-' + new Date().toISOString().slice(0, 10) + '.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showNotice(`Exported ${visibleEntries.length} log entries`, 'success');
     }
 
     /**
@@ -1060,17 +1364,25 @@
     }
 
     /**
-     * Show loading overlay
+     * Show loading overlay - menggunakan shared utility
      */
     function showLoading() {
-        $('#almgr-loading-overlay').show();
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.showLoading) {
+            window.ALMGRSharedUtils.showLoading('#almgr-loading-overlay');
+        } else {
+            $('#almgr-loading-overlay').show();
+        }
     }
 
     /**
-     * Hide loading overlay
+     * Hide loading overlay - menggunakan shared utility
      */
     function hideLoading() {
-        $('#almgr-loading-overlay').hide();
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.hideLoading) {
+            window.ALMGRSharedUtils.hideLoading('#almgr-loading-overlay');
+        } else {
+            $('#almgr-loading-overlay').hide();
+        }
     }
 
     /**
@@ -1102,18 +1414,26 @@
     window.almgrShowNotice = showNotice;
 
     /**
-     * Escape HTML
+     * Escape HTML - menggunakan shared utility
      */
     function escapeHtml(text) {
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.escapeHtml) {
+            return window.ALMGRSharedUtils.escapeHtml(text);
+        }
+        // Fallback
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 
     /**
-     * Debounce function
+     * Debounce function - menggunakan shared utility
      */
     function debounce(func, wait) {
+        if (window.ALMGRSharedUtils && window.ALMGRSharedUtils.debounce) {
+            return window.ALMGRSharedUtils.debounce(func, wait);
+        }
+        // Fallback
         let timeout;
         return function executedFunction(...args) {
             const later = function() {
@@ -1126,9 +1446,236 @@
     }
 
     // Expose utility functions globally for other scripts
-    window.almgrUtils = {
+    // Shared utils akan menghandle backward compatibility
+    window.almgrUtils = window.almgrUtils || {
         escapeHtml: escapeHtml,
         debounce: debounce
     };
+
+    /**
+     * Initialize card toggle buttons functionality
+     */
+    function initializeCardToggleButtons() {
+        // Handle card toggle button clicks
+        $(document).on('click', '.almgr-card-toggle-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const target = $(this).data('target');
+            const $card = $(this).closest('.almgr-feature-card');
+            const $icon = $(this).find('.dashicons');
+            const isCurrentlyExpanded = $card.hasClass('expanded');
+
+            // First, close all other cards and hide all tab contents
+            $('.almgr-feature-card').removeClass('expanded');
+            $('.almgr-tab-content').removeClass('active');
+
+            // Reset all toggle buttons to default state
+            $('.almgr-card-toggle-btn').each(function() {
+                const $btn = $(this);
+                const $btnIcon = $btn.find('.dashicons');
+                const btnTarget = $btn.data('target');
+                const closeText = btnTarget === 'debug-management' ? 'Configure' :
+                                 btnTarget === 'perf-monitor' ? 'Configure' :
+                                 btnTarget === 'file-editor' ? 'Configure' : 'Configure';
+                $btn.find('span:not(.dashicons)').text(closeText);
+                $btnIcon.removeClass('dashicons-arrow-up-alt2').addClass('dashicons-arrow-down-alt2');
+            });
+
+            // If the clicked card wasn't expanded, expand it and show its content
+            if (!isCurrentlyExpanded) {
+                $card.addClass('expanded');
+
+                // Show the target tab content
+                if (target) {
+                    const $targetTab = $('#tab-' + target);
+                    $targetTab.addClass('active');
+                }
+
+                // Update button text and icon for the expanded card
+                const closeText = target === 'debug-management' ? 'Close Debug' :
+                                 target === 'perf-monitor' ? 'Close Monitor' :
+                                 target === 'file-editor' ? 'Close Editor' : 'Close';
+                $(this).find('span:not(.dashicons)').text(closeText);
+                $icon.removeClass('dashicons-arrow-down-alt2').addClass('dashicons-arrow-up-alt2');
+            }
+        });
+    }
+
+    /**
+     * Initialize collapsible sections functionality
+     */
+    function initializeCollapsibleSections() {
+        // Handle section toggle clicks
+        $(document).on('click', '.almgr-section-toggle', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $section = $(this).closest('.almgr-collapsible-section');
+            const $content = $section.find('.almgr-section-content');
+            const $icon = $(this).find('.dashicons');
+
+            // Toggle collapsed state
+            $section.toggleClass('collapsed');
+
+            // Animate content with slide effect
+            if ($section.hasClass('collapsed')) {
+                $content.slideUp(300);
+                $icon.css('transform', 'rotate(-90deg)');
+            } else {
+                $content.slideDown(300);
+                $icon.css('transform', 'rotate(0deg)');
+            }
+        });
+
+        // Handle header clicks (same as toggle button)
+        $(document).on('click', '.almgr-section-header', function(e) {
+            // Don't trigger if clicking on the toggle button itself
+            if ($(e.target).closest('.almgr-section-toggle').length) {
+                return;
+            }
+
+            $(this).find('.almgr-section-toggle').trigger('click');
+        });
+
+        // Initialize sections state - collapse all except first one by default
+        $('.almgr-collapsible-section').each(function(index) {
+            const $section = $(this);
+            const $content = $section.find('.almgr-section-content');
+            const $icon = $section.find('.almgr-section-toggle .dashicons');
+
+            // Keep first section (Basic Debug Settings) open, collapse others
+            if (index > 0) {
+                $section.addClass('collapsed');
+                $content.hide();
+                $icon.css('transform', 'rotate(-90deg)');
+            }
+        });
+
+        // Add smooth transitions for better UX
+        $('.almgr-section-content').css({
+            'overflow': 'hidden',
+            'transition': 'all 0.3s ease'
+        });
+    }
+
+    /**
+     * Initialize Performance Monitor functionality
+     */
+    function initializePerformanceMonitor() {
+        // Handle performance bar toggle
+        $(document).on('change', '#enable_performance_bar', function() {
+            const isEnabled = $(this).is(':checked');
+            const $previewBar = $('.almgr-perf-preview-bar');
+            const $previewBadge = $('.almgr-preview-badge');
+            const $advancedToggles = $('.almgr-perf-advanced-toggles input[type="checkbox"]');
+
+            // Update preview bar state
+            if (isEnabled) {
+                $previewBar.removeClass('inactive');
+                $previewBadge.removeClass('inactive').addClass('active')
+                    .html('<span class="dashicons dashicons-yes-alt"></span> Performance Bar Active');
+                $advancedToggles.prop('disabled', false);
+            } else {
+                $previewBar.addClass('inactive');
+                $previewBadge.removeClass('active').addClass('inactive')
+                    .html('<span class="dashicons dashicons-dismiss"></span> Performance Bar Disabled');
+                $advancedToggles.prop('disabled', true).prop('checked', false);
+            }
+
+            updatePerformancePreview();
+        });
+
+        // Handle advanced feature toggles
+        $(document).on('change', '.almgr-perf-advanced-toggles input[type="checkbox"]', function() {
+            updatePerformancePreview();
+        });
+
+        // Handle performance bar details toggle
+        $(document).on('click', '.almgr-perf-toggle-details', function() {
+            const $this = $(this);
+            const $icon = $this.find('.dashicons');
+
+            // Toggle expanded state (placeholder for future detailed view)
+            $this.toggleClass('expanded');
+
+            if ($this.hasClass('expanded')) {
+                $icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                $this.find('span').text('Hide Details');
+            } else {
+                $icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                $this.find('span').text('Show Details');
+            }
+        });
+
+        // Initialize performance preview on page load
+        updatePerformancePreview();
+    }
+
+    /**
+     * Initialize clickable status cards functionality
+     */
+    function initializeClickableStatusCards() {
+        // Handle clickable status card clicks
+        $(document).on('click', '.almgr-clickable-card', function(e) {
+            e.preventDefault();
+            const navigateUrl = $(this).data('navigate');
+            if (navigateUrl) {
+                window.location.href = navigateUrl;
+            }
+        });
+    }
+
+    /**
+     * Update performance preview based on current settings
+     */
+    function updatePerformancePreview() {
+        const isEnabled = $('#enable_performance_bar').is(':checked');
+        const $previewBar = $('.almgr-perf-preview-bar');
+
+        if (!isEnabled) {
+            return;
+        }
+
+        // Get enabled features
+        const features = {
+            hooks: $('#real_time_hooks').is(':checked'),
+            bootstrap: $('#bootstrap_phases').is(':checked'),
+            domains: $('#domain_panels').is(':checked')
+        };
+
+        // Update performance items visibility
+        $('.almgr-perf-item').each(function() {
+            const $item = $(this);
+            const itemType = $item.data('type');
+
+            if (features[itemType]) {
+                $item.show().css('opacity', '1');
+            } else {
+                $item.css('opacity', '0.3');
+            }
+        });
+
+        // Update status indicators
+        updatePerformanceStatus(features);
+    }
+
+    /**
+     * Update performance status indicators
+     */
+    function updatePerformanceStatus(features) {
+        const enabledCount = Object.values(features).filter(Boolean).length;
+        const $statusIndicators = $('.almgr-perf-status-indicator');
+
+        $statusIndicators.removeClass('almgr-status-good almgr-status-warning almgr-status-critical');
+
+        if (enabledCount === 0) {
+            $statusIndicators.addClass('almgr-status-critical').text('Minimal');
+        } else if (enabledCount <= 2) {
+            $statusIndicators.addClass('almgr-status-warning').text('Moderate');
+        } else {
+            $statusIndicators.addClass('almgr-status-good').text('Comprehensive');
+        }
+    }
 
 })(jQuery);

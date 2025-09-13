@@ -56,30 +56,69 @@ $debug_status = $debug_service->get_debug_status();
     </div>
 
     <div class="almgr-logs-filters">
-        <div class="almgr-filter-group">
-            <label for="log-level-filter"><?php esc_html_e('Level:', 'advanced-log-manager'); ?></label>
-            <select id="log-level-filter">
-                <option value=""><?php esc_html_e('All Levels', 'advanced-log-manager'); ?></option>
-                <option value="ERROR"><?php esc_html_e('Error', 'advanced-log-manager'); ?></option>
-                <option value="WARNING"><?php esc_html_e('Warning', 'advanced-log-manager'); ?></option>
-                <option value="NOTICE"><?php esc_html_e('Notice', 'advanced-log-manager'); ?></option>
-                <option value="DEPRECATED"><?php esc_html_e('Deprecated', 'advanced-log-manager'); ?></option>
-            </select>
+        <div class="almgr-filter-row">
+            <div class="almgr-filter-group">
+                <label for="log-level-filter"><?php esc_html_e('Level:', 'advanced-log-manager'); ?></label>
+                <select id="log-level-filter">
+                    <option value=""><?php esc_html_e('All Levels', 'advanced-log-manager'); ?></option>
+                    <option value="ERROR"><?php esc_html_e('Error', 'advanced-log-manager'); ?></option>
+                    <option value="WARNING"><?php esc_html_e('Warning', 'advanced-log-manager'); ?></option>
+                    <option value="NOTICE"><?php esc_html_e('Notice', 'advanced-log-manager'); ?></option>
+                    <option value="DEPRECATED"><?php esc_html_e('Deprecated', 'advanced-log-manager'); ?></option>
+                </select>
+            </div>
+
+            <div class="almgr-filter-group">
+                <label for="log-time-filter"><?php esc_html_e('Time:', 'advanced-log-manager'); ?></label>
+                <select id="log-time-filter">
+                    <option value=""><?php esc_html_e('All Time', 'advanced-log-manager'); ?></option>
+                    <option value="1h"><?php esc_html_e('Last Hour', 'advanced-log-manager'); ?></option>
+                    <option value="24h" selected><?php esc_html_e('Last 24 Hours', 'advanced-log-manager'); ?></option>
+                    <option value="7d"><?php esc_html_e('Last 7 Days', 'advanced-log-manager'); ?></option>
+                    <option value="30d"><?php esc_html_e('Last 30 Days', 'advanced-log-manager'); ?></option>
+                </select>
+            </div>
+
+            <div class="almgr-filter-group">
+                <label for="log-search"><?php esc_html_e('Search:', 'advanced-log-manager'); ?></label>
+                <input type="text" id="log-search" placeholder="<?php esc_attr_e('Search logs...', 'advanced-log-manager'); ?>">
+            </div>
+
+            <div class="almgr-filter-group">
+                <label for="log-file-filter"><?php esc_html_e('File:', 'advanced-log-manager'); ?></label>
+                <input type="text" id="log-file-filter" placeholder="<?php esc_attr_e('Filter by file path...', 'advanced-log-manager'); ?>">
+            </div>
         </div>
 
-        <div class="almgr-filter-group">
-            <label for="log-time-filter"><?php esc_html_e('Time:', 'advanced-log-manager'); ?></label>
-            <select id="log-time-filter">
-                <option value=""><?php esc_html_e('All Time', 'advanced-log-manager'); ?></option>
-                <option value="1h"><?php esc_html_e('Last Hour', 'advanced-log-manager'); ?></option>
-                <option value="24h" selected><?php esc_html_e('Last 24 Hours', 'advanced-log-manager'); ?></option>
-                <option value="7d"><?php esc_html_e('Last 7 Days', 'advanced-log-manager'); ?></option>
-            </select>
+        <div class="almgr-filter-row almgr-advanced-options">
+            <div class="almgr-filter-group almgr-checkbox-group">
+                <label class="almgr-checkbox-label">
+                    <input type="checkbox" id="regex-search-toggle">
+                    <span class="almgr-checkbox-text"><?php esc_html_e('Regex Search', 'advanced-log-manager'); ?></span>
+                </label>
+            </div>
+
+            <div class="almgr-filter-group almgr-checkbox-group">
+                <label class="almgr-checkbox-label">
+                    <input type="checkbox" id="case-sensitive-toggle">
+                    <span class="almgr-checkbox-text"><?php esc_html_e('Case Sensitive', 'advanced-log-manager'); ?></span>
+                </label>
+            </div>
+
+            <div class="almgr-filter-actions">
+                <button type="button" id="clear-filters" class="button">
+                    <span class="dashicons dashicons-dismiss"></span>
+                    <?php esc_html_e('Clear Filters', 'advanced-log-manager'); ?>
+                </button>
+                <button type="button" id="export-filtered" class="button">
+                    <span class="dashicons dashicons-download"></span>
+                    <?php esc_html_e('Export Filtered', 'advanced-log-manager'); ?>
+                </button>
+            </div>
         </div>
 
-        <div class="almgr-filter-group">
-            <label for="log-search"><?php esc_html_e('Search:', 'advanced-log-manager'); ?></label>
-            <input type="text" id="log-search" placeholder="<?php esc_attr_e('Search logs...', 'advanced-log-manager'); ?>">
+        <div class="almgr-filter-results">
+            <span id="filter-results-counter"><?php esc_html_e('Loading...', 'advanced-log-manager'); ?></span>
         </div>
     </div>
 

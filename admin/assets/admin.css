@@ -1,50 +1,875 @@
 /**
- * MT Admin Styles
+ * Advanced Log Manager - Admin Styles
+ * Redesigned UI/UX with Overview → Cards → Actions structure
  */
+
+/* Design System Variables */
+:root {
+    /* Colors */
+    --almgr-primary: #0073aa;
+    --almgr-primary-hover: #005a87;
+    --almgr-success: #00a32a;
+    --almgr-warning: #dba617;
+    --almgr-danger: #d63638;
+    --almgr-danger-hover: #c92d2f;
+    --almgr-gray-50: #f9f9f9;
+    --almgr-gray-100: #f6f7f7;
+    --almgr-gray-200: #f0f0f1;
+    --almgr-gray-300: #ddd;
+    --almgr-gray-400: #ccd0d4;
+    --almgr-gray-500: #a7aaad;
+    --almgr-gray-600: #646970;
+    --almgr-gray-700: #50575e;
+    --almgr-gray-800: #32373c;
+    --almgr-gray-900: #1d2327;
+
+    /* Text Colors */
+    --almgr-text-primary: #1d2327;
+    --almgr-text-secondary: #646970;
+    --almgr-text-muted: #a7aaad;
+
+    /* Background Colors */
+    --almgr-bg-primary: #ffffff;
+    --almgr-bg-secondary: #f6f7f7;
+    --almgr-bg-muted: #f0f0f1;
+
+    /* Spacing */
+    --almgr-space-xs: 4px;
+    --almgr-space-sm: 8px;
+    --almgr-space-md: 16px;
+    --almgr-space-lg: 24px;
+    --almgr-space-xl: 32px;
+
+    /* Typography */
+    --almgr-font-h1: 24px;
+    --almgr-font-h2: 20px;
+    --almgr-font-h3: 16px;
+    --almgr-font-body: 14px;
+    --almgr-font-small: 12px;
+
+    /* Border Radius */
+    --almgr-border-radius: 4px;
+
+    /* Shadows */
+    --almgr-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --almgr-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --almgr-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 /* Main Container */
 .almgr-toolkit-admin {
     max-width: 1200px;
 }
 
-/* Tab Navigation */
-.almgr-tab-navigation {
-    border-bottom: 1px solid #ccd0d4;
-    margin-bottom: 20px;
-    display: flex;
-    gap: 0;
+/* Overview Status Section */
+.almgr-overview-section {
+    background: #ffffff;
+    border: 1px solid var(--almgr-gray-400);
+    border-radius: 8px;
+    padding: var(--almgr-space-lg);
+    margin-bottom: var(--almgr-space-lg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.almgr-tab-btn {
-    background: none;
-    border: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    color: #646970;
-    font-size: 14px;
-    font-weight: 500;
+.almgr-overview-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: var(--almgr-space-lg);
+    padding-bottom: var(--almgr-space-md);
+    border-bottom: 1px solid var(--almgr-gray-300);
+}
+
+.almgr-overview-title {
+    font-size: var(--almgr-font-h2);
+    font-weight: 600;
+    color: var(--almgr-gray-900);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-sm);
+}
+
+.almgr-overview-title .dashicons {
+    color: var(--almgr-primary);
+    font-size: 20px;
+}
+
+.almgr-status-indicators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--almgr-space-md);
+}
+
+.almgr-status-card {
+    background: var(--almgr-gray-50);
+    border: 1px solid var(--almgr-gray-300);
+    border-radius: 6px;
+    padding: var(--almgr-space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-md);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.almgr-status-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--almgr-primary);
+}
+
+/* Clickable Status Cards */
+.almgr-clickable-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.almgr-clickable-card:hover {
+    background: #f8f9fa;
+    border-color: var(--almgr-primary);
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.15);
+    transform: translateY(-2px);
+}
+
+.almgr-clickable-card:active {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 4px rgba(0, 115, 170, 0.1);
+}
+
+.almgr-status-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.almgr-status-icon.success {
+    background: rgba(0, 163, 42, 0.1);
+    color: var(--almgr-success);
+}
+
+.almgr-status-icon.warning {
+    background: rgba(219, 166, 23, 0.1);
+    color: var(--almgr-warning);
+}
+
+.almgr-status-icon.danger {
+    background: rgba(214, 54, 56, 0.1);
+    color: var(--almgr-danger);
+}
+
+.almgr-status-icon.inactive {
+    background: rgba(100, 105, 112, 0.1);
+    color: var(--almgr-gray-600);
+}
+
+.almgr-status-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.almgr-status-label {
+    font-size: var(--almgr-font-small);
+    color: var(--almgr-gray-600);
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.almgr-status-value {
+    font-size: var(--almgr-font-body);
+    font-weight: 600;
+    color: var(--almgr-gray-900);
+    margin: 0;
+}
+
+.almgr-status-value.success {
+    color: var(--almgr-success);
+}
+
+.almgr-status-value.warning {
+    color: var(--almgr-warning);
+}
+
+.almgr-status-value.danger {
+    color: var(--almgr-danger);
+}
+
+/* Responsive Design for Overview Section */
+@media (max-width: 768px) {
+    .almgr-status-indicators {
+        grid-template-columns: 1fr;
+    }
+
+    .almgr-status-card {
+        padding: var(--almgr-space-sm);
+    }
+
+    .almgr-status-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .almgr-overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--almgr-space-sm);
+    }
+}
+
+/* ==========================================================================
+   Master Switch Section
+   ========================================================================== */
+
+.almgr-master-switch-section {
+    margin-bottom: var(--almgr-space-lg);
+}
+
+.almgr-master-switch-card {
+    background: #ffffff;
+    border: 1px solid var(--almgr-gray-300);
+    border-radius: 8px;
+    padding: var(--almgr-space-lg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
 
-.almgr-tab-btn:hover {
-    color: #0073aa;
-    background: #f6f7f7;
+.almgr-master-switch-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--almgr-primary);
 }
 
-.almgr-tab-btn.active {
-    color: #0073aa;
-    border-bottom-color: #0073aa;
-    background: #ffffff;
+.almgr-master-switch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--almgr-space-md);
+    gap: var(--almgr-space-md);
 }
 
-.almgr-tab-btn .dashicons {
+.almgr-master-switch-info {
+    flex: 1;
+}
+
+.almgr-master-switch-title {
+    margin: 0 0 var(--almgr-space-xs) 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--almgr-gray-900);
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-xs);
+}
+
+.almgr-master-switch-title .dashicons {
+    color: var(--almgr-primary);
+    font-size: 1.25rem;
+}
+
+.almgr-master-switch-description {
+    margin: 0;
+    color: var(--almgr-gray-600);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.almgr-master-switch-control {
+    flex-shrink: 0;
+}
+
+.almgr-master-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-sm);
+}
+
+.almgr-master-toggle {
+    position: relative;
+    width: 60px;
+    height: 32px;
+    background: var(--almgr-gray-300);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.almgr-master-toggle.active {
+    background: var(--almgr-success);
+}
+
+.almgr-master-toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px;
+    height: 28px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.almgr-master-toggle.active .almgr-master-toggle-slider {
+    transform: translateX(28px);
+}
+
+.almgr-master-toggle-wrapper input[type="checkbox"] {
+    display: none;
+}
+
+.almgr-master-toggle-label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.almgr-toggle-status {
+    color: var(--almgr-gray-900);
+    font-size: 0.9rem;
+}
+
+.almgr-master-switch-indicators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--almgr-space-sm);
+    padding-top: var(--almgr-space-md);
+    border-top: 1px solid var(--almgr-gray-200);
+}
+
+.almgr-quick-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-xs);
+    padding: var(--almgr-space-xs) var(--almgr-space-sm);
+    border-radius: 4px;
+    background: var(--almgr-gray-50);
+    transition: all 0.2s ease;
+}
+
+.almgr-quick-indicator.active {
+    background: rgba(0, 163, 42, 0.1);
+    color: var(--almgr-success);
+}
+
+.almgr-quick-indicator.inactive {
+    background: rgba(214, 54, 56, 0.1);
+    color: var(--almgr-danger);
+}
+
+.almgr-quick-indicator .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
+}
+
+.almgr-indicator-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Responsive Design for Master Switch */
+@media (max-width: 768px) {
+    .almgr-master-switch-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .almgr-master-switch-control {
+        align-self: flex-start;
+    }
+
+    .almgr-master-switch-indicators {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .almgr-master-switch-indicators {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== COLLAPSIBLE SECTIONS LAYOUT ===== */
+.almgr-debug-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.almgr-collapsible-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.almgr-collapsible-section:hover {
+    border-color: #007cba;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.almgr-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.almgr-section-header:hover {
+    background: #e9ecef;
+}
+
+.almgr-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.almgr-section-title .dashicons {
+    color: #007cba;
+    font-size: 20px;
+}
+
+.almgr-section-title h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.almgr-section-toggle {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.almgr-section-toggle:hover {
+    background: rgba(0,124,186,0.1);
+}
+
+.almgr-section-toggle .dashicons {
+    color: #646970;
+    transition: transform 0.3s ease;
+}
+
+.almgr-collapsible-section.collapsed .almgr-section-toggle .dashicons {
+    transform: rotate(-90deg);
+}
+
+.almgr-section-content {
+    padding: 20px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.almgr-collapsible-section.collapsed .almgr-section-content {
+    display: none;
+}
+
+.almgr-section-description {
+    margin: 0 0 20px 0;
+    color: #646970;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Settings Grid */
+.almgr-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.almgr-setting-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.almgr-setting-item:hover {
+    background: #f1f3f4;
+    border-color: #007cba;
+}
+
+.almgr-setting-title {
+    font-weight: 600;
+    color: #1d2327;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.almgr-setting-description {
+    color: #646970;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Log Status Grid */
+.almgr-log-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.almgr-log-status-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.almgr-log-status-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.almgr-log-status-header .dashicons {
+    color: #007cba;
+}
+
+.almgr-log-status-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.almgr-log-status-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.almgr-log-size {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.almgr-log-note {
+    color: #646970;
+    font-size: 11px;
+}
+
+.almgr-log-status-actions {
+    margin-top: auto;
+}
+
+/* Danger Zone */
+.almgr-danger-zone {
+    border-color: #dc3545 !important;
+}
+
+.almgr-danger-zone .almgr-section-header {
+    background: #f8d7da;
+    border-bottom-color: #dc3545;
+}
+
+.almgr-danger-zone .almgr-section-title .dashicons {
+    color: #dc3545;
+}
+
+.almgr-danger-zone .almgr-section-title h3 {
+    color: #721c24;
+}
+
+.almgr-danger-warning {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.almgr-danger-warning .dashicons {
+    color: #856404;
+    font-size: 18px;
+}
+
+.almgr-danger-warning p {
+    margin: 0;
+    color: #856404;
+    font-weight: 500;
+}
+
+.almgr-danger-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.almgr-danger-item {
+    background: #fff;
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.almgr-danger-info h4 {
+    margin: 0 0 8px 0;
+    color: #721c24;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.almgr-danger-info .description {
+    margin: 0 0 16px 0;
+    color: #646970;
+}
+
+.almgr-danger-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.almgr-danger-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #646970;
+}
+
+.button-danger {
+    background: var(--almgr-danger) !important;
+    border-color: var(--almgr-danger) !important;
+    color: #fff !important;
+}
+
+.button-danger:hover {
+    background: var(--almgr-danger-hover) !important;
+    border-color: var(--almgr-danger-hover) !important;
+}
+
+/* Feature Cards Layout */
+.almgr-feature-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--almgr-space-lg);
+    margin-bottom: var(--almgr-space-xl);
+}
+
+.almgr-feature-card {
+    background: #ffffff;
+    border: 1px solid var(--almgr-gray-300);
+    border-radius: 8px;
+    padding: var(--almgr-space-lg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.almgr-feature-card:hover {
+    border-color: var(--almgr-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.almgr-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--almgr-space-md);
+    margin-bottom: var(--almgr-space-md);
+}
+
+.almgr-card-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: rgba(0, 115, 170, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.almgr-card-icon .dashicons {
+    color: var(--almgr-primary);
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.almgr-card-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.almgr-card-title h3 {
+    margin: 0 0 var(--almgr-space-xs) 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--almgr-gray-900);
+    line-height: 1.3;
+}
+
+.almgr-card-description {
+    margin: 0;
+    font-size: 14px;
+    color: var(--almgr-gray-600);
+    line-height: 1.4;
+}
+
+.almgr-card-status {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.almgr-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.almgr-status-badge.active {
+    background: rgba(0, 163, 42, 0.1);
+    color: var(--almgr-success);
+}
+
+.almgr-status-badge.inactive {
+    background: rgba(214, 54, 56, 0.1);
+    color: var(--almgr-danger);
+}
+
+.almgr-status-badge.info {
+    background: rgba(0, 115, 170, 0.1);
+    color: var(--almgr-primary);
+}
+
+.almgr-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--almgr-space-sm);
+}
+
+.almgr-card-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-xs);
+    padding: var(--almgr-space-sm) var(--almgr-space-md);
+    background: var(--almgr-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.almgr-card-toggle-btn:hover {
+    background: #005a87;
+    transform: translateY(-1px);
+}
+
+.almgr-card-toggle-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+.almgr-feature-card.expanded .almgr-card-toggle-btn .dashicons {
+    transform: rotate(180deg);
+}
+
+/* Responsive Design for Feature Cards */
+@media (max-width: 768px) {
+    .almgr-debug-sections {
+        gap: 15px;
+    }
+
+    .almgr-section-header {
+        padding: 15px;
+    }
+
+    .almgr-section-content {
+        padding: 15px;
+    }
+
+    .almgr-settings-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .almgr-log-status-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .almgr-danger-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .almgr-feature-cards {
+        grid-template-columns: 1fr;
+        gap: var(--almgr-space-md);
+    }
+
+    .almgr-feature-card {
+        padding: var(--almgr-space-md);
+    }
+
+    .almgr-card-header {
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .almgr-card-icon .dashicons {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .almgr-card-title h3 {
+        font-size: 16px;
+    }
+
+    .almgr-card-description {
+        font-size: 13px;
+    }
 }
 
 /* Tab Contents */
@@ -128,7 +953,7 @@
 /* Cards */
 .almgr-card {
     background: #ffffff;
-    border: 1px solid #ccd0d4;
+    border: 1px solid var(--almgr-gray-400);
     border-radius: 4px;
     padding: 20px;
     margin-bottom: 20px;
@@ -140,8 +965,8 @@
     margin-bottom: 20px;
     font-size: 18px;
     font-weight: 600;
-    color: #1d2327;
-    border-bottom: 1px solid #f0f0f1;
+    color: var(--almgr-gray-900);
+    border-bottom: 1px solid var(--almgr-gray-200);
     padding-bottom: 10px;
 }
 
@@ -150,14 +975,14 @@
     margin-bottom: 12px;
     font-size: 16px;
     font-weight: 600;
-    color: #1d2327;
+    color: var(--almgr-gray-900);
 }
 
 /* Form Sections */
 .almgr-form-section {
     margin-bottom: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #f0f0f1;
+    border-bottom: 1px solid var(--almgr-gray-200);
 }
 
 .almgr-form-section:last-child {
@@ -172,15 +997,17 @@
     align-items: flex-start;
     justify-content: space-between;
     font-weight: 500;
-    color: #1d2327;
+    color: var(--almgr-gray-900);
     flex-direction: column;
 }
 
 .almgr-toggle-wrapper {
     position: relative;
     display: flex;
-    justify-content: space-between;
     flex-direction: row-reverse;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .almgr-toggle-wrapper input[type="checkbox"] {
@@ -192,7 +1019,7 @@
 .almgr-toggle {
     width: 50px;
     height: 24px;
-    background: #ddd;
+    background: var(--almgr-gray-300);
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -200,7 +1027,7 @@
 }
 
 .almgr-toggle.active {
-    background: #0073aa;
+    background: var(--almgr-primary);
 }
 
 .almgr-toggle-slider {
@@ -227,16 +1054,37 @@
 
 .almgr-toggle.disabled {
     cursor: not-allowed;
-    background: #f0f0f0;
+    background: var(--almgr-gray-200);
 }
 
 .almgr-toggle.active.disabled {
-    background: #a0a5aa;
+    background: var(--almgr-gray-500);
 }
 
 .almgr-toggle-label.disabled {
     cursor: not-allowed;
-    color: #666;
+    color: var(--almgr-gray-600);
+}
+
+/* Info Display */
+.almgr-info-display {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-sm);
+    padding: var(--almgr-space-sm) var(--almgr-space-md);
+    background: rgba(0, 115, 170, 0.05);
+    border: 1px solid rgba(0, 115, 170, 0.2);
+    border-radius: 4px;
+    color: var(--almgr-primary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.almgr-info-display .dashicons {
+    color: var(--almgr-primary);
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 .almgr-toggle-group {
@@ -258,30 +1106,30 @@
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    color: #646970;
+    color: var(--almgr-gray-600);
 }
 
 .almgr-status-indicator {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #ddd;
+    background: var(--almgr-gray-300);
 }
 
 .almgr-status-indicator.active {
-    background: #00a32a;
+    background: var(--almgr-success);
 }
 
 .almgr-status-indicator.inactive {
-    background: #646970;
+    background: var(--almgr-gray-600);
 }
 
 .almgr-status-indicator.warning {
-    background: #dba617;
+    background: var(--almgr-warning);
 }
 
 .almgr-status-indicator.error {
-    background: #d63638;
+    background: var(--almgr-danger);
 }
 
 /* Log Cleanup Section */
@@ -362,8 +1210,54 @@
     margin-right: 4px;
 }
 
-/* Responsive adjustments for cleanup section */
-@media (max-width: 768px) {
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet Landscape (1024px and below) */
+@media screen and (max-width: 1024px) {
+    .almgr-toolkit-admin {
+        max-width: 100%;
+        padding: 0 var(--almgr-space-md);
+    }
+
+    .almgr-status-indicators {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--almgr-space-md);
+    }
+
+    .almgr-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+/* Tablet Portrait (768px and below) */
+@media screen and (max-width: 768px) {
+    .almgr-overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--almgr-space-md);
+    }
+
+    .almgr-status-indicators {
+        grid-template-columns: 1fr;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-cards-grid {
+        grid-template-columns: 1fr;
+        gap: var(--almgr-space-md);
+    }
+
+    .almgr-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-card-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
     .almgr-cleanup-item {
         flex-direction: column;
         align-items: stretch;
@@ -373,6 +1267,18 @@
     .almgr-cleanup-controls {
         justify-content: space-between;
         flex-wrap: wrap;
+    }
+
+    .almgr-debug-actions,
+    .almgr-editor-actions {
+        flex-direction: column;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-debug-actions .button,
+    .almgr-editor-actions .button {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -457,21 +1363,21 @@
 
 /* Clear All Debug Logs Button */
 #clear-all-debug-logs {
-    background: #d63638;
-    border-color: #d63638;
+    background: var(--almgr-danger);
+    border-color: var(--almgr-danger);
     color: #ffffff;
     transition: all 0.2s ease;
 }
 
 #clear-all-debug-logs:hover {
-    background: #c92d2f;
-    border-color: #c92d2f;
+    background: var(--almgr-danger-hover);
+    border-color: var(--almgr-danger-hover);
     color: #ffffff;
 }
 
 #clear-all-debug-logs:focus {
-    background: #c92d2f;
-    border-color: #c92d2f;
+    background: var(--almgr-danger-hover);
+    border-color: var(--almgr-danger-hover);
     color: #ffffff;
     box-shadow: 0 0 0 1px rgba(214, 54, 56, 0.5);
 }
@@ -499,21 +1405,21 @@
 
 /* Query Rotation Logs Cleanup Button */
 #cleanup-query-rotation-logs {
-    background: #646970;
-    border-color: #646970;
+    background: var(--almgr-gray-600);
+    border-color: var(--almgr-gray-600);
     color: #ffffff;
     transition: all 0.2s ease;
 }
 
 #cleanup-query-rotation-logs:hover {
-    background: #50575e;
-    border-color: #50575e;
+    background: var(--almgr-gray-700);
+    border-color: var(--almgr-gray-700);
     color: #ffffff;
 }
 
 #cleanup-query-rotation-logs:focus {
-    background: #50575e;
-    border-color: #50575e;
+    background: var(--almgr-gray-700);
+    border-color: var(--almgr-gray-700);
     color: #ffffff;
     box-shadow: 0 0 0 1px rgba(100, 105, 112, 0.5);
 }
@@ -561,22 +1467,117 @@
     font-size: 12px;
 }
 
+/* File Editor Styles */
+.almgr-editor-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--almgr-space-md);
+    padding: var(--almgr-space-sm) var(--almgr-space-md);
+    background: var(--almgr-bg-secondary);
+    border: 1px solid var(--almgr-gray-300);
+    border-radius: var(--almgr-border-radius);
+}
+
+.almgr-editor-status {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-sm);
+}
+
+.almgr-status-saved {
+    color: var(--almgr-success);
+    font-weight: 500;
+}
+
+.almgr-status-modified {
+    color: var(--almgr-warning);
+    font-weight: 500;
+}
+
+.almgr-status-error {
+    color: var(--almgr-danger);
+    font-weight: 500;
+}
+
+.almgr-auto-save-status {
+    color: var(--almgr-primary);
+    font-weight: 500;
+}
+
+.almgr-auto-save-status .dashicons {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.almgr-editor-options {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-md);
+}
+
+/* Toggle Switch Styles */
+.almgr-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--almgr-space-sm);
+    cursor: pointer;
+    user-select: none;
+}
+
+.almgr-toggle-switch input[type="checkbox"] {
+    display: none;
+}
+
+.almgr-toggle-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--almgr-text-primary);
+}
+
 /* Code Editor */
 .almgr-code-editor {
     width: 100%;
-    font-size: 13px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
     line-height: 1.5;
     background: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 12px;
     resize: vertical;
+    min-height: 400px;
 }
 
 .almgr-code-editor:focus {
     outline: none;
     border-color: #0073aa;
     box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+}
+
+/* Simple Editor Styles */
+#htaccess-editor {
+    border: 1px solid var(--almgr-gray-300);
+    border-radius: var(--almgr-border-radius);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 400px;
+    width: 100%;
+    padding: 12px;
+    resize: vertical;
+    background: var(--almgr-bg-primary);
+    color: var(--almgr-text-primary);
+}
+
+#htaccess-editor:focus {
+    border-color: var(--almgr-primary);
+    box-shadow: 0 0 0 1px var(--almgr-primary);
+    outline: none;
 }
 
 /* Editor Actions */
@@ -622,7 +1623,7 @@
     top: 100%;
     right: 0;
     background: #ffffff;
-    border: 1px solid #ccd0d4;
+    border: 1px solid var(--almgr-gray-400);
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-width: 250px;
@@ -638,14 +1639,14 @@
     display: block;
     padding: 8px 12px;
     text-decoration: none;
-    color: #1d2327;
-    border-bottom: 1px solid #f0f0f1;
+    color: var(--almgr-gray-900);
+    border-bottom: 1px solid var(--almgr-gray-200);
     font-size: 13px;
 }
 
 .almgr-restore-item:hover {
-    background: #f6f7f7;
-    color: #0073aa;
+    background: var(--almgr-gray-100);
+    color: var(--almgr-primary);
 }
 
 .almgr-restore-item:last-child {
@@ -653,7 +1654,7 @@
 }
 
 .almgr-restore-item .size {
-    color: #646970;
+    color: var(--almgr-gray-600);
     font-size: 12px;
     float: right;
 }
@@ -845,8 +1846,7 @@
 }
 
 .almgr-logs-actions button.button {
-    display: flex
-;
+    display: flex;
     align-items: center;
     flex-direction: row;
     align-content: center;
@@ -873,35 +1873,114 @@
 }
 
 .almgr-logs-filters {
-    display: flex;
-    align-items: center;
-    gap: 20px;
     margin-bottom: 20px;
-    padding: 16px;
-    background: #ffffff;
-    border: 1px solid #ccd0d4;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+.almgr-filter-row {
+    display: flex;
     flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.almgr-filter-row:last-child {
+    margin-bottom: 0;
+}
+
+.almgr-advanced-options {
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    align-items: center;
 }
 
 .almgr-filter-group {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    min-width: 150px;
 }
 
 .almgr-filter-group label {
-    font-weight: 500;
-    color: #1d2327;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #23282d;
 }
 
 .almgr-filter-group select,
 .almgr-filter-group input[type="text"] {
-    padding: 4px 8px;
-    padding-left: 10px;
-    padding-right: 32px;
+    padding: 6px 8px;
     border: 1px solid #ddd;
     border-radius: 3px;
+    font-size: 13px;
+}
+
+.almgr-checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    min-width: auto;
+}
+
+.almgr-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+}
+
+.almgr-checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.almgr-checkbox-text {
+    font-size: 13px;
+    color: #23282d;
+}
+
+.almgr-filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.almgr-filter-actions .button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.almgr-filter-results {
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    font-size: 13px;
+    color: #666;
+}
+
+#filter-results-counter {
+    font-weight: 600;
+}
+
+/* Search Highlighting */
+.almgr-highlight {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.almgr-log-entry.filtered {
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.almgr-log-entry:not(.filtered) {
+    opacity: 1;
 }
 
 .almgr-logs-container {
@@ -924,7 +2003,7 @@
 }
 
 .almgr-log-entry {
-    border: 1px solid #ddd;
+    border: 1px solid var(--almgr-gray-300);
     border-radius: 4px;
     padding: 12px;
     font-size: 13px;
@@ -1087,8 +2166,178 @@
     gap: 12px;
 }
 
-/* Responsive Design */
+/* Performance Monitor Sections */
+.almgr-perf-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Performance Preview Container */
+.almgr-performance-preview-container {
+    background: #f8f9fa;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+}
+
+.almgr-perf-preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1d2327;
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.almgr-perf-preview-bar.inactive {
+    opacity: 0.5;
+    background: #646970;
+}
+
+.almgr-perf-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.almgr-perf-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.almgr-perf-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.almgr-perf-icon {
+    font-size: 14px;
+    color: #00a0d2;
+}
+
+.almgr-perf-data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.almgr-perf-value {
+    font-weight: 600;
+    color: #fff;
+    font-size: 13px;
+}
+
+.almgr-perf-label {
+    color: #c3c4c7;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Performance Status Indicators */
+.almgr-perf-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.almgr-perf-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.almgr-status-good {
+    background: rgba(46, 160, 67, 0.2);
+    color: #2ea043;
+}
+
+.almgr-status-warning {
+    background: rgba(251, 188, 5, 0.2);
+    color: #bf8700;
+}
+
+.almgr-status-critical {
+    background: rgba(214, 54, 56, 0.2);
+    color: #d63638;
+}
+
+.almgr-perf-toggle-details {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.almgr-perf-toggle-details:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.almgr-perf-toggle-details .dashicons {
+    font-size: 12px;
+}
+
+/* Preview Status Badge */
+.almgr-preview-status {
+    display: flex;
+    justify-content: center;
+}
+
+.almgr-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.almgr-preview-badge.active {
+    background: rgba(46, 160, 67, 0.1);
+    color: #2ea043;
+    border: 1px solid rgba(46, 160, 67, 0.3);
+}
+
+.almgr-preview-badge.inactive {
+    background: rgba(214, 54, 56, 0.1);
+    color: #d63638;
+    border: 1px solid rgba(214, 54, 56, 0.3);
+}
+
+.almgr-preview-badge .dashicons {
+    font-size: 14px;
+}
+
+/* Additional Tablet Responsive Rules */
 @media screen and (max-width: 768px) {
+    /* Tab Navigation Responsive */
     .almgr-tab-navigation {
         flex-direction: column;
     }
@@ -1097,10 +2346,11 @@
         border-bottom: none;
         border-left: 3px solid transparent;
         justify-content: flex-start;
+        padding: var(--almgr-space-md);
     }
 
     .almgr-tab-btn.active {
-        border-left-color: #0073aa;
+        border-left-color: var(--almgr-primary);
         border-bottom-color: transparent;
     }
 
@@ -1112,30 +2362,175 @@
     .almgr-logs-filters {
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: var(--almgr-space-md);
     }
 
     .almgr-logs-actions {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-perf-preview-bar {
+        flex-direction: column;
+        gap: var(--almgr-space-md);
+        align-items: stretch;
+    }
+
+    .almgr-perf-section {
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-perf-item {
+        flex: 1;
+        min-width: 80px;
+        justify-content: center;
+    }
+
+    .almgr-perf-data {
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Form Elements Responsive */
+    .almgr-form-row {
+        flex-direction: column;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-form-group {
+        width: 100%;
+    }
+
+    /* Table Responsive */
+    .almgr-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
+/* Mobile (480px and below) */
 @media screen and (max-width: 480px) {
-    .almgr-card {
-        padding: 16px;
+    .almgr-toolkit-admin {
+        padding: 0 var(--almgr-space-sm);
     }
 
-    .almgr-debug-actions,
-    .almgr-editor-actions {
-        flex-direction: column;
-        align-items: stretch;
+    .almgr-overview-section,
+    .almgr-card {
+        padding: var(--almgr-space-md);
+        margin-bottom: var(--almgr-space-md);
+    }
+
+    .almgr-overview-title {
+        font-size: var(--almgr-font-h3);
+    }
+
+    .almgr-status-indicator-item {
+        padding: var(--almgr-space-sm);
     }
 
     .almgr-checkbox-group {
         grid-template-columns: 1fr;
+        gap: var(--almgr-space-sm);
     }
 
     .almgr-preset-settings {
         grid-template-columns: 1fr;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-performance-preview-container {
+        padding: var(--almgr-space-md);
+    }
+
+    /* Logs Filters Mobile */
+    .almgr-logs-filters {
+        padding: 10px;
+    }
+
+    .almgr-filter-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .almgr-advanced-options {
+        padding-top: 10px;
+    }
+
+    .almgr-filter-group {
+        min-width: 100%;
+    }
+
+    .almgr-filter-actions {
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .almgr-filter-actions .button {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    /* File Editor Mobile */
+    .almgr-editor-controls {
+        flex-direction: column;
+        gap: var(--almgr-space-sm);
+        padding: var(--almgr-space-sm);
+    }
+
+    .almgr-editor-status,
+    .almgr-editor-options {
+        justify-content: center;
+    }
+
+    .almgr-toggle-label {
+        font-size: 13px;
+    }
+
+    .almgr-code-editor,
+    #htaccess-editor {
+        font-size: 12px;
+        min-height: 300px;
+    }
+
+    .almgr-editor-actions {
+        flex-wrap: wrap;
+        gap: var(--almgr-space-sm);
+    }
+
+    .almgr-editor-actions .button {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    /* Button Groups Mobile */
+    .almgr-button-group {
+        flex-direction: column;
+        gap: var(--almgr-space-xs);
+    }
+
+    .almgr-button-group .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Modal Mobile */
+    .almgr-modal-content {
+        width: 95%;
+        max-width: none;
+        margin: var(--almgr-space-md);
+    }
+
+    /* Typography Mobile */
+    .almgr-card-title {
+        font-size: var(--almgr-font-h3);
+    }
+
+    .almgr-section-title {
+        font-size: var(--almgr-font-body);
     }
 }

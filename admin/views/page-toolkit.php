@@ -70,24 +70,285 @@ $setting_units = array(
         <?php esc_html_e('Developer tools untuk WordPress: Debug Manager, Performance Monitor, Htaccess Editor, PHP Config presets.', 'advanced-log-manager'); ?>
     </p>
 
-    <!-- Tab Navigation -->
-    <div class="almgr-tab-navigation">
-        <button class="almgr-tab-btn active" data-tab="debug-management">
-            <span class="dashicons dashicons-admin-tools"></span>
-            <?php esc_html_e('Debug Management', 'advanced-log-manager'); ?>
-        </button>
-        <button class="almgr-tab-btn" data-tab="perf-monitor">
-            <span class="dashicons dashicons-performance"></span>
-            <?php esc_html_e('Performance Monitor', 'advanced-log-manager'); ?>
-        </button>
-        <button class="almgr-tab-btn" data-tab="file-editor">
-            <span class="dashicons dashicons-edit"></span>
-            <?php esc_html_e('File Editor', 'advanced-log-manager'); ?>
-        </button>
-        <button class="almgr-tab-btn" data-tab="php-config">
-            <span class="dashicons dashicons-admin-settings"></span>
-            <?php esc_html_e('PHP Config', 'advanced-log-manager'); ?>
-        </button>
+    <!-- Overview Status Section -->
+    <div class="almgr-overview-section">
+        <div class="almgr-overview-header">
+            <h2 class="almgr-overview-title">
+                <span class="dashicons dashicons-dashboard"></span>
+                <?php esc_html_e('System Overview', 'advanced-log-manager'); ?>
+            </h2>
+        </div>
+
+        <div class="almgr-status-indicators">
+            <!-- Debug Mode Status -->
+            <div class="almgr-status-card">
+                <div class="almgr-status-icon <?php echo esc_attr($debug_enabled ? 'success' : 'inactive'); ?>">
+                    <span class="dashicons <?php echo esc_attr($debug_enabled ? 'dashicons-yes-alt' : 'dashicons-dismiss'); ?>"></span>
+                </div>
+                <div class="almgr-status-content">
+                    <p class="almgr-status-label"><?php esc_html_e('Debug Mode', 'advanced-log-manager'); ?></p>
+                    <p class="almgr-status-value <?php echo esc_attr($debug_enabled ? 'success' : ''); ?>">
+                        <?php echo $debug_enabled ? esc_html__('Active', 'advanced-log-manager') : esc_html__('Inactive', 'advanced-log-manager'); ?>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Performance Status -->
+            <div class="almgr-status-card">
+                <div class="almgr-status-icon <?php echo esc_attr($perf_monitor_enabled ? 'success' : 'inactive'); ?>">
+                    <span class="dashicons <?php echo esc_attr($perf_monitor_enabled ? 'dashicons-performance' : 'dashicons-clock'); ?>"></span>
+                </div>
+                <div class="almgr-status-content">
+                    <p class="almgr-status-label"><?php esc_html_e('Performance Monitor', 'advanced-log-manager'); ?></p>
+                    <p class="almgr-status-value <?php echo esc_attr($perf_monitor_enabled ? 'success' : ''); ?>">
+                        <?php echo $perf_monitor_enabled ? esc_html__('Monitoring', 'advanced-log-manager') : esc_html__('Disabled', 'advanced-log-manager'); ?>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Debug Log Status -->
+            <?php
+            $debug_log_exists = file_exists(almgr_get_debug_log_path());
+            $debug_log_size = $debug_log_exists ? filesize(almgr_get_debug_log_path()) : 0;
+            $debug_log_status = 'inactive';
+            if ($debug_log_exists && $debug_log_size > 0) {
+                $debug_log_status = $debug_log_size > (10 * 1024 * 1024) ? 'warning' : 'success'; // 10MB threshold
+            }
+            ?>
+            <div class="almgr-status-card almgr-clickable-card" data-navigate="<?php echo esc_url(admin_url('tools.php?page=almgr-all-logs-activity&tab=debug')); ?>">
+                <div class="almgr-status-icon <?php echo esc_attr($debug_log_status); ?>">
+                    <span class="dashicons dashicons-media-text"></span>
+                </div>
+                <div class="almgr-status-content">
+                    <p class="almgr-status-label"><?php esc_html_e('Debug Log', 'advanced-log-manager'); ?></p>
+                    <p class="almgr-status-value <?php echo esc_attr($debug_log_status); ?>">
+                        <?php
+                        if ($debug_log_exists && $debug_log_size > 0) {
+                            echo esc_html__('Active', 'advanced-log-manager') . ' - ' . esc_html(almgr_format_bytes($debug_log_size));
+                        } else {
+                            esc_html_e('No logs', 'advanced-log-manager');
+                        }
+                        ?>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Query Log Status -->
+            <?php
+            $query_log_exists = file_exists(almgr_get_query_log_path());
+            $query_log_size = $query_log_exists ? filesize(almgr_get_query_log_path()) : 0;
+            $query_log_status = 'inactive';
+            if ($savequeries && $query_log_exists && $query_log_size > 0) {
+                $query_log_status = 'warning'; // Query logging impacts performance
+            } elseif ($savequeries) {
+                $query_log_status = 'success';
+            }
+            ?>
+            <div class="almgr-status-card almgr-clickable-card" data-navigate="<?php echo esc_url(admin_url('tools.php?page=almgr-all-logs-activity&tab=query')); ?>">
+                <div class="almgr-status-icon <?php echo esc_attr($query_log_status); ?>">
+                    <span class="dashicons dashicons-database"></span>
+                </div>
+                <div class="almgr-status-content">
+                    <p class="almgr-status-label"><?php esc_html_e('Query Log', 'advanced-log-manager'); ?></p>
+                    <p class="almgr-status-value <?php echo esc_attr($query_log_status); ?>">
+                        <?php
+                        if ($savequeries && $query_log_exists && $query_log_size > 0) {
+                            echo esc_html__('Active', 'advanced-log-manager') . ' - ' . esc_html(almgr_format_bytes($query_log_size));
+                        } elseif ($savequeries) {
+                            esc_html_e('Active - No logs yet', 'advanced-log-manager');
+                        } else {
+                            esc_html_e('Disabled', 'advanced-log-manager');
+                        }
+                        ?>
+                    </p>
+                </div>
+            </div>
+
+            <!-- SMTP Log Status -->
+            <?php
+            // Get SMTP logging status for overview
+            $smtp_service = $plugin->get_service('smtp_logger');
+            $smtp_overview_status = $smtp_service ? $smtp_service->get_logging_status() : array('enabled' => false);
+            $smtp_overview_enabled = $smtp_overview_status['enabled'];
+            $smtp_overview_log_status = 'inactive';
+            if ($smtp_overview_enabled && $smtp_overview_status['current_log_exists']) {
+                $smtp_overview_log_status = 'success';
+            } elseif ($smtp_overview_enabled) {
+                $smtp_overview_log_status = 'warning';
+            }
+            ?>
+            <div class="almgr-status-card almgr-clickable-card" data-navigate="<?php echo esc_url(admin_url('tools.php?page=almgr-all-logs-activity&tab=smtp')); ?>">
+                <div class="almgr-status-icon <?php echo esc_attr($smtp_overview_log_status); ?>">
+                    <span class="dashicons dashicons-email"></span>
+                </div>
+                <div class="almgr-status-content">
+                    <p class="almgr-status-label"><?php esc_html_e('SMTP Logs', 'advanced-log-manager'); ?></p>
+                    <p class="almgr-status-value <?php echo esc_attr($smtp_overview_log_status); ?>">
+                        <?php
+                        if ($smtp_overview_enabled && $smtp_overview_status['current_log_exists']) {
+                            echo esc_html__('Active', 'advanced-log-manager') . ' - ' . esc_html($smtp_overview_status['current_log_size']);
+                        } elseif ($smtp_overview_enabled) {
+                            esc_html_e('Active - No logs yet', 'advanced-log-manager');
+                        } else {
+                            esc_html_e('Disabled', 'advanced-log-manager');
+                        }
+                        ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Master Switch Section -->
+    <div class="almgr-master-switch-section">
+        <div class="almgr-master-switch-card">
+            <div class="almgr-master-switch-header">
+                <div class="almgr-master-switch-info">
+                    <h2 class="almgr-master-switch-title">
+                        <span class="dashicons dashicons-admin-tools"></span>
+                        <?php esc_html_e('Enable Debug Mode', 'advanced-log-manager'); ?>
+                    </h2>
+                    <p class="almgr-master-switch-description">
+                        <?php esc_html_e('Enable or disable all debug features. This controls WordPress debug constants and logging functionality.', 'advanced-log-manager'); ?>
+                    </p>
+                </div>
+                <div class="almgr-master-switch-control">
+                    <div class="almgr-master-toggle-wrapper">
+                        <input type="checkbox" id="master-debug-toggle" <?php checked($debug_enabled); ?>>
+                        <div class="almgr-master-toggle <?php echo esc_attr($debug_enabled ? 'active' : ''); ?>">
+                            <div class="almgr-master-toggle-slider"></div>
+                        </div>
+                        <label for="master-debug-toggle" class="almgr-master-toggle-label">
+                            <span class="almgr-toggle-status">
+                                <?php echo $debug_enabled ? esc_html__('Debug Mode Enabled', 'advanced-log-manager') : esc_html__('Debug Mode Disabled', 'advanced-log-manager'); ?>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Status Indicators -->
+            <div class="almgr-master-switch-indicators">
+                <div class="almgr-quick-indicator <?php echo esc_attr($debug_enabled && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG ? 'active' : 'inactive'); ?>">
+                    <span class="dashicons dashicons-media-text"></span>
+                    <span class="almgr-indicator-label"><?php esc_html_e('Error Logging', 'advanced-log-manager'); ?></span>
+                </div>
+                <div class="almgr-quick-indicator <?php echo esc_attr($debug_enabled && defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY ? 'active' : 'inactive'); ?>">
+                    <span class="dashicons dashicons-visibility"></span>
+                    <span class="almgr-indicator-label"><?php esc_html_e('Error Display', 'advanced-log-manager'); ?></span>
+                </div>
+                <div class="almgr-quick-indicator <?php echo esc_attr($debug_enabled && defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? 'active' : 'inactive'); ?>">
+                    <span class="dashicons dashicons-editor-code"></span>
+                    <span class="almgr-indicator-label"><?php esc_html_e('Script Debug', 'advanced-log-manager'); ?></span>
+                </div>
+                <?php
+                $savequeries_active = defined('SAVEQUERIES') ? constant('SAVEQUERIES') : false;
+                ?>
+                <div class="almgr-quick-indicator <?php echo esc_attr($debug_enabled && $savequeries_active ? 'active' : 'inactive'); ?>">
+                    <span class="dashicons dashicons-database"></span>
+                    <span class="almgr-indicator-label"><?php esc_html_e('Query Logging', 'advanced-log-manager'); ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Cards Navigation -->
+    <div class="almgr-feature-cards">
+        <!-- Debug Management Card -->
+        <div class="almgr-feature-card" data-tab="debug-management">
+            <div class="almgr-card-header">
+                <div class="almgr-card-icon">
+                    <span class="dashicons dashicons-admin-tools"></span>
+                </div>
+                <div class="almgr-card-title">
+                    <h3><?php esc_html_e('Debug Management', 'advanced-log-manager'); ?></h3>
+                    <p class="almgr-card-description"><?php esc_html_e('Control WordPress debug settings and log management', 'advanced-log-manager'); ?></p>
+                </div>
+                <div class="almgr-card-status">
+                    <span class="almgr-status-badge <?php echo esc_attr($debug_enabled ? 'active' : 'inactive'); ?>">
+                        <?php echo $debug_enabled ? esc_html__('Active', 'advanced-log-manager') : esc_html__('Inactive', 'advanced-log-manager'); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="almgr-card-actions">
+                <button class="almgr-card-toggle-btn" data-target="debug-management">
+                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    <?php esc_html_e('Configure', 'advanced-log-manager'); ?>
+                </button>
+            </div>
+        </div>
+
+        <!-- Performance Monitor Card -->
+        <div class="almgr-feature-card" data-tab="perf-monitor">
+            <div class="almgr-card-header">
+                <div class="almgr-card-icon">
+                    <span class="dashicons dashicons-performance"></span>
+                </div>
+                <div class="almgr-card-title">
+                    <h3><?php esc_html_e('Performance Monitor', 'advanced-log-manager'); ?></h3>
+                    <p class="almgr-card-description"><?php esc_html_e('Monitor site performance and query analysis', 'advanced-log-manager'); ?></p>
+                </div>
+                <div class="almgr-card-status">
+                    <span class="almgr-status-badge <?php echo esc_attr($perf_monitor_enabled ? 'active' : 'inactive'); ?>">
+                        <?php echo $perf_monitor_enabled ? esc_html__('Monitoring', 'advanced-log-manager') : esc_html__('Disabled', 'advanced-log-manager'); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="almgr-card-actions">
+                <button class="almgr-card-toggle-btn" data-target="perf-monitor">
+                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    <?php esc_html_e('Configure', 'advanced-log-manager'); ?>
+                </button>
+            </div>
+        </div>
+
+        <!-- File Editor Card -->
+        <div class="almgr-feature-card" data-tab="file-editor">
+            <div class="almgr-card-header">
+                <div class="almgr-card-icon">
+                    <span class="dashicons dashicons-edit"></span>
+                </div>
+                <div class="almgr-card-title">
+                    <h3><?php esc_html_e('.htaccess Editor', 'advanced-log-manager'); ?></h3>
+                    <p class="almgr-card-description"><?php esc_html_e('Edit .htaccess configuration files', 'advanced-log-manager'); ?></p>
+                </div>
+                <div class="almgr-card-status">
+                    <span class="almgr-status-badge info">
+                        <?php esc_html_e('Available', 'advanced-log-manager'); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="almgr-card-actions">
+                <button class="almgr-card-toggle-btn" data-target="file-editor">
+                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    <?php esc_html_e('Open Editor', 'advanced-log-manager'); ?>
+                </button>
+            </div>
+        </div>
+
+        <!-- PHP Config Card -->
+        <div class="almgr-feature-card" data-tab="php-config">
+            <div class="almgr-card-header">
+                <div class="almgr-card-icon">
+                    <span class="dashicons dashicons-admin-settings"></span>
+                </div>
+                <div class="almgr-card-title">
+                    <h3><?php esc_html_e('PHP Config', 'advanced-log-manager'); ?></h3>
+                    <p class="almgr-card-description"><?php esc_html_e('PHP configuration presets and optimization', 'advanced-log-manager'); ?></p>
+                </div>
+                <div class="almgr-card-status">
+                    <span class="almgr-status-badge info">
+                        <?php esc_html_e('Ready', 'advanced-log-manager'); ?>
+                    </span>
+                </div>
+            </div>
+            <div class="almgr-card-actions">
+                <button class="almgr-card-toggle-btn" data-target="php-config">
+                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    <?php esc_html_e('Configure', 'advanced-log-manager'); ?>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Tab Contents -->
@@ -95,235 +356,324 @@ $setting_units = array(
 
         <!-- Debug Management Tab -->
         <div id="tab-debug-management" class="almgr-tab-content active">
-            <div class="almgr-card">
-                <h2><?php esc_html_e('Debug Mode Control', 'advanced-log-manager'); ?></h2>
-
-                <div class="almgr-form-section">
-                        <div class="almgr-toggle-wrapper">
-                            <input type="checkbox" id="debug-mode-toggle" <?php checked($debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr($debug_enabled ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                        <label class="almgr-toggle-label">
-                            <span><?php esc_html_e('Enable Debug Mode', 'advanced-log-manager'); ?></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- WP Debug Settings Section -->
-                <div class="almgr-wp-debug-settings">
-                    <h3><?php esc_html_e('WP Debug Settings', 'advanced-log-manager'); ?></h3>
-                    <p class="description"><?php esc_html_e('WordPress debug constants configuration', 'advanced-log-manager'); ?></p>
-                    <div class="almgr-toggle-group" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="wp-debug-log-toggle" <?php checked(defined('WP_DEBUG_LOG') && WP_DEBUG_LOG); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="wp-debug-log-toggle" class="almgr-toggle-label">
-                                <span>WP_DEBUG_LOG</span>
-                                <small class="description"><?php esc_html_e('Log errors to file', 'advanced-log-manager'); ?></small>
-                            </label>
+            <div class="almgr-debug-sections">
+                <!-- Basic Debug Settings -->
+                <div class="almgr-collapsible-section" data-section="basic-debug">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-admin-generic"></span>
+                            <h3><?php esc_html_e('Basic Debug Settings', 'advanced-log-manager'); ?></h3>
                         </div>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="wp-debug-display-toggle" <?php checked(defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr((defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="wp-debug-display-toggle" class="almgr-toggle-label">
-                                <span>WP_DEBUG_DISPLAY</span>
-                                <small class="description"><?php esc_html_e('Display errors on screen', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="script-debug-toggle" <?php checked(defined('SCRIPT_DEBUG') && SCRIPT_DEBUG); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="script-debug-toggle" class="almgr-toggle-label">
-                                <span>SCRIPT_DEBUG</span>
-                                <small class="description"><?php esc_html_e('Use unminified JS/CSS', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                        <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
-                            <input type="checkbox" id="savequeries-toggle" <?php checked($savequeries); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr(($savequeries && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="savequeries-toggle" class="almgr-toggle-label">
-                                <span>SAVEQUERIES</span>
-                                <small class="description"><?php esc_html_e('Save database queries to query.log for analysis', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                        <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
-                            <input type="checkbox" id="display-errors-toggle" <?php checked($display_errors_on); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr(($display_errors_on && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="display-errors-toggle" class="almgr-toggle-label">
-                                <span>display_errors</span>
-                                <small class="description"><?php esc_html_e('Display PHP errors on screen', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SMTP Debug Settings Section -->
-                <div class="almgr-smtp-debug-settings">
-                    <h3><?php esc_html_e('SMTP Debug Settings', 'advanced-log-manager'); ?></h3>
-                    <p class="description"><?php esc_html_e('Email logging and monitoring configuration', 'advanced-log-manager'); ?></p>
-                    <?php
-                    // Get SMTP logging status
-                    $smtp_service = $plugin->get_service('smtp_logger');
-                    $smtp_status = $smtp_service ? $smtp_service->get_logging_status() : array('enabled' => false);
-                    $smtp_enabled = $smtp_status['enabled'];
-                    ?>
-                    <div class="almgr-toggle-group" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
-                        <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
-                            <input type="checkbox" id="smtp-logging-toggle" <?php checked($smtp_enabled); ?> <?php disabled(!$debug_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr(($smtp_enabled && $debug_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="smtp-logging-toggle" class="almgr-toggle-label">
-                                <span>SMTP Logging</span>
-                                <small class="description"><?php esc_html_e('Log all email activity to smtp-ddmmyyyy.log files', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                        <?php
-                        // Get IP address logging status
-                        $ip_logging_enabled = \get_option('almgr_smtp_log_ip_address', false);
-                        ?>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr((!$debug_enabled || !$smtp_enabled) ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="smtp-ip-logging-toggle" <?php checked($ip_logging_enabled); ?> <?php disabled(!$debug_enabled || !$smtp_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr(($ip_logging_enabled && $debug_enabled && $smtp_enabled) ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
-                            <label for="smtp-ip-logging-toggle" class="almgr-toggle-label">
-                                <span>IP Address Logging</span>
-                                <small class="description"><?php esc_html_e('Include originating IP addresses in SMTP logs (requires SMTP logging)', 'advanced-log-manager'); ?></small>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="almgr-status-info">
-                    <div class="almgr-status-item">
-                        <span class="almgr-status-indicator <?php echo esc_attr($debug_enabled ? 'active' : 'inactive'); ?>"></span>
-                        <span><?php esc_html_e('Status:', 'advanced-log-manager'); ?>
-                            <?php echo $debug_enabled ? esc_html__('Debug Enabled', 'advanced-log-manager') : esc_html__('Debug Disabled', 'advanced-log-manager'); ?>
-                        </span>
-                    </div>
-                    <?php if (file_exists(almgr_get_debug_log_path())): ?>
-                    <div class="almgr-status-item">
-                        <span class="dashicons dashicons-media-text"></span>
-                        <span><?php esc_html_e('Debug Log Size:', 'advanced-log-manager'); ?> <?php echo esc_html(almgr_format_bytes(filesize(almgr_get_debug_log_path()))); ?></span>
-                         <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=debug') ); ?>" class="button button-small" style="margin-left: 10px;">
-                             <?php esc_html_e('View Debug Logs', 'advanced-log-manager'); ?>
-                        </a>
-                        <button type="button" id="clear-all-debug-logs" class="button button-small" style="margin-left: 5px;" title="<?php esc_attr_e('Clear all wp-errors-* log files except the currently active one', 'advanced-log-manager'); ?>">
-                            <span class="dashicons dashicons-trash"></span>
-                            <?php esc_html_e('Clear All Logs', 'advanced-log-manager'); ?>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
                         </button>
                     </div>
-                    <?php endif; ?>
-                    <?php if ($savequeries): ?>
-                    <div class="almgr-status-item">
-                        <span class="dashicons dashicons-database"></span>
-                        <span><?php esc_html_e('Query Logging:', 'advanced-log-manager'); ?>
-                            <?php echo $savequeries ? esc_html__('Enabled', 'advanced-log-manager') : esc_html__('Disabled', 'advanced-log-manager'); ?>
-                        </span>
-                        <?php if (file_exists(almgr_get_query_log_path())): ?>
-                        <span style="margin-left: 10px; color: #646970;">
-                            <?php esc_html_e('Size:', 'advanced-log-manager'); ?> <?php echo esc_html(almgr_format_bytes(filesize(almgr_get_query_log_path()))); ?>
-                            <small style="margin-left: 5px; color: #007cba;">
-                                (<?php esc_html_e('Auto-rotates at', 'advanced-log-manager'); ?> <?php echo esc_html(almgr_format_bytes(almgr_get_query_log_max_size())); ?>)
-                            </small>
-                        </span>
-                        <?php endif; ?>
-                        <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=query') ); ?>" class="button button-small" style="margin-left: 10px;">
-                            <?php esc_html_e('View Query Logs', 'advanced-log-manager'); ?>
-                        </a>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Essential debug configuration for WordPress development and troubleshooting.', 'advanced-log-manager'); ?></p>
+
+                        <!-- Enable Debug Mode Toggle -->
+                        <div class="almgr-setting-item">
+                            <div class="almgr-toggle-wrapper">
+                                <input type="checkbox" id="debug-mode-toggle" <?php checked($debug_enabled); ?>>
+                                <div class="almgr-toggle <?php echo esc_attr($debug_enabled ? 'active' : ''); ?>">
+                                    <div class="almgr-toggle-slider"></div>
+                                </div>
+                                <label for="debug-mode-toggle" class="almgr-toggle-label">
+                                    <span class="almgr-setting-title"><?php esc_html_e('Enable Debug Mode', 'advanced-log-manager'); ?></span>
+                                    <small class="almgr-setting-description"><?php esc_html_e('Master switch for all debug functionality', 'advanced-log-manager'); ?></small>
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <?php endif; ?>
-                    <?php if ($smtp_enabled): ?>
-                    <div class="almgr-status-item">
-                        <span class="dashicons dashicons-email"></span>
-                        <span><?php esc_html_e('SMTP Logging:', 'advanced-log-manager'); ?>
-                            <?php echo $smtp_enabled ? esc_html__('Enabled', 'advanced-log-manager') : esc_html__('Disabled', 'advanced-log-manager'); ?>
-                        </span>
-                        <?php if ($smtp_status['current_log_exists']): ?>
-                        <span style="margin-left: 10px; color: #646970;">
-                            <?php esc_html_e('Today:', 'advanced-log-manager'); ?> <?php echo esc_html($smtp_status['current_log_size']); ?>
-                            <?php if (count($smtp_status['available_files']) > 0): ?>
-                            <small style="margin-left: 5px; color: #007cba;">
-                                (<?php
-                /* translators: %d: number of log files */
-                echo esc_html( sprintf( __('%d log files', 'advanced-log-manager'), count($smtp_status['available_files']) ) ); ?>)
-                            </small>
-                            <?php endif; ?>
-                        </span>
-                        <?php endif; ?>
-                        <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=smtp') ); ?>" class="button button-small" style="margin-left: 10px;">
-                            <?php esc_html_e('View SMTP Logs', 'advanced-log-manager'); ?>
-                        </a>
-                    </div>
-                    <?php endif; ?>
                 </div>
 
-                <div class="almgr-log-cleanup-section">
-                    <h3><?php esc_html_e('Log Management', 'advanced-log-manager'); ?></h3>
-                    <p class="description"><?php esc_html_e('Manage and cleanup log files created by the plugin.', 'advanced-log-manager'); ?></p>
+                <!-- WordPress Debug Constants -->
+                <div class="almgr-collapsible-section" data-section="wp-debug">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-wordpress"></span>
+                            <h3><?php esc_html_e('WordPress Debug Constants', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Configure WordPress-specific debug constants and error handling.', 'advanced-log-manager'); ?></p>
 
-                    <div class="almgr-cleanup-actions">
-                        <div class="almgr-cleanup-item">
-                            <div class="almgr-cleanup-info">
-                                <strong><?php esc_html_e('Debug Logs Cleanup', 'advanced-log-manager'); ?></strong>
-                                <p class="description"><?php esc_html_e('Remove old wp-errors-* log files, keeping only the most recent ones.', 'advanced-log-manager'); ?></p>
+                        <div class="almgr-settings-grid" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="wp-debug-log-toggle" <?php checked(defined('WP_DEBUG_LOG') && WP_DEBUG_LOG); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="wp-debug-log-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">WP_DEBUG_LOG</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Log errors to debug.log file', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="almgr-cleanup-controls almgr-logs-actions">
-                                <select id="debug-cleanup-keep-count">
-                                    <option value="1"><?php esc_html_e('Keep 1 file', 'advanced-log-manager'); ?></option>
-                                    <option value="3" selected><?php esc_html_e('Keep 3 files', 'advanced-log-manager'); ?></option>
-                                    <option value="5"><?php esc_html_e('Keep 5 files', 'advanced-log-manager'); ?></option>
-                                </select>
-                                <button type="button" id="cleanup-debug-logs" class="button">
-                                    <span class="dashicons dashicons-admin-tools"></span>
-                                    <?php esc_html_e('Cleanup Debug Logs', 'advanced-log-manager'); ?>
-                                </button>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="wp-debug-display-toggle" <?php checked(defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr((defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="wp-debug-display-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">WP_DEBUG_DISPLAY</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Display errors on screen (not recommended for production)', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$debug_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="script-debug-toggle" <?php checked(defined('SCRIPT_DEBUG') && SCRIPT_DEBUG); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="script-debug-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">SCRIPT_DEBUG</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Use unminified JavaScript and CSS files', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="savequeries-toggle" <?php checked($savequeries); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr(($savequeries && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="savequeries-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">SAVEQUERIES</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Save database queries for analysis (impacts performance)', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="display-errors-toggle" <?php checked($display_errors_on); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr(($display_errors_on && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="display-errors-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">display_errors</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('PHP setting to display errors on screen', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="almgr-cleanup-item">
-                            <div class="almgr-cleanup-info">
-                                <strong><?php esc_html_e('All Logs Cleanup', 'advanced-log-manager'); ?></strong>
-                                <p class="description"><?php esc_html_e('Remove all log files created by the plugin (wp-errors-*, wp-queries-*, etc.).', 'advanced-log-manager'); ?></p>
+                <!-- Email & SMTP Debug -->
+                <div class="almgr-collapsible-section" data-section="smtp-debug">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-email"></span>
+                            <h3><?php esc_html_e('Email & SMTP Debug', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Monitor and debug email functionality including SMTP transactions.', 'advanced-log-manager'); ?></p>
+
+                        <?php
+                        // Get SMTP logging status
+                        $smtp_service = $plugin->get_service('smtp_logger');
+                        $smtp_status = $smtp_service ? $smtp_service->get_logging_status() : array('enabled' => false);
+                        $smtp_enabled = $smtp_status['enabled'];
+                        ?>
+
+                        <div class="almgr-settings-grid" <?php echo !$debug_enabled ? 'data-disabled="true"' : ''; ?>>
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo !$debug_enabled ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="smtp-logging-toggle" <?php checked($smtp_enabled); ?> <?php disabled(!$debug_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr(($smtp_enabled && $debug_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="smtp-logging-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">SMTP Logging</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Log all email activity to daily smtp-ddmmyyyy.log files', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="almgr-cleanup-controls almgr-logs-actions">
-                                <label>
-                                    <input type="checkbox" id="include-current-logs">
-                                    <?php esc_html_e('Include current active logs', 'advanced-log-manager'); ?>
-                                </label>
-                                <button type="button" id="cleanup-all-logs" class="button button-secondary">
-                                    <span class="dashicons dashicons-trash"></span>
-                                    <?php esc_html_e('Remove All Logs', 'advanced-log-manager'); ?>
-                                </button>
+
+                            <?php
+                            // Get IP address logging status
+                            $ip_logging_enabled = \get_option('almgr_smtp_log_ip_address', false);
+                            ?>
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr((!$debug_enabled || !$smtp_enabled) ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="smtp-ip-logging-toggle" <?php checked($ip_logging_enabled); ?> <?php disabled(!$debug_enabled || !$smtp_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr(($ip_logging_enabled && $debug_enabled && $smtp_enabled) ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="smtp-ip-logging-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title">IP Address Logging</span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Include originating IP addresses in SMTP logs', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="almgr-cleanup-item">
-                            <div class="almgr-cleanup-info">
-                                <strong><?php esc_html_e('Query Log Rotation Cleanup', 'advanced-log-manager'); ?></strong>
-                                <p class="description"><?php esc_html_e('Remove old query log rotation files (query.log.1, query.log.2, etc.) that accumulate over time.', 'advanced-log-manager'); ?></p>
+                <!-- Log Status & Quick Actions -->
+                <div class="almgr-collapsible-section" data-section="log-status">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-media-text"></span>
+                            <h3><?php esc_html_e('Log Status & Quick Actions', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Monitor log file status and perform quick actions.', 'advanced-log-manager'); ?></p>
+
+                        <div class="almgr-log-status-grid">
+                            <!-- Debug Log Status -->
+                            <?php if (file_exists(almgr_get_debug_log_path())): ?>
+                            <div class="almgr-log-status-card">
+                                <div class="almgr-log-status-header">
+                                    <span class="dashicons dashicons-media-text"></span>
+                                    <h4><?php esc_html_e('Debug Logs', 'advanced-log-manager'); ?></h4>
+                                </div>
+                                <div class="almgr-log-status-info">
+                                    <span class="almgr-log-size"><?php echo esc_html(almgr_format_bytes(filesize(almgr_get_debug_log_path()))); ?></span>
+                                </div>
+                                <div class="almgr-log-status-actions">
+                                    <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=debug') ); ?>" class="button button-small">
+                                        <?php esc_html_e('View', 'advanced-log-manager'); ?>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="almgr-cleanup-controls almgr-logs-actions">
-                                <label>
-                                    <input type="checkbox" id="keep-latest-rotation" checked>
-                                    <?php esc_html_e('Keep latest backup (query.log.1)', 'advanced-log-manager'); ?>
-                                </label>
-                                <button type="button" id="cleanup-query-rotation-logs" class="button button-secondary">
-                                    <span class="dashicons dashicons-database-remove"></span>
-                                    <?php esc_html_e('Cleanup Rotation Files', 'advanced-log-manager'); ?>
-                                </button>
+                            <?php endif; ?>
+
+                            <!-- Query Log Status -->
+                            <?php if ($savequeries && file_exists(almgr_get_query_log_path())): ?>
+                            <div class="almgr-log-status-card">
+                                <div class="almgr-log-status-header">
+                                    <span class="dashicons dashicons-database"></span>
+                                    <h4><?php esc_html_e('Query Logs', 'advanced-log-manager'); ?></h4>
+                                </div>
+                                <div class="almgr-log-status-info">
+                                    <span class="almgr-log-size"><?php echo esc_html(almgr_format_bytes(filesize(almgr_get_query_log_path()))); ?></span>
+                                    <small class="almgr-log-note"><?php esc_html_e('Auto-rotates at', 'advanced-log-manager'); ?> <?php echo esc_html(almgr_format_bytes(almgr_get_query_log_max_size())); ?></small>
+                                </div>
+                                <div class="almgr-log-status-actions">
+                                    <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=query') ); ?>" class="button button-small">
+                                        <?php esc_html_e('View', 'advanced-log-manager'); ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- SMTP Log Status -->
+                            <?php if ($smtp_enabled): ?>
+                            <div class="almgr-log-status-card">
+                                <div class="almgr-log-status-header">
+                                    <span class="dashicons dashicons-email"></span>
+                                    <h4><?php esc_html_e('SMTP Logs', 'advanced-log-manager'); ?></h4>
+                                </div>
+                                <div class="almgr-log-status-info">
+                                    <?php if ($smtp_status['current_log_exists']): ?>
+                                    <span class="almgr-log-size"><?php echo esc_html($smtp_status['current_log_size']); ?></span>
+                                    <?php if (count($smtp_status['available_files']) > 0): ?>
+                                    <small class="almgr-log-note"><?php echo esc_html( sprintf( __('%d log files', 'advanced-log-manager'), count($smtp_status['available_files']) ) ); ?></small>
+                                    <?php endif; ?>
+                                    <?php else: ?>
+                                    <span class="almgr-log-size"><?php esc_html_e('No logs yet', 'advanced-log-manager'); ?></span>
+                                    <small class="almgr-log-note"><?php esc_html_e('Logs will appear after first email', 'advanced-log-manager'); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="almgr-log-status-actions">
+                                    <a href="<?php echo esc_url( admin_url('tools.php?page=almgr-all-logs-activity&tab=smtp') ); ?>" class="button button-small">
+                                        <?php esc_html_e('View', 'advanced-log-manager'); ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="almgr-collapsible-section almgr-danger-zone" data-section="danger-zone">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-warning"></span>
+                            <h3><?php esc_html_e('Danger Zone', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <div class="almgr-danger-warning">
+                            <span class="dashicons dashicons-warning"></span>
+                            <p><?php esc_html_e('These actions are irreversible. Please proceed with caution.', 'advanced-log-manager'); ?></p>
+                        </div>
+
+                        <div class="almgr-danger-actions">
+                            <div class="almgr-danger-item">
+                                <div class="almgr-danger-info">
+                                    <h4><?php esc_html_e('Debug Logs Cleanup', 'advanced-log-manager'); ?></h4>
+                                    <p class="description"><?php esc_html_e('Remove old wp-errors-* log files, keeping only the most recent ones.', 'advanced-log-manager'); ?></p>
+                                </div>
+                                <div class="almgr-danger-controls">
+                                    <select id="debug-cleanup-keep-count">
+                                        <option value="1"><?php esc_html_e('Keep 1 file', 'advanced-log-manager'); ?></option>
+                                        <option value="3" selected><?php esc_html_e('Keep 3 files', 'advanced-log-manager'); ?></option>
+                                        <option value="5"><?php esc_html_e('Keep 5 files', 'advanced-log-manager'); ?></option>
+                                    </select>
+                                    <button type="button" id="cleanup-debug-logs" class="button button-secondary">
+                                        <span class="dashicons dashicons-admin-tools"></span>
+                                        <?php esc_html_e('Cleanup Debug Logs', 'advanced-log-manager'); ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="almgr-danger-item">
+                                <div class="almgr-danger-info">
+                                    <h4><?php esc_html_e('All Logs Cleanup', 'advanced-log-manager'); ?></h4>
+                                    <p class="description"><?php esc_html_e('Remove all log files created by the plugin (wp-errors-*, wp-queries-*, etc.).', 'advanced-log-manager'); ?></p>
+                                </div>
+                                <div class="almgr-danger-controls">
+                                    <label class="almgr-danger-checkbox">
+                                        <input type="checkbox" id="include-current-logs">
+                                        <?php esc_html_e('Include current active logs', 'advanced-log-manager'); ?>
+                                    </label>
+                                    <button type="button" id="cleanup-all-logs" class="button button-danger">
+                                        <span class="dashicons dashicons-trash"></span>
+                                        <?php esc_html_e('Remove All Logs', 'advanced-log-manager'); ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="almgr-danger-item">
+                                <div class="almgr-danger-info">
+                                    <h4><?php esc_html_e('Query Log Rotation Cleanup', 'advanced-log-manager'); ?></h4>
+                                    <p class="description"><?php esc_html_e('Remove old query log rotation files (query.log.1, query.log.2, etc.) that accumulate over time.', 'advanced-log-manager'); ?></p>
+                                </div>
+                                <div class="almgr-danger-controls">
+                                    <label class="almgr-danger-checkbox">
+                                        <input type="checkbox" id="keep-latest-rotation" checked>
+                                        <?php esc_html_e('Keep latest backup (query.log.1)', 'advanced-log-manager'); ?>
+                                    </label>
+                                    <button type="button" id="cleanup-query-rotation-logs" class="button button-danger">
+                                        <span class="dashicons dashicons-database-remove"></span>
+                                        <?php esc_html_e('Cleanup Rotation Files', 'advanced-log-manager'); ?>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -333,101 +683,228 @@ $setting_units = array(
 
         <!-- Performance Monitor Tab -->
         <div id="tab-perf-monitor" class="almgr-tab-content">
-            <div class="almgr-card">
-                <h2><?php esc_html_e('Performance Monitor', 'advanced-log-manager'); ?></h2>
+            <!-- Performance Monitor Sections -->
+            <div class="almgr-perf-sections">
 
-                <div class="almgr-form-section">
-                    <label class="almgr-toggle-label">
-                        <span><?php esc_html_e('Enable Performance Bar', 'advanced-log-manager'); ?></span>
-                        <div class="almgr-toggle-wrapper">
-                            <input type="checkbox" id="perf-monitor-toggle" <?php checked($perf_monitor_enabled); ?>>
-                            <div class="almgr-toggle <?php echo esc_attr($perf_monitor_enabled ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
+                <!-- Master Performance Toggle -->
+                <div class="almgr-collapsible-section almgr-section-open" data-section="perf-master">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-performance"></span>
+                            <h3><?php esc_html_e('Performance Monitoring', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-up-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Enable comprehensive performance monitoring with real-time metrics display.', 'advanced-log-manager'); ?></p>
+
+                        <div class="almgr-settings-grid">
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper">
+                                    <input type="checkbox" id="perf-monitor-toggle" <?php checked($perf_monitor_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr($perf_monitor_enabled ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="perf-monitor-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Enable Performance Bar', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Display performance metrics bar at the bottom of pages for logged-in users', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-info-display">
+                                    <div class="almgr-info-icon">
+                                        <span class="dashicons dashicons-yes-alt"></span>
+                                    </div>
+                                    <div class="almgr-info-content">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Logged Users Only', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Performance bar is restricted to administrators only (security requirement)', 'advanced-log-manager'); ?></small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </label>
-                    <p class="description">
-                        <?php esc_html_e('Menampilkan bar performa di bagian bawah halaman untuk user yang login.', 'advanced-log-manager'); ?>
-                    </p>
-                    <p class="description">
-                        <?php esc_html_e('Peringatan: Mengaktifkan Performance Bar dapat menambah sedikit overhead pada waktu muat halaman karena pengumpulan metrik. Disarankan hanya untuk kebutuhan debugging/lingkungan pengembangan.', 'advanced-log-manager'); ?>
-                    </p>
-                </div>
 
-                <!-- Granular feature toggles -->
-                <div class="almgr-form-section">
-                    <label class="almgr-toggle-label">
-                        <span><?php esc_html_e('Enable Real-time Hooks Monitoring', 'advanced-log-manager'); ?></span>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="perf-realtime-toggle" <?php checked($perf_realtime_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="almgr-toggle <?php echo esc_attr($perf_realtime_enabled ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
+                        <div class="almgr-warning-notice">
+                            <span class="dashicons dashicons-warning"></span>
+                            <p><?php esc_html_e('Performance monitoring adds minimal overhead. Recommended for development/staging environments.', 'advanced-log-manager'); ?></p>
                         </div>
-                    </label>
-                    <p class="description">
-                        <?php esc_html_e('Pantau eksekusi hook strategis secara real-time (dioptimalkan, bukan hook "all").', 'advanced-log-manager'); ?>
-                    </p>
+                    </div>
                 </div>
 
-                <div class="almgr-form-section">
-                    <label class="almgr-toggle-label">
-                        <span><?php esc_html_e('Enable Bootstrap Phases Snapshots', 'advanced-log-manager'); ?></span>
-                        <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
-                            <input type="checkbox" id="perf-bootstrap-toggle" <?php checked($perf_bootstrap_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="almgr-toggle <?php echo esc_attr($perf_bootstrap_enabled ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
-                            </div>
+                <!-- Advanced Monitoring Features -->
+                <div class="almgr-collapsible-section" data-section="perf-advanced">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-chart-line"></span>
+                            <h3><?php esc_html_e('Advanced Monitoring', 'advanced-log-manager'); ?></h3>
                         </div>
-                    </label>
-                    <p class="description">
-                        <?php esc_html_e('Ambil snapshot evolusi hook pada fase bootstrap WordPress.', 'advanced-log-manager'); ?>
-                    </p>
-                </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Configure detailed monitoring features for comprehensive performance analysis.', 'advanced-log-manager'); ?></p>
 
-                <div class="almgr-form-section">
-                    <label class="almgr-toggle-label">
-                        <span><?php esc_html_e('Enable Domain-specific Panels', 'advanced-log-manager'); ?></span>
-                        <div class="almgr-toggle-wrapper <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>">
-                            <input type="checkbox" id="perf-domains-toggle" <?php checked($perf_domains_enabled); ?> <?php echo !$perf_monitor_enabled ? 'disabled' : ''; ?>>
-                            <div class="almgr-toggle <?php echo esc_attr($perf_domains_enabled ? 'active' : ''); ?>">
-                                <div class="almgr-toggle-slider"></div>
+                        <div class="almgr-settings-grid">
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="perf-realtime-toggle" <?php checked($perf_realtime_enabled); ?> <?php disabled(!$perf_monitor_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr($perf_realtime_enabled && $perf_monitor_enabled ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="perf-realtime-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Real-time Hooks Monitoring', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Monitor strategic hook execution in real-time (optimized, not "all" hooks)', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                    </label>
-                    <p class="description">
-                        <?php esc_html_e('Tampilkan panel analisis berdasarkan domain (Database, HTTP, Template, dsb).', 'advanced-log-manager'); ?>
-                    </p>
-                </div>
 
-                <div class="almgr-preview-section">
-                    <h3><?php esc_html_e('Frontend Display Preview', 'advanced-log-manager'); ?></h3>
-                    <div class="almgr-performance-preview">
-                        <div class="almgr-perf-preview-bar">
-                            <div class="almgr-perf-item">
-                                <span class="dashicons dashicons-update"></span>
-                                <span class="value">15</span>
-                                <span class="label">queries</span>
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="perf-bootstrap-toggle" <?php checked($perf_bootstrap_enabled); ?> <?php disabled(!$perf_monitor_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr($perf_bootstrap_enabled && $perf_monitor_enabled ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="perf-bootstrap-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Bootstrap Phases Snapshots', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Capture hook evolution snapshots during WordPress bootstrap phases', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="almgr-perf-item">
-                                <span class="dashicons dashicons-clock"></span>
-                                <span class="value">1.2s</span>
-                                <span class="label">time</span>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="perf-domains-toggle" <?php checked($perf_domains_enabled); ?> <?php disabled(!$perf_monitor_enabled); ?>>
+                                    <div class="almgr-toggle <?php echo esc_attr($perf_domains_enabled && $perf_monitor_enabled ? 'active' : ''); ?>">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="perf-domains-toggle" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Domain-specific Panels', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Show analysis panels by domain (Database, HTTP, Template, etc.)', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="almgr-perf-item">
-                                <span class="dashicons dashicons-database"></span>
-                                <span class="value">45.2MB</span>
-                                <span class="label">memory</span>
+
+                            <div class="almgr-setting-item">
+                                <div class="almgr-toggle-wrapper <?php echo esc_attr(!$perf_monitor_enabled ? 'disabled' : ''); ?>">
+                                    <input type="checkbox" id="perf-memory-tracking" <?php disabled(!$perf_monitor_enabled); ?>>
+                                    <div class="almgr-toggle">
+                                        <div class="almgr-toggle-slider"></div>
+                                    </div>
+                                    <label for="perf-memory-tracking" class="almgr-toggle-label">
+                                        <span class="almgr-setting-title"><?php esc_html_e('Memory Usage Tracking', 'advanced-log-manager'); ?></span>
+                                        <small class="almgr-setting-description"><?php esc_html_e('Track detailed memory usage patterns and peak consumption', 'advanced-log-manager'); ?></small>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="almgr-form-section">
-                    <label>
-                        <input type="checkbox" id="perf-monitor-logged-only" checked disabled>
-                        <?php esc_html_e('Show for logged-in users only', 'advanced-log-manager'); ?>
-                    </label>
+                <!-- Performance Preview -->
+                <div class="almgr-collapsible-section" data-section="perf-preview">
+                    <div class="almgr-section-header">
+                        <div class="almgr-section-title">
+                            <span class="dashicons dashicons-visibility"></span>
+                            <h3><?php esc_html_e('Frontend Preview', 'advanced-log-manager'); ?></h3>
+                        </div>
+                        <button class="almgr-section-toggle" type="button">
+                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                        </button>
+                    </div>
+                    <div class="almgr-section-content">
+                        <p class="almgr-section-description"><?php esc_html_e('Preview how the performance bar will appear on your website frontend.', 'advanced-log-manager'); ?></p>
+
+                        <!-- Enhanced Performance Preview Bar -->
+                        <div class="almgr-performance-preview-container">
+                            <div class="almgr-perf-preview-bar <?php echo esc_attr($perf_monitor_enabled ? 'active' : 'inactive'); ?>">
+                                <!-- Core Metrics -->
+                                <div class="almgr-perf-section almgr-perf-core">
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-clock"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">1.24s</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('Load Time', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-database"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">15</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('Queries', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-performance"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">45.2MB</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('Memory', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced Indicators -->
+                                <div class="almgr-perf-section almgr-perf-advanced">
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-admin-plugins"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">23</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('Hooks', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-admin-appearance"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">0.18s</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('Template', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="almgr-perf-item">
+                                        <span class="almgr-perf-icon dashicons dashicons-networking"></span>
+                                        <div class="almgr-perf-data">
+                                            <span class="almgr-perf-value">3</span>
+                                            <span class="almgr-perf-label"><?php esc_html_e('HTTP', 'advanced-log-manager'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status Indicators -->
+                                <div class="almgr-perf-section almgr-perf-status">
+                                    <div class="almgr-perf-status-indicator almgr-status-good">
+                                        <span class="dashicons dashicons-yes-alt"></span>
+                                        <span class="almgr-status-text"><?php esc_html_e('Good', 'advanced-log-manager'); ?></span>
+                                    </div>
+
+                                    <button class="almgr-perf-toggle-details" type="button">
+                                        <span class="dashicons dashicons-info"></span>
+                                        <?php esc_html_e('Details', 'advanced-log-manager'); ?>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Preview Status -->
+                            <div class="almgr-preview-status">
+                                <?php if ($perf_monitor_enabled): ?>
+                                    <span class="almgr-preview-badge active">
+                                        <span class="dashicons dashicons-visibility"></span>
+                                        <?php esc_html_e('Performance bar is active', 'advanced-log-manager'); ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="almgr-preview-badge inactive">
+                                        <span class="dashicons dashicons-hidden"></span>
+                                        <?php esc_html_e('Performance bar is disabled', 'advanced-log-manager'); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -458,6 +935,26 @@ $setting_units = array(
                     <p><?php esc_html_e('.htaccess file is not writable. Please check file permissions.', 'advanced-log-manager'); ?></p>
                 </div>
                 <?php endif; ?>
+
+                <div class="almgr-editor-controls">
+                    <div class="almgr-editor-status">
+                        <span id="editor-status" class="almgr-status-saved">
+                            <span class="dashicons dashicons-yes-alt"></span>
+                            <?php esc_html_e('Saved', 'advanced-log-manager'); ?>
+                        </span>
+                        <span id="auto-save-status" class="almgr-auto-save-status" style="display: none;">
+                            <span class="dashicons dashicons-update"></span>
+                            <?php esc_html_e('Auto-saving...', 'advanced-log-manager'); ?>
+                        </span>
+                    </div>
+                    <div class="almgr-editor-options">
+                        <label class="almgr-toggle-switch">
+                            <input type="checkbox" id="auto-save-toggle" checked>
+                            <span class="almgr-toggle-slider"></span>
+                            <span class="almgr-toggle-label"><?php esc_html_e('Auto-save', 'advanced-log-manager'); ?></span>
+                        </label>
+                    </div>
+                </div>
 
                 <div class="almgr-editor-section">
                     <textarea id="htaccess-editor" class="almgr-code-editor" rows="20" <?php echo !$htaccess_info['writable'] ? 'readonly' : ''; ?>><?php echo esc_textarea($htaccess_service->get_htaccess_content()); ?></textarea>
