@@ -447,7 +447,7 @@ $setting_units = array(
                     <?php if (!empty($htaccess_backups)): ?>
                     <div class="almgr-backup-last">
                         <span><?php esc_html_e('Last backup:', 'advanced-log-manager'); ?>
-                            <?php echo human_time_diff($htaccess_backups[0]['timestamp']); ?> ago
+                            <?php echo esc_html(human_time_diff($htaccess_backups[0]['timestamp'])); ?> ago
                         </span>
                     </div>
                     <?php endif; ?>

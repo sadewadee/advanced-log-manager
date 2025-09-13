@@ -5,6 +5,25 @@ All notable changes to Advanced Log Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.30] - 2025-01-15
+
+### Security
+- Memperbaiki WordPress.Security.EscapeOutput.ExceptionNotEscaped di admin/views/page-toolkit.php dengan menambahkan esc_html() untuk human_time_diff() output
+- Memperbaiki WordPress.Security.EscapeOutput.ExceptionNotEscaped di includes/class-wp-config-integration.php dengan menambahkan esc_html() untuk exception messages dalam almgr_config_log
+- Memperbaiki WordPress.Security.EscapeOutput.OutputNotEscaped di includes/class-file-manager.php dengan menambahkan esc_html() untuk backup content output
+- Memperbaiki WordPress.Security.EscapeOutput.OutputNotEscaped di includes/class-plugin.php dengan menambahkan esc_html() untuk content output
+- Memperbaiki WordPress.Security.EscapeOutput.OutputNotEscaped di includes/class-query-monitor.php dengan menambahkan esc_html__() untuk translatable strings
+- Meningkatkan keamanan output dengan proper escaping sesuai WordPress Coding Standards
+
+### Fixed
+- Menambahkan PHPStan ignore comments untuk undefined properties dan functions yang sudah memiliki proper checks
+- Memperbaiki sebagian error ReflectionClass dengan menambahkan PHPStan ignore comments
+- Mengatasi beberapa diagnostic errors terkait undefined properties $wpdb->queries dan $wpdb->num_queries
+
+### Known Issues
+- Beberapa diagnostic errors masih tersisa terkait undefined properties dan types yang memerlukan perbaikan lebih lanjut
+- Error ReflectionClass masih ada di beberapa lokasi yang memerlukan proper use statement atau type hints
+
 ## [1.2.29] - 2025-01-15
 
 ### Fixed

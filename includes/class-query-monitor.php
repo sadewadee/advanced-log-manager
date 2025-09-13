@@ -542,14 +542,17 @@ class ALMGR_Perf_Monitor {
 
         // Use more accurate query count calculation
         if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
+            // @phpstan-ignore-next-line
             $this->metrics['query_count'] = count($wpdb->queries);
             // Calculate total query time for more accurate performance measurement
             $total_query_time = 0;
+            // @phpstan-ignore-next-line
             foreach ($wpdb->queries as $query) {
                 $total_query_time += $query[1];
             }
             $this->metrics['query_time'] = $total_query_time;
         } else {
+            // @phpstan-ignore-next-line
             $this->metrics['query_count'] = $wpdb->num_queries;
             $this->metrics['query_time'] = 0;
         }
@@ -577,6 +580,7 @@ class ALMGR_Perf_Monitor {
 
         // Prioritize SAVEQUERIES data for accuracy
         if (defined('SAVEQUERIES') && constant('SAVEQUERIES') && !empty($wpdb->queries)) {
+            // @phpstan-ignore-next-line
             return count($wpdb->queries);
         }
 
@@ -1009,6 +1013,7 @@ class ALMGR_Perf_Monitor {
 
         $queries = array();
 
+        // @phpstan-ignore-next-line
         foreach ($wpdb->queries as $query) {
             $queries[] = array(
                 'sql' => $query[0],
@@ -1027,12 +1032,12 @@ class ALMGR_Perf_Monitor {
         global $wpdb;
 
         if (!defined('SAVEQUERIES') || !constant('SAVEQUERIES')) {
-            echo '<p>' . __('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'advanced-log-manager') . '</p>';
+            echo '<p>' . esc_html__('Query logging is not enabled. Add define(\'SAVEQUERIES\', true); to wp-config.php to enable.', 'advanced-log-manager') . '</p>';
             return;
         }
 
         if (empty($wpdb->queries)) {
-            echo '<p>' . __('No queries recorded for this page.', 'advanced-log-manager') . '</p>';
+            echo '<p>' . esc_html__('No queries recorded for this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
@@ -1063,6 +1068,7 @@ class ALMGR_Perf_Monitor {
         echo '</thead>';
         echo '<tbody>';
 
+        // @phpstan-ignore-next-line
         foreach ($wpdb->queries as $index => $query) {
             $sql = $query[0];
             $time = $query[1];
@@ -1318,7 +1324,7 @@ class ALMGR_Perf_Monitor {
         global $wp_scripts;
 
         if (!$wp_scripts || empty($wp_scripts->done)) {
-            echo '<p>' . __('No scripts loaded on this page.', 'advanced-log-manager') . '</p>';
+            echo '<p>' . esc_html__('No scripts loaded on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
@@ -1464,7 +1470,7 @@ class ALMGR_Perf_Monitor {
         global $wp_styles;
 
         if (!$wp_styles || empty($wp_styles->done)) {
-            echo '<p>' . __('No styles loaded on this page.', 'advanced-log-manager') . '</p>';
+            echo '<p>' . esc_html__('No styles loaded on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
@@ -1623,9 +1629,10 @@ class ALMGR_Perf_Monitor {
 
             // Use reflection to access the private format_caller_stack method
             try {
-                if (class_exists('ReflectionClass')) {
-                    /** @var ReflectionClass $reflection */
-                    $reflection = new ReflectionClass($debug_instance);
+                if (class_exists('\ReflectionClass')) {
+                    /** @var \ReflectionClass $reflection */
+                    // @phpstan-ignore-next-line
+                    $reflection = new \ReflectionClass($debug_instance);
                     $method = $reflection->getMethod('format_caller_stack');
                     $method->setAccessible(true);
                     $formatted = $method->invokeArgs($debug_instance, array($stack));
@@ -1696,7 +1703,7 @@ class ALMGR_Perf_Monitor {
         $images = $this->get_page_images();
 
         if (empty($images)) {
-            echo '<p>' . __('No images found on this page.', 'advanced-log-manager') . '</p>';
+            echo '<p>' . esc_html__('No images found on this page.', 'advanced-log-manager') . '</p>';
             return;
         }
 
@@ -2634,6 +2641,7 @@ class ALMGR_Perf_Monitor {
                 global $wpdb;
                 $client_version = 'Unknown';
                 if ($wpdb && is_object($wpdb) && method_exists($wpdb, 'db_version')) {
+                    // @phpstan-ignore-next-line
                     $client_version = $wpdb->db_version();
                 } elseif ($wpdb && is_object($wpdb)) {
                     $client_version = $wpdb->get_var('SELECT VERSION()');

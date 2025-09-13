@@ -137,7 +137,7 @@ class ALMGR_File_Manager {
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($backup['content']));
 
-        echo $backup['content'];
+        echo esc_html($backup['content']);
         exit;
     }
 

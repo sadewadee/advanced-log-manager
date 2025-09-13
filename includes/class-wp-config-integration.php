@@ -69,7 +69,7 @@ class ALMGR_WP_Config_Integration {
         } catch (Exception $e) {
             // Restore backup on exception
             copy($backup_path, $wp_config_path);
-            almgr_config_log(' Exception - ' . $e->getMessage() . ', backup restored');
+            almgr_config_log(' Exception - ' . esc_html($e->getMessage()) . ', backup restored');
             return false;
         }
     }
@@ -150,7 +150,7 @@ class ALMGR_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            almgr_config_log(' Enhanced debug constants failed - ' . $e->getMessage());
+            almgr_config_log(' Enhanced debug constants failed - ' . esc_html($e->getMessage()));
             return false;
         }
     }
@@ -208,7 +208,7 @@ class ALMGR_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            almgr_config_log(' Debug constants failed - ' . $e->getMessage());
+            almgr_config_log(' Debug constants failed - ' . esc_html($e->getMessage()));
             return false;
         }
     }
@@ -567,7 +567,7 @@ class ALMGR_WP_Config_Integration {
 
         } catch (Exception $e) {
             copy($backup_path, $wp_config_path);
-            almgr_config_log(' Custom query log path failed - ' . $e->getMessage());
+            almgr_config_log(' Custom query log path failed - ' . esc_html($e->getMessage()));
             return false;
         }
     }
@@ -847,7 +847,7 @@ class ALMGR_WP_Config_Integration {
                 return $transformer->get_value('constant', $constant_name);
             }
         } catch (Exception $e) {
-            almgr_config_log(' Failed to get constant value - ' . $e->getMessage());
+            almgr_config_log(' Failed to get constant value - ' . esc_html($e->getMessage()));
         }
         return null;
     }

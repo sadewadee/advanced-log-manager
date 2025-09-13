@@ -3,7 +3,7 @@
  * Plugin Name: Advanced Log Manager
  * Plugin URI: https://github.com/sadewadee/advanced-log-manager
  * Description: Advanced logging and debugging tools for WordPress: Log Manager, Query Monitor, Htaccess Editor, PHP Config presets.
- * Version: 1.2.27
+ * Version: 1.2.30
  * Author: Morden Team
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ALMGR_VERSION', '1.2.27');
+define('ALMGR_VERSION', '1.2.30');
 define('ALMGR_PLUGIN_FILE', __FILE__);
 define('ALMGR_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ALMGR_PLUGIN_URL', plugin_dir_url(__FILE__));

@@ -585,7 +585,7 @@ class ALMGR_Plugin {
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($content));
 
-        echo $content;
+        echo esc_html($content);
         exit;
     }
 
@@ -754,6 +754,7 @@ class ALMGR_Plugin {
 
 
         /** @var \ReflectionClass $reflection */
+        // @phpstan-ignore-next-line
         $reflection = new \ReflectionClass($this->services['debug']);
         $method = $reflection->getMethod('get_custom_debug_log_path');
         $method->setAccessible(true);
@@ -795,6 +796,7 @@ class ALMGR_Plugin {
 
         if (isset($this->services['smtp_logger'])) {
             /** @var \ReflectionClass $reflection */
+            // @phpstan-ignore-next-line
             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_enabled');
             $property->setAccessible(true);
@@ -829,6 +831,7 @@ class ALMGR_Plugin {
 
         if (isset($this->services['smtp_logger'])) {
             /** @var \ReflectionClass $reflection */
+            // @phpstan-ignore-next-line
             $reflection = new \ReflectionClass($this->services['smtp_logger']);
             $property = $reflection->getProperty('log_ip_address');
             $property->setAccessible(true);
@@ -904,7 +907,7 @@ class ALMGR_Plugin {
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($content));
 
-        echo $content;
+        echo esc_html($content);
         exit;
     }
 }

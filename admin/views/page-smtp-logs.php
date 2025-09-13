@@ -248,7 +248,7 @@ function initializeSmtpLogsPage() {
         if (this.disabled || !<?php echo json_encode($smtp_status['enabled']); ?>) {
             return false;
         }
-        const keepDays = prompt('<?php _e('Keep logs for how many days?', 'advanced-log-manager'); ?>', '30');
+        const keepDays = prompt('<?php esc_html_e('Keep logs for how many days?', 'advanced-log-manager'); ?>', '30');
         if (!keepDays || isNaN(keepDays)) return;
 
         const logsLoading = document.querySelector('#mt-smtp-logs-viewer .almgr-logs-loading');
@@ -275,7 +275,7 @@ function initializeSmtpLogsPage() {
         if (this.disabled || !<?php echo json_encode($smtp_status['enabled']); ?>) {
             return false;
         }
-        const selectedDate = document.getElementById('smtp-date-filter').value || '<?php echo date('dmY'); ?>';
+        const selectedDate = document.getElementById('smtp-date-filter').value || '<?php echo esc_html(date('dmY')); ?>';
         const downloadUrl = ajaxurl + '?action=almgr_download_smtp_logs&date=' + selectedDate + '&nonce=' + almgrToolkit.nonce;
         const link = document.createElement('a');
         link.href = downloadUrl;
@@ -308,7 +308,7 @@ function loadSmtpLogs() {
     // Check if SMTP logging is enabled
     if (!<?php echo json_encode($smtp_status['enabled']); ?>) {
         logsLoading.style.display = 'none';
-        logsContent.innerHTML = '<div class="notice notice-warning"><p><?php _e('SMTP logging is disabled. Enable it in the Debug Management tab to start recording email activity.', 'advanced-log-manager'); ?></p></div>';
+        logsContent.innerHTML = '<div class="notice notice-warning"><p><?php esc_html_e('SMTP logging is disabled. Enable it in the Debug Management tab to start recording email activity.', 'advanced-log-manager'); ?></p></div>';
         logsContent.style.display = 'block';
         return;
     }
@@ -372,71 +372,71 @@ function displaySmtpLogs(logEntries) {
         html += '<div class="smtp-details-content">';
 
         // Recipients
-        html += '<div class="detail-row"><strong><?php _e('To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.to || entry.rcptto)) + '</div>';
+        html += '<div class="detail-row"><strong><?php esc_html_e('To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.to || entry.rcptto)) + '</div>';
 
         // CC/BCC if present
         if (entry.cc && entry.cc.length > 0) {
-            html += '<div class="detail-row"><strong><?php _e('CC:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.cc)) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('CC:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.cc)) + '</div>';
         }
         if (entry.bcc && entry.bcc.length > 0) {
-            html += '<div class="detail-row"><strong><?php _e('BCC:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.bcc)) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('BCC:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(formatSmtpRecipients(entry.bcc)) + '</div>';
         }
 
         // Message ID and Reply-To
         if (entry.msg_id) {
-            html += '<div class="detail-row"><strong><?php _e('Message ID:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.msg_id) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('Message ID:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.msg_id) + '</div>';
         }
         if (entry.reply_to) {
-            html += '<div class="detail-row"><strong><?php _e('Reply-To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.reply_to) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('Reply-To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.reply_to) + '</div>';
         }
 
         // Error message if failed
         if (entry.status === 'failed' && (entry.last_reply || entry.error_message)) {
             const errorMessage = entry.error_message || entry.last_reply;
-            html += '<div class="detail-row error"><strong><?php _e('Error:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(errorMessage) + '</div>';
+            html += '<div class="detail-row error"><strong><?php esc_html_e('Error:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(errorMessage) + '</div>';
         }
 
         // Message size
         if (entry.message_size) {
-            html += '<div class="detail-row"><strong><?php _e('Message Size:', 'advanced-log-manager'); ?></strong> ' + entry.message_size + ' bytes</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('Message Size:', 'advanced-log-manager'); ?></strong> ' + entry.message_size + ' bytes</div>';
         }
 
         // Email content type
         if (entry.email_content_type) {
-            html += '<div class="detail-row"><strong><?php _e('Content Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_content_type) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('Content Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_content_type) + '</div>';
         }
 
         // Originating IP if enabled (updated field names)
         if ((entry.ip_address && entry.ip_address !== 'IP logging disabled') || (entry.x_originating_ip && entry.x_originating_ip !== 'IP logging disabled')) {
             const ipAddress = entry.ip_address || entry.x_originating_ip;
-            html += '<div class="detail-row"><strong><?php _e('Originating IP:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(ipAddress) + '</div>';
+            html += '<div class="detail-row"><strong><?php esc_html_e('Originating IP:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(ipAddress) + '</div>';
         }
 
         // Enhanced caller information
         if (entry.caller_info) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Source:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('Email Source:', 'advanced-log-manager'); ?></strong>';
             html += '<div class="caller-details">';
-            html += '<div><strong><?php _e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.type || 'Unknown') + '</div>';
-            html += '<div><strong><?php _e('Name:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.name || 'Unknown') + '</div>';
+            html += '<div><strong><?php esc_html_e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.type || 'Unknown') + '</div>';
+            html += '<div><strong><?php esc_html_e('Name:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.name || 'Unknown') + '</div>';
             if (entry.caller_info.file) {
-                html += '<div><strong><?php _e('File:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.file) + '</div>';
+                html += '<div><strong><?php esc_html_e('File:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.file) + '</div>';
             }
             if (entry.caller_info.line) {
-                html += '<div><strong><?php _e('Line:', 'advanced-log-manager'); ?></strong> ' + entry.caller_info.line + '</div>';
+                html += '<div><strong><?php esc_html_e('Line:', 'advanced-log-manager'); ?></strong> ' + entry.caller_info.line + '</div>';
             }
             if (entry.caller_info.function) {
-                html += '<div><strong><?php _e('Function:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.function) + '</div>';
+                html += '<div><strong><?php esc_html_e('Function:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.function) + '</div>';
             }
             if (entry.caller_info.class) {
-                html += '<div><strong><?php _e('Class:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.class) + '</div>';
+                html += '<div><strong><?php esc_html_e('Class:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.class) + '</div>';
             }
             // Plugin/Theme specific data
             if (entry.caller_info.plugin_data && entry.caller_info.plugin_data.version) {
-                html += '<div><strong><?php _e('Plugin Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.plugin_data.version) + '</div>';
+                html += '<div><strong><?php esc_html_e('Plugin Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.plugin_data.version) + '</div>';
             }
             if (entry.caller_info.theme_data && entry.caller_info.theme_data.version) {
-                html += '<div><strong><?php _e('Theme Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.theme_data.version) + '</div>';
+                html += '<div><strong><?php esc_html_e('Theme Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.caller_info.theme_data.version) + '</div>';
             }
             html += '</div>';
             html += '</div>';
@@ -445,66 +445,66 @@ function displaySmtpLogs(logEntries) {
         // Enhanced WordPress context
         if (entry.wordpress_context) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('WordPress Context:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('WordPress Context:', 'advanced-log-manager'); ?></strong>';
             html += '<div class="context-details">';
             if (entry.wordpress_context.url) {
-                html += '<div><strong><?php _e('URL:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.url) + '</div>';
+                html += '<div><strong><?php esc_html_e('URL:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.url) + '</div>';
             }
             if (entry.wordpress_context.user_id) {
-                html += '<div><strong><?php _e('User ID:', 'advanced-log-manager'); ?></strong> ' + entry.wordpress_context.user_id + '</div>';
+                html += '<div><strong><?php esc_html_e('User ID:', 'advanced-log-manager'); ?></strong> ' + entry.wordpress_context.user_id + '</div>';
             }
             if (entry.wordpress_context.request_method) {
-                html += '<div><strong><?php _e('Request Method:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.request_method) + '</div>';
+                html += '<div><strong><?php esc_html_e('Request Method:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.request_method) + '</div>';
             }
             if (entry.wordpress_context.is_admin !== undefined) {
-                html += '<div><strong><?php _e('Admin Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_admin ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php esc_html_e('Admin Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_admin ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.is_ajax !== undefined) {
-                html += '<div><strong><?php _e('AJAX Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_ajax ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php esc_html_e('AJAX Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_ajax ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.is_cron !== undefined) {
-                html += '<div><strong><?php _e('Cron Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_cron ? 'Yes' : 'No') + '</div>';
+                html += '<div><strong><?php esc_html_e('Cron Request:', 'advanced-log-manager'); ?></strong> ' + (entry.wordpress_context.is_cron ? 'Yes' : 'No') + '</div>';
             }
             if (entry.wordpress_context.wp_version) {
-                html += '<div><strong><?php _e('WordPress Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.wp_version) + '</div>';
+                html += '<div><strong><?php esc_html_e('WordPress Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.wp_version) + '</div>';
             }
             if (entry.wordpress_context.php_version) {
-                html += '<div><strong><?php _e('PHP Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.php_version) + '</div>';
+                html += '<div><strong><?php esc_html_e('PHP Version:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.php_version) + '</div>';
             }
             if (entry.wordpress_context.memory_usage) {
-                html += '<div><strong><?php _e('Memory Usage:', 'advanced-log-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.memory_usage) + '</div>';
+                html += '<div><strong><?php esc_html_e('Memory Usage:', 'advanced-log-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.memory_usage) + '</div>';
             }
             if (entry.wordpress_context.peak_memory) {
-                html += '<div><strong><?php _e('Peak Memory:', 'advanced-log-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.peak_memory) + '</div>';
+                html += '<div><strong><?php esc_html_e('Peak Memory:', 'advanced-log-manager'); ?></strong> ' + formatBytes(entry.wordpress_context.peak_memory) + '</div>';
             }
             // Legacy caller for backward compatibility
             if (entry.wordpress_context.caller && !entry.caller_info) {
-                html += '<div><strong><?php _e('Source:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.caller) + '</div>';
+                html += '<div><strong><?php esc_html_e('Source:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.wordpress_context.caller) + '</div>';
             }
             html += '</div>';
             html += '</div>';
         }
         if (entry.email_headers || entry.all_headers) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Headers:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('Email Headers:', 'advanced-log-manager'); ?></strong>';
             html += '<div class="email-headers-details">';
 
             // Enhanced headers from email_headers object
             if (entry.email_headers) {
                 if (entry.email_headers.return_path) {
-                    html += '<div><strong><?php _e('Return-Path:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.return_path) + '</div>';
+                    html += '<div><strong><?php esc_html_e('Return-Path:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.return_path) + '</div>';
                 }
                 if (entry.email_headers.message_id) {
-                    html += '<div><strong><?php _e('Message-ID:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.message_id) + '</div>';
+                    html += '<div><strong><?php esc_html_e('Message-ID:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.message_id) + '</div>';
                 }
                 if (entry.email_headers.in_reply_to) {
-                    html += '<div><strong><?php _e('In-Reply-To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.in_reply_to) + '</div>';
+                    html += '<div><strong><?php esc_html_e('In-Reply-To:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.in_reply_to) + '</div>';
                 }
                 if (entry.email_headers.references) {
-                    html += '<div><strong><?php _e('References:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.references) + '</div>';
+                    html += '<div><strong><?php esc_html_e('References:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.references) + '</div>';
                 }
                 if (entry.email_headers.priority) {
-                    html += '<div><strong><?php _e('Priority:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.priority) + '</div>';
+                    html += '<div><strong><?php esc_html_e('Priority:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_headers.priority) + '</div>';
                 }
             }
 
@@ -525,9 +525,9 @@ function displaySmtpLogs(logEntries) {
         if (entry.headers_raw) {
             html += '<div class="detail-section">';
             html += '<div class="headers-toggle-wrapper">';
-            html += '<strong><?php _e('Raw Headers:', 'advanced-log-manager'); ?></strong>';
-            html += '<button type="button" class="button button-small toggle-headers" data-target="headers-' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('Show/Hide', 'advanced-log-manager'); ?></button>';
-            html += '<button type="button" class="button button-small view-full-headers" data-entry-id="' + index + '" style="margin-left: 5px; font-size: 11px;"><?php _e('View Full', 'advanced-log-manager'); ?></button>';
+            html += '<strong><?php esc_html_e('Raw Headers:', 'advanced-log-manager'); ?></strong>';
+            html += '<button type="button" class="button button-small toggle-headers" data-target="headers-' + index + '" style="margin-left: 10px; font-size: 11px;"><?php esc_html_e('Show/Hide', 'advanced-log-manager'); ?></button>';
+            html += '<button type="button" class="button button-small view-full-headers" data-entry-id="' + index + '" style="margin-left: 5px; font-size: 11px;"><?php esc_html_e('View Full', 'advanced-log-manager'); ?></button>';
             html += '</div>';
             html += '<div class="headers-content" id="headers-' + index + '" style="display: none;">';
             html += '<pre class="headers-raw">' + window.almgrUtils.escapeHtml(entry.headers_raw) + '</pre>';
@@ -540,16 +540,16 @@ function displaySmtpLogs(logEntries) {
         if (emailContent) {
             const contentPreview = emailContent.substring(0, 200) + (emailContent.length > 200 ? '...' : '');
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Email Content:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('Email Content:', 'advanced-log-manager'); ?></strong>';
             if (emailContent.length > 200) {
-                html += '<button type="button" class="button button-small view-full-content" data-entry-id="' + index + '" style="margin-left: 10px; font-size: 11px;"><?php _e('View Full Content', 'advanced-log-manager'); ?></button>';
+                html += '<button type="button" class="button button-small view-full-content" data-entry-id="' + index + '" style="margin-left: 10px; font-size: 11px;"><?php esc_html_e('View Full Content', 'advanced-log-manager'); ?></button>';
             }
             // Show content type if available
             if (entry.email_content_type) {
-                html += '<div style="margin-top: 5px; font-size: 12px; color: #666;"><strong><?php _e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_content_type) + '</div>';
+                html += '<div style="margin-top: 5px; font-size: 12px; color: #666;"><strong><?php esc_html_e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(entry.email_content_type) + '</div>';
             }
             if (entry.email_content_html !== undefined) {
-                html += '<div style="margin-top: 3px; font-size: 12px; color: #666;"><strong><?php _e('Format:', 'advanced-log-manager'); ?></strong> ' + (entry.email_content_html ? 'HTML' : 'Plain Text') + '</div>';
+                html += '<div style="margin-top: 3px; font-size: 12px; color: #666;"><strong><?php esc_html_e('Format:', 'advanced-log-manager'); ?></strong> ' + (entry.email_content_html ? 'HTML' : 'Plain Text') + '</div>';
             }
             html += '<div class="message-preview">' + window.almgrUtils.escapeHtml(contentPreview) + '</div>';
             html += '</div>';
@@ -558,17 +558,17 @@ function displaySmtpLogs(logEntries) {
         // Email attachments (enhanced)
         if (entry.email_attachments && entry.email_attachments.length > 0) {
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Attachments:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('Attachments:', 'advanced-log-manager'); ?></strong>';
             html += '<div class="attachments-list">';
             entry.email_attachments.forEach(function(attachment) {
                 html += '<div class="attachment-item">';
                 if (typeof attachment === 'object') {
-                    html += '<div><strong><?php _e('File:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(attachment.file_name || 'Unknown') + '</div>';
+                    html += '<div><strong><?php esc_html_e('File:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(attachment.file_name || 'Unknown') + '</div>';
                     if (attachment.file_size) {
-                        html += '<div><strong><?php _e('Size:', 'advanced-log-manager'); ?></strong> ' + formatBytes(attachment.file_size) + '</div>';
+                        html += '<div><strong><?php esc_html_e('Size:', 'advanced-log-manager'); ?></strong> ' + formatBytes(attachment.file_size) + '</div>';
                     }
                     if (attachment.mime_type) {
-                        html += '<div><strong><?php _e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(attachment.mime_type) + '</div>';
+                        html += '<div><strong><?php esc_html_e('Type:', 'advanced-log-manager'); ?></strong> ' + window.almgrUtils.escapeHtml(attachment.mime_type) + '</div>';
                     }
                 } else {
                     html += window.almgrUtils.escapeHtml(attachment);
@@ -580,7 +580,7 @@ function displaySmtpLogs(logEntries) {
         } else if (entry.attachments && entry.attachments.length > 0) {
             // Fallback for legacy attachment format
             html += '<div class="detail-section">';
-            html += '<strong><?php _e('Attachments:', 'advanced-log-manager'); ?></strong>';
+            html += '<strong><?php esc_html_e('Attachments:', 'advanced-log-manager'); ?></strong>';
             html += '<div class="attachments-list">';
             entry.attachments.forEach(function(attachment) {
                 html += '<div class="attachment-item">' + window.almgrUtils.escapeHtml(attachment) + '</div>';
@@ -642,10 +642,10 @@ function displaySmtpLogs(logEntries) {
 
             if (target.style.display === 'none' || target.style.display === '') {
                 target.style.display = 'block';
-                this.textContent = '<?php _e('Hide', 'advanced-log-manager'); ?>';
+                this.textContent = '<?php esc_html_e('Hide', 'advanced-log-manager'); ?>';
             } else {
                 target.style.display = 'none';
-                this.textContent = '<?php _e('Show', 'advanced-log-manager'); ?>';
+                this.textContent = '<?php esc_html_e('Show', 'advanced-log-manager'); ?>';
             }
         });
     });
@@ -695,7 +695,7 @@ function showFullContentModal(content, subject, type = 'message') {
         existingModal.remove();
     }
 
-    const title = type === 'headers' ? '<?php _e('Full Email Headers', 'advanced-log-manager'); ?>' : '<?php _e('Full Email Content', 'advanced-log-manager'); ?>';
+    const title = type === 'headers' ? '<?php esc_html_e('Full Email Headers', 'advanced-log-manager'); ?>' : '<?php esc_html_e('Full Email Content', 'advanced-log-manager'); ?>';
 
     // Create modal
     const modal = document.createElement('div');
@@ -706,13 +706,13 @@ function showFullContentModal(content, subject, type = 'message') {
         <div class="smtp-modal">
             <div class="smtp-modal-header">
                 <h3>${title}: ${window.almgrUtils.escapeHtml(subject)}</h3>
-                <button type="button" class="smtp-modal-close" aria-label="<?php _e('Close', 'advanced-log-manager'); ?>">&times;</button>
+                <button type="button" class="smtp-modal-close" aria-label="<?php esc_attr_e('Close', 'advanced-log-manager'); ?>">&times;</button>
             </div>
             <div class="smtp-modal-body">
                 <textarea readonly class="smtp-full-content-textarea">${window.almgrUtils.escapeHtml(content)}</textarea>
             </div>
             <div class="smtp-modal-footer">
-                <button type="button" class="button" id="copy-content-btn"><?php _e('Copy to Clipboard', 'advanced-log-manager'); ?></button>
+                <button type="button" class="button" id="copy-content-btn"><?php esc_html_e('Copy to Clipboard', 'advanced-log-manager'); ?></button>
             </div>
         </div>
     `;
@@ -735,9 +735,9 @@ function showFullContentModal(content, subject, type = 'message') {
 
         try {
             document.execCommand('copy');
-            this.textContent = '<?php _e('Copied!', 'advanced-log-manager'); ?>';
+            this.textContent = '<?php esc_html_e('Copied!', 'advanced-log-manager'); ?>';
             setTimeout(() => {
-                this.textContent = '<?php _e('Copy to Clipboard', 'advanced-log-manager'); ?>';
+                this.textContent = '<?php esc_html_e('Copy to Clipboard', 'advanced-log-manager'); ?>';
             }, 2000);
         } catch (err) {
             console.error('Failed to copy content:', err);
