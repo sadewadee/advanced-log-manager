@@ -10,3 +10,5 @@ test-*.php
 .trae/
 *.sh
 .dist/
+dist/
+release/
