@@ -14,7 +14,13 @@ The Debug Log Manager provides a user-friendly interface to view, filter, and ma
 
 *   **Real-time Log Viewing:** Observe log entries as they are generated, offering immediate insights into your site's activity and helping you catch issues as they occur.
 *   **Advanced Filtering:** Easily filter logs by type (e.g., `Notice`, `Warning`, `Error`, `Deprecated`) to quickly pinpoint relevant entries and focus on critical issues. This saves time by narrowing down vast log data.
+*   **Time-based Filtering:** Filter logs by time ranges (Last Hour, 24 Hours, 7 Days, 30 Days) to focus on recent activity or specific time periods.
+*   **File Path Filtering:** Filter logs by specific file paths to focus on issues from particular plugins, themes, or WordPress core files.
 *   **Intelligent Search:** Search for specific keywords, phrases, or patterns within the logs to find particular events, error messages, or user actions. Supports regular expressions for more precise searches.
+*   **Case-sensitive Search:** Option to perform case-sensitive searches for exact matching.
+*   **Search Highlighting:** Visual highlighting of search terms in log entries for easy identification.
+*   **Real-time Filter Counter:** Live count of matching log entries as you type or adjust filters.
+*   **Export Filtered Results:** Export only the filtered log entries instead of the entire log file, making it easier to share specific issues.
 *   **Log Clearing:** Clear the debug log file with a single click, which is invaluable for starting fresh during debugging sessions, freeing up disk space, or ensuring only recent issues are visible.
 *   **Download & Export:** Download the entire log file for offline analysis, archival purposes, or to share securely with support teams or developers.
 *   **Log File Rotation:** Automatically manages log file size and rotation to prevent single log files from becoming excessively large and impacting server performance.
@@ -53,15 +59,21 @@ The .htaccess Editor provides a convenient and safe way to edit your website's `
 
 **Key Capabilities & Benefits:**
 
-*   **Direct & Secure Editing:** Modify the `.htaccess` file without needing FTP access or cPanel, making quick and necessary changes much easier and faster. The editor often includes syntax highlighting for better readability.
-*   **Automatic Backup and Restore:** Automatically creates a backup of your `.htaccess` file before saving any changes. This crucial safety feature allows you to easily restore a previous version if a new configuration causes issues, preventing site downtime and ensuring site stability.
+*   **Advanced Code Editor:** Professional CodeMirror editor with syntax highlighting, line numbers, code folding, and bracket matching for Apache configuration files. Makes editing complex .htaccess rules much easier and less error-prone.
+*   **Auto-Save Functionality:** Intelligent auto-save feature with debouncing to prevent excessive saves while you type. Includes a toggle to enable/disable auto-save and visual indicators showing save status.
+*   **Direct & Secure Editing:** Modify the `.htaccess` file without needing FTP access or cPanel, making quick and necessary changes much easier and faster.
+*   **Automatic Backup and Restore:** Automatically creates up to 3 backups of your `.htaccess` file before saving any changes. This crucial safety feature allows you to easily restore a previous version if a new configuration causes issues, preventing site downtime and ensuring site stability.
+*   **One-Click Restore:** Simple interface to restore from any of the saved backups with timestamp information.
 *   **Pre-defined Common Snippets:** Access a library of pre-defined code snippets for common tasks, such as:
     *   **WordPress Rewrite Rules:** Standard rules for permalinks.
     *   **Browser Caching:** Improve site speed by instructing browsers to cache static assets.
     *   **GZIP Compression:** Reduce file sizes for faster delivery.
     *   **Security Headers:** Enhance site security by adding HTTP security headers.
     *   **Blocking IP Addresses:** Prevent malicious traffic.
-*   **Syntax Validation (Optional):** Some editors may offer basic syntax validation to help prevent common errors that could lead to a 500 Internal Server Error.
+*   **Duplicate Prevention:** Smart detection prevents adding the same snippet multiple times.
+*   **Site Accessibility Testing:** Automatic testing after changes to ensure your site remains accessible, with automatic rollback if issues are detected.
+*   **Status Indicators:** Real-time status updates showing editor state, auto-save status, and unsaved changes warnings.
+*   **503 Error Protection:** Enhanced validation to prevent service unavailable errors from malformed .htaccess rules.
 
 ### 2.2. PHP Config Presets
 
@@ -92,6 +104,13 @@ The Frontend Performance Bar displays a discreet, non-intrusive bar on the front
 **Key Capabilities & Benefits:**
 
 *   **High-Level Overview:** Provides a quick summary of critical performance metrics, including total database queries, overall page load time, and current memory usage. This helps you quickly grasp the general health and efficiency of the page.
+*   **Tabbed Interface:** Modern tabbed sidebar interface with dedicated tabs for different types of monitoring:
+    *   **Overview Tab:** General performance summary and key metrics
+    *   **Queries Tab:** Detailed database query analysis with execution times and caller information
+    *   **Scripts Tab:** JavaScript file analysis with load times, file sizes, and source locations
+    *   **Styles Tab:** CSS file analysis with load times, file sizes, and source locations
+    *   **Images Tab:** Image optimization check with dimensions, file sizes, and host filtering
+    *   **Hooks Tab:** WordPress hooks and actions execution tracking
 *   **Detailed Query Analysis:** Lists all database queries executed during the page load, along with their individual execution times and the components that triggered them. This is indispensable for identifying slow or inefficient queries that significantly impact performance.
 *   **Script & Style Optimization Insights:** Shows all JavaScript and CSS files loaded on the page, their respective sizes, and their load order. This helps in optimizing script and stylesheet delivery, identifying render-blocking resources, and detecting unused code.
 *   **Image Optimization Check:** Lists all images loaded on the page, their dimensions, and file sizes. Essential for identifying unoptimized images that can drastically slow down page load times and consume excessive bandwidth.

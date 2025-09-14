@@ -2,27 +2,42 @@
 
 This guide provides comprehensive information for developers who wish to extend or customize the Advanced Log Manager plugin. By utilizing the provided action and filter hooks, you can integrate custom functionalities, modify plugin behavior, and tailor it to specific project requirements.
 
-## Action Hooks
+## 🎯 Action Hooks untuk Developer
 
-Action hooks allow you to execute custom code at specific points during the plugin's lifecycle or when certain events occur. This is useful for adding new features, displaying additional information, or triggering external processes without directly modifying the plugin's core files.
+Action hooks memungkinkan Anda mengeksekusi kode custom pada titik spesifik selama lifecycle plugin atau ketika event tertentu terjadi. Berguna untuk menambah fitur baru, menampilkan informasi tambahan, atau trigger proses eksternal tanpa modifikasi core files plugin.
 
-### `alm_log_viewer_before`
+### `alm_log_viewer_before` - Hook Sebelum Log Viewer
 
-**Description:** This action hook is triggered immediately before the log viewer interface is rendered on the WordPress admin page. It provides an opportunity to inject custom content or perform actions before any log data or viewer elements are displayed.
+**Deskripsi:** Hook ini trigger tepat sebelum interface log viewer di-render di halaman admin WordPress. Memberikan kesempatan untuk inject custom content atau lakukan actions sebelum log data atau viewer elements ditampilkan.
 
-**When to Use:**
-*   To display a custom message or warning to users before they see the logs.
-*   To add a custom header or introductory section to the log viewer page.
-*   To enqueue custom scripts or styles that need to be loaded before the log viewer.
-*   To perform any preliminary checks or data processing that should occur before the log display.
+**Kapan Menggunakan:**
+*   Menampilkan pesan custom atau warning sebelum user melihat logs
+*   Menambah custom header atau introductory section
+*   Enqueue custom scripts/styles yang perlu load sebelum log viewer
+*   Lakukan preliminary checks atau data processing
 
-**Example:**
+**Contoh Praktis:**
 
 ```php
+// Menampilkan notice sebelum log viewer
 add_action('alm_log_viewer_before', function() {
-    echo '<div class="notice notice-info is-dismissible"><p><strong>Important:</strong> Review logs carefully for critical issues.</p></div>';
-    // You could also enqueue a script here:
-    // wp_enqueue_script('my-custom-script', plugins_url('my-custom-script.js', __FILE__), array('jquery'), '1.0', true);
+    echo '<div class="notice notice-info is-dismissible">
+        <p><strong>🔍 Debug Mode Active:</strong> Logs direkam untuk troubleshooting.</p>
+    </div>';
+});
+
+// Enqueue custom CSS untuk styling log viewer
+add_action('alm_log_viewer_before', function() {
+    wp_enqueue_style('my-custom-log-styles',
+        plugins_url('css/custom-log-styles.css', __FILE__),
+        array(), '1.0.0'
+    );
+});
+
+// Log aktivitas user sebelum melihat logs
+add_action('alm_log_viewer_before', function() {
+    $user = wp_get_current_user();
+    error_log("User {$user->user_login} mengakses log viewer pada " . current_time('mysql'));
 });
 ```
 

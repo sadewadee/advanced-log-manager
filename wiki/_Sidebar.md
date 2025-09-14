@@ -1,5 +1,7 @@
 - [Home](Home)
   *Ringkasan dan fitur utama Advanced Log Manager.*
+- [Quick Start](Quick-Start)
+  *Panduan 5 menit setup untuk pemula.*
 - [Features](Features)
   *Penjelasan mendalam tentang semua fitur yang ditawarkan plugin.*
 - [Installation](Installation)

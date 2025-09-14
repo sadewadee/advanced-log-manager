@@ -2,28 +2,38 @@
 
 This comprehensive guide provides detailed solutions to common problems you might encounter while using the Advanced Log Manager plugin. We aim to help you quickly diagnose and resolve issues to ensure a smooth experience.
 
-## 1. Invalid Debug Constant Error
+## 🛠️ Panduan Troubleshooting Lengkap
 
-**Problem:** You encounter an error message indicating an "invalid debug constant," and some or all of the plugin's features are not functioning as expected.
+Dokumen ini memberikan solusi lengkap untuk masalah umum yang mungkin Anda temui saat menggunakan Advanced Log Manager. Kami fokus pada step-by-step solutions yang mudah diikuti.
 
-**Cause:** This error typically arises when the `WP_DEBUG` constant is either not defined or explicitly set to `false` within your WordPress `wp-config.php` file. Advanced Log Manager relies on proper debug constant configuration to operate correctly, especially for logging and monitoring functionalities.
+## 1. 🔧 Debug Mode Tidak Aktif / Invalid Debug Constant
 
-**Solution:**
+**Gejala:** Error "invalid debug constant" atau fitur plugin tidak berfungsi dengan baik.
 
-1.  **Access `wp-config.php`:** Connect to your website's server using an FTP client or your hosting provider's file manager. Navigate to the root directory of your WordPress installation and locate the `wp-config.php` file.
-2.  **Edit `wp-config.php`:** Open the `wp-config.php` file in a text editor.
-3.  **Enable WordPress Debug Mode:** Ensure that `WP_DEBUG` is set to `true`. If it's not present, add the following lines *before* the line `/* That's all, stop editing! Happy publishing. */`:
-    ```php
-    define( 'WP_DEBUG', true );
-    define( 'WP_DEBUG_LOG', true );
-    define( 'WP_DEBUG_DISPLAY', false );
-    @ini_set( 'display_errors', 0 );
-    ```
-    *   `WP_DEBUG`: Enables the debug mode.
-    *   `WP_DEBUG_LOG`: Ensures that all errors are saved to a `debug.log` file within the `wp-content` directory.
-    *   `WP_DEBUG_DISPLAY`: Set to `false` to prevent debug messages from appearing on your live site, which can be a security risk and negatively impact user experience.
-4.  **Save Changes:** Save the `wp-config.php` file and upload it back to your server, overwriting the old one.
-5.  **Verify:** Refresh your WordPress admin dashboard and check if the error persists and if the plugin's features are now working correctly.
+**Penyebab:** Constant `WP_DEBUG` tidak didefinisikan atau diset `false` di `wp-config.php`.
+
+**Solusi Mudah (Recommended):**
+1. **Gunakan Dashboard Plugin:**
+   - Pergi ke **Tools** → **Advance Log Manager**
+   - Klik tombol **"Enable Debug Mode"**
+   - Plugin akan auto-konfigurasi semua constants
+
+2. **Verifikasi:**
+   - Status Debug Mode berubah ke **"Active"**
+   - Indicator hijau muncul di Error Logging
+
+**Solusi Manual (Advanced):**
+1. **Akses `wp-config.php`** via FTP atau File Manager hosting
+2. **Edit file** dan tambahkan sebelum `/* That's all, stop editing! Happy publishing. */`:
+   ```php
+   define( 'WP_DEBUG', true );
+   define( 'WP_DEBUG_LOG', true );
+   define( 'WP_DEBUG_DISPLAY', false );
+   ```
+3. **Save dan upload** kembali file
+4. **Test** dengan refresh dashboard
+
+**Tips:** Selalu backup `wp-config.php` sebelum edit manual!
 
 ## 2. Debug Mode Toggle Button Not Clickable
 
