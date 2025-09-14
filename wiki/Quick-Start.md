@@ -1,125 +1,124 @@
-# 🚀 Quick Start Guide - Advanced Log Manager
+# Quick Start
 
-Panduan 5 menit untuk memulai menggunakan Advanced Log Manager. Cocok untuk pemula yang baru pertama kali menggunakan plugin debugging WordPress.
+5-minute guide to get started with Advanced Log Manager. Suitable for beginners who are new to WordPress debugging plugins.
 
-## 📋 Checklist Setup Awal
+## Initial Setup Checklist
 
-- [ ] Plugin sudah terinstall dan aktif
-- [ ] Dashboard plugin dapat diakses
-- [ ] Debug mode berhasil diaktifkan
-- [ ] Performance bar terlihat di frontend
-- [ ] Logs berhasil direkam
+- [ ] Plugin is installed and active
+- [ ] Plugin dashboard is accessible
+- [ ] Debug mode is successfully enabled
+- [ ] Performance bar is visible on frontend
+- [ ] Logs are successfully recorded
 
-## ⚡ Langkah demi Langkah Setup
+## Step-by-Step Setup
 
-### Langkah 1: Aktivasi Plugin
-1. Login ke WordPress Admin Dashboard
-2. Pergi ke **Plugins** → **Installed Plugins**
-3. Cari "Advanced Log Manager"
-4. Klik **Activate** jika belum aktif
+### Step 1: Plugin Activation
+1. Login to WordPress Admin Dashboard
+2. Go to Plugins → Installed Plugins
+3. Find "Advanced Log Manager"
+4. Click Activate if not already active
 
-### Langkah 2: Akses Dashboard Utama
-1. Di menu sebelah kiri, klik **Tools** → **Advance Log Manager**
-2. Anda akan melihat dashboard dengan status sistem:
+### Step 2: Access Main Dashboard
+1. In the left menu, click Tools → Advance Log Manager
+2. You will see the dashboard with system status:
    - Debug Mode status
    - Performance Monitor status
    - Log file sizes
    - System overview
 
-### Langkah 3: Aktifkan Debug Mode
-1. Di dashboard utama, klik tombol besar **"Enable Debug Mode"**
-2. Plugin akan otomatis:
-   - Mengaktifkan `WP_DEBUG` di `wp-config.php`
-   - Mengaktifkan `WP_DEBUG_LOG`
-   - Memulai pencatatan error ke `debug.log`
-3. Status akan berubah menjadi "Active"
+### Step 3: Enable Debug Mode
+1. In the main dashboard, find the large "Enable Debug Mode" button
+2. Click the button
+3. The plugin will automatically:
+   - Enable WP_DEBUG in wp-config.php
+   - Enable WP_DEBUG_LOG
+   - Start recording errors to debug.log
+4. Status will change to "Active"
 
-### Langkah 4: Test Performance Monitoring
-1. Klik tab **"Performance Monitor"**
-2. Aktifkan toggle **"Enable Performance Bar"**
-3. Buka tab baru browser dan kunjungi halaman frontend situs Anda
-4. Login sebagai administrator
-5. Anda akan melihat bar hitam di bagian bawah halaman dengan metrics:
+### Step 4: Test Performance Monitoring
+1. Click the "Performance Monitor" tab
+2. Enable the "Enable Performance Bar" toggle
+3. Open a new browser tab and visit your site's frontend page
+4. Login as an administrator
+5. You will see a black bar at the bottom of the page with metrics:
    - Load time
    - Number of queries
    - Memory usage
 
-### Langkah 5: Generate dan Lihat Logs Pertama
-1. Lakukan beberapa aksi di situs untuk generate logs:
-   - Kunjungi halaman yang tidak ada (404 error)
-   - Coba login dengan password salah
-   - Akses halaman admin
-2. Kembali ke dashboard Advanced Log Manager
-3. Klik card **"Debug Log"** atau **"Query Log"**
-4. Anda akan melihat entries log terbaru
+### Step 5: Generate and View First Logs
+1. Perform some actions on the site to generate logs:
+   - Visit a non-existent page (404 error)
+   - Try logging in with wrong password
+   - Access admin pages
+2. Return to Advanced Log Manager dashboard
+3. Click the "Debug Log" or "Query Log" card
+4. You will see the latest log entries
 
-## 🔍 Memahami Interface Dashboard
+## Understanding Dashboard Interface
 
 ### System Overview Cards
-- **Debug Mode**: Status aktif/tidak debug logging
-- **Performance Monitor**: Status monitoring performa
-- **Debug Log**: Ukuran file log dan status
-- **Query Log**: Status query logging
-- **SMTP Logs**: Status email logging
+- Debug Mode: Active/inactive debug logging status
+- Performance Monitor: Performance monitoring status
+- Debug Log: Log file size and status
+- Query Log: Query logging status
+- SMTP Logs: Email logging status
 
 ### Feature Cards
-- **Debug Management**: Kontrol settings debug
-- **Performance Monitor**: Konfigurasi monitoring
-- **.htaccess Editor**: Edit file server config
-- **PHP Config**: Preset konfigurasi PHP
+- Debug Management: Debug settings control
+- Performance Monitor: Monitoring configuration
+- .htaccess Editor: Server config file editing
+- PHP Config: PHP configuration presets
 
-## 🛠️ Troubleshooting Setup
+## Setup Troubleshooting
 
-### Jika Debug Mode Tidak Aktif
-- Pastikan `wp-config.php` writable
-- Cek permission file system
-- Coba manual edit `wp-config.php`
+### If Debug Mode Does Not Activate
+- Ensure wp-config.php is writable
+- Check file system permissions
+- Try manual wp-config.php editing
 
-### Jika Performance Bar Tidak Muncul
-- Pastikan login sebagai administrator
+### If Performance Bar Does Not Appear
+- Ensure you are logged in as administrator
 - Clear browser cache
-- Cek console browser untuk error JavaScript
+- Check browser console for JavaScript errors
 
-### Jika Logs Tidak Terekam
-- Verifikasi debug mode aktif
-- Cek permission folder `wp-content`
-- Pastikan ada aktivitas yang generate logs
+### If Logs Are Not Recorded
+- Verify debug mode is active
+- Check wp-content folder permissions
+- Ensure there are activities that generate logs
 
-## 📖 Tips untuk Pemula
+## Tips for Beginners
 
-### Mode Development vs Production
-- **Development**: Aktifkan semua debug features
-- **Staging**: Test dengan debug mode aktif
-- **Production**: Minimal logging, monitor performa
+### Development vs Production Mode
+- Development: Enable all debug features
+- Staging: Test with debug mode active
+- Production: Minimal logging, monitor performance
 
-### Backup Sebelum Perubahan
-- Selalu backup `wp-config.php` sebelum edit
-- Backup `.htaccess` sebelum menggunakan editor
-- Test perubahan di staging environment dulu
+### Backup Before Changes
+- Always backup wp-config.php before editing
+- Backup .htaccess before using editor
+- Test changes in staging environment first
 
-### Monitoring Berkala
-- Cek logs setiap hari di development
+### Regular Monitoring
+- Check logs daily in development
 - Monitor performance metrics weekly
-- Review error logs sebelum deploy
+- Review error logs before deployment
 
-## 🎯 Next Steps
+## Next Steps
 
-Setelah setup dasar selesai:
+After basic setup is complete:
 
-1. **Pelajari Filtering Logs**: Gunakan filter untuk menemukan error spesifik
-2. **Konfigurasi .htaccess**: Tambahkan security headers dan caching rules
-3. **Setup PHP Presets**: Pilih preset sesuai environment
-4. **Monitor Performance**: Gunakan insights untuk optimasi
-5. **Baca Dokumentasi Lengkap**: Explore wiki untuk fitur advanced
+1. Learn Log Filtering: Use filters to find specific errors
+2. Configure .htaccess: Add security headers and caching rules
+3. Setup PHP Presets: Choose preset according to environment
+4. Monitor Performance: Use insights for optimization
+5. Read Complete Documentation: Explore wiki for advanced features
 
-## 🆘 Butuh Bantuan?
+## Need Help?
 
-Jika mengalami masalah:
-1. Cek **Troubleshooting Guide** di wiki
-2. Pastikan versi plugin terbaru
-3. Cek forum support atau documentation
-4. Contact developer jika issue persist
+If you encounter issues:
+1. Check Troubleshooting Guide in wiki
+2. Ensure plugin is latest version
+3. Check support forum or documentation
+4. Contact developer if issues persist
 
----
-
-**Selamat!** Anda sudah berhasil setup Advanced Log Manager. Plugin ini akan membantu Anda maintain WordPress site yang lebih sehat dan performant.
+Congratulations! You have successfully set up Advanced Log Manager. This plugin will help you maintain a healthier and more performant WordPress site.

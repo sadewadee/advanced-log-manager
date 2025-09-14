@@ -1,135 +1,120 @@
 # Welcome to the Advanced Log Manager Wiki!
 
-Advanced Log Manager adalah plugin WordPress komprehensif yang dirancang untuk memberikan kemampuan logging, debugging, dan monitoring yang powerful untuk developer dan administrator situs. Wiki ini berfungsi sebagai sumber daya utama Anda untuk dokumentasi detail tentang semua fitur, memastikan Anda dapat memanfaatkan plugin ini secara maksimal.
+Advanced Log Manager is a comprehensive WordPress plugin designed to provide powerful logging, debugging, and monitoring capabilities for developers and site administrators. This wiki serves as your primary resource for detailed documentation on all features, ensuring you can leverage the plugin to its full potential.
 
-## Apa itu Advanced Log Manager?
+## What is Advanced Log Manager?
 
-Dalam environment WordPress yang dinamis, memahami apa yang terjadi di balik layar sangat penting untuk menjaga website yang sehat, performant, dan aman. Advanced Log Manager menyederhanakan ini dengan menyentralisasi berbagai tools diagnostic ke dalam satu interface yang intuitif. Dari melacak error PHP hingga memonitor query database dan mengelola konfigurasi server, plugin ini memberdayakan Anda untuk dengan cepat mengidentifikasi dan menyelesaikan masalah, mengoptimalkan performa, dan meningkatkan stabilitas situs secara keseluruhan.
+In the dynamic WordPress environment, understanding what's happening behind the scenes is crucial for maintaining a healthy, performant, and secure website. Advanced Log Manager simplifies this by centralizing various diagnostic tools into one intuitive interface. From tracking PHP errors to monitoring database queries and managing server configurations, this plugin empowers you to quickly identify and resolve issues, optimize performance, and enhance overall site stability.
 
-## 🚀 Quick Start untuk Pemula (5 Menit Setup)
+## Quick Start for Beginners (5 Minute Setup)
 
-Jika Anda baru menggunakan Advanced Log Manager, ikuti langkah-langkah sederhana ini untuk memulai:
+If you're new to Advanced Log Manager, follow these simple steps to get started:
 
-### 1. **Aktivasi Plugin**
-   - Masuk ke WordPress Admin → **Plugins** → **Installed Plugins**
-   - Cari "Advanced Log Manager" dan klik **Activate**
+### 1. Plugin Activation
+   - Go to WordPress Admin → Plugins → Installed Plugins
+   - Find "Advanced Log Manager" and click Activate
 
-### 2. **Akses Dashboard**
-   - Pergi ke **Tools** → **Advance Log Manager**
-   - Anda akan melihat dashboard utama dengan status sistem
+### 2. Access Dashboard
+   - Go to Tools → Advance Log Manager
+   - You will see the main dashboard with system status
 
-### 3. **Setup Dasar Debugging**
-   - Klik tombol **"Enable Debug Mode"** di dashboard
-   - Plugin akan mengaktifkan logging otomatis
-   - Debug logs akan tersimpan di `wp-content/debug.log`
+### 3. Basic Debugging Setup
+   - Click the "Enable Debug Mode" button in the dashboard
+   - The plugin will automatically enable logging
+   - Debug logs will be saved to wp-content/debug.log
 
-### 4. **Test Performance Monitoring**
-   - Di tab **Performance Monitor**, aktifkan **"Enable Performance Bar"**
-   - Kunjungi halaman frontend situs Anda (sebagai admin)
-   - Anda akan melihat bar performa di bagian bawah halaman
+### 4. Test Performance Monitoring
+   - In the Performance Monitor tab, enable "Enable Performance Bar"
+   - Visit your site's frontend page (as an admin)
+   - You will see the performance bar at the bottom of the page
 
-### 5. **Cek Logs Pertama**
-   - Kembali ke dashboard → Klik card **"Debug Log"**
-   - Jika ada error, akan muncul di log viewer
-   - Gunakan filter untuk mencari masalah spesifik
+### 5. Check First Logs
+   - Return to dashboard → Click the "Debug Log" card
+   - If there are errors, they will appear in the log viewer
+   - Use filters to search for specific issues
 
-**Tips untuk Pemula:**
-- ✅ Selalu backup situs sebelum mengubah konfigurasi
-- ✅ Mulai dengan debug mode aktif di development environment
-- ✅ Gunakan performance bar untuk memonitor loading time
-- ❌ Jangan aktifkan debug mode di production tanpa monitoring
+Tips for Beginners:
+- Always backup your site before making configuration changes
+- Start with debug mode active in development environment
+- Use performance bar to monitor loading time
+- Do not enable debug mode in production without monitoring
 
-## 📋 Fitur Utama Overview
+## Core Features Overview
 
-Berikut adalah overview singkat dari fungsionalitas inti yang ditawarkan Advanced Log Manager. Setiap fitur dirancang untuk memberikan kontrol granular dan insights jelas ke berbagai aspek instalasi WordPress Anda.
+Here is a brief overview of the core functionalities offered by Advanced Log Manager. Each feature is designed to provide granular control and clear insights into different aspects of your WordPress installation.
 
-### 1. 🔍 Log Manager (Debug Logs)
+### 1. Log Manager (Debug Logs)
 
-**Fungsi:** Hub sentral untuk melihat, memfilter, dan mengelola semua debug logs WordPress. Mengkonsolidasikan berbagai tipe log (PHP errors, warnings, notices) ke dalam format yang readable.
+Function: Central hub for viewing, filtering, and managing all WordPress debug logs. Consolidates various log types (PHP errors, warnings, notices) into a readable format.
 
-**Manfaat untuk Pemula:**
-*   **Debugging Cepat:** Identifikasi error PHP, warning, dan notice yang mungkin mempengaruhi fungsionalitas situs
-*   **View Terpusat:** Akses semua log relevan dari satu interface user-friendly di dashboard WordPress
-*   **Filter & Search:** Navigasi melalui file log besar menggunakan filtering dan search capabilities
-*   **Pembersihan Log:** Clear log lama untuk menghemat space server
+Benefits for Beginners:
+*   Fast Debugging: Identify PHP errors, warnings, and notices that might affect site functionality
+*   Centralized View: Access all relevant logs from one user-friendly interface in the WordPress dashboard
+*   Filter & Search: Navigate through large log files using filtering and search capabilities
+*   Log Cleaning: Clear old logs to save server space
 
-### 2. 🗄️ Query Monitor
+### 2. Query Monitor
 
-**Fungsi:** Memberikan insights mendalam tentang interaksi database WordPress. Melacak setiap query yang dijalankan di situs Anda.
+Function: Provides deep insights into WordPress database interactions. Tracks every query executed on your site.
 
-**Manfaat untuk Pemula:**
-*   **Optimasi Performa:** Identifikasi dan optimalkan slow database queries
-*   **Analisis Resource:** Pahami plugin/theme mana yang generate database calls berlebihan
-*   **Debug Database Issues:** Pinpoint error atau behavior unexpected terkait database
-*   **Detailed Analysis:** View execution time, caller functions, dan affected rows
+Benefits for Beginners:
+*   Performance Optimization: Identify and optimize slow database queries
+*   Resource Analysis: Understand which plugins/themes generate excessive database calls
+*   Debug Database Issues: Pinpoint errors or unexpected behavior related to database
+*   Detailed Analysis: View execution time, caller functions, and affected rows
 
-### 3. 📧 SMTP Logs
+### 3. SMTP Logs
 
-**Fungsi:** Mencatat semua email keluar dari situs WordPress Anda, memberikan history komprehensif tentang delivery attempts, status, dan errors.
+Function: Records all outgoing emails from your WordPress site, providing comprehensive history of delivery attempts, status, and errors.
 
-**Manfaat untuk Pemula:**
-*   **Email Deliverability:** Verifikasi apakah email terkirim dengan sukses
-*   **Troubleshooting:** Diagnose masalah email seperti masuk spam atau gagal kirim
-*   **Audit Trail:** Maintain record semua email keluar untuk compliance
-*   **Info Detail:** View sender, recipient, subject, dan status setiap email
+Benefits for Beginners:
+*   Email Deliverability: Verify if emails are sent successfully
+*   Troubleshooting: Diagnose email problems like spam or failed delivery
+*   Audit Trail: Maintain record of all outgoing emails for compliance
+*   Detailed Information: View sender, recipient, subject, and status of each email
 
-### 4. ⚙️ .htaccess Editor
+### 4. .htaccess Editor
 
-**Fungsi:** Cara aman dan convenient untuk memodifikasi file `.htaccess` situs langsung dari dashboard WordPress.
+Function: Safe and convenient way to modify your site's .htaccess file directly from the WordPress dashboard.
 
-**Manfaat untuk Pemula:**
-*   **Safe Editing:** Edit file `.htaccess` tanpa perlu FTP access
-*   **Auto Backup:** Backup otomatis sebelum perubahan
-*   **Security & Performance:** Implement rules keamanan dan optimasi performa
-*   **Error Prevention:** Built-in safeguards mencegah common errors
+Benefits for Beginners:
+*   Safe Editing: Edit .htaccess file without FTP access
+*   Auto Backup: Automatic backup before changes
+*   Security & Performance: Implement security rules and performance optimizations
+*   Error Prevention: Built-in safeguards prevent common errors
 
-### 5. 🔧 PHP Config Presets
+### 5. PHP Config Presets
 
-**Fungsi:** Terapkan preset konfigurasi PHP yang umum untuk environment berbeda (debugging, development, production).
+Function: Apply common PHP configuration presets for different environments (debugging, development, production).
 
-**Manfaat untuk Pemula:**
-*   **Switching Mudah:** Ganti konfigurasi PHP dengan beberapa klik
-*   **Debugging Streamlined:** Enable error reporting verbose untuk debugging
-*   **Performance Optimized:** Apply settings untuk production sites
-*   **Environment Management:** Switch antara development dan production
+Benefits for Beginners:
+*   Easy Switching: Change PHP configuration with a few clicks
+*   Streamlined Debugging: Enable verbose error reporting for debugging
+*   Performance Optimized: Apply settings for production sites
+*   Environment Management: Switch between development and production
 
-### 6. 📊 Performance Monitoring
+### 6. Performance Monitoring
 
-**Fungsi:** Berikan real-time insights tentang performance metrics situs, sering ditampilkan di admin bar WordPress.
+Function: Provide real-time insights into site performance metrics, often displayed in the WordPress admin bar.
 
-**Manfaat untuk Pemula:**
-*   **Real-time Insights:** Monitor metrics kritis langsung dari admin bar
-*   **Issue Detection:** Spot performance degradation atau resource usage spikes
-*   **Bottleneck Identification:** Pahami area mana yang mempengaruhi site speed
-*   **UX Improvement:** Ensure website yang fast dan responsive
+Benefits for Beginners:
+*   Real-time Insights: Monitor critical metrics directly from admin bar
+*   Issue Detection: Spot performance degradation or resource usage spikes
+*   Bottleneck Identification: Understand which areas affect site speed
+*   UX Improvement: Ensure fast and responsive website
 
-## 🆚 Perbandingan Fitur
+## FAQ for Beginners
 
-| Fitur | Free Version | Pro Version |
-|-------|-------------|-------------|
-| Debug Log Viewer | ✅ | ✅ |
-| Query Monitor | ✅ | ✅ |
-| SMTP Logs | ✅ | ✅ |
-| .htaccess Editor | ✅ | ✅ |
-| PHP Config Presets | ✅ | ✅ |
-| Performance Bar | ✅ | ✅ |
-| Advanced Filtering | ✅ | ✅ |
-| Export Logs | ✅ | ✅ |
-| Priority Support | ❌ | ✅ |
-| Custom Presets | ❌ | ✅ |
+Q: Is this plugin safe for production sites?
+A: Yes, this plugin has multiple safety features like auto-backup and validation. However, always test in staging environment first.
 
-## ❓ FAQ untuk Pemula
+Q: How do I read debug logs?
+A: Logs contain timestamp, error level, and error message. Use filters to focus on specific errors.
 
-**Q: Apakah plugin ini aman untuk production site?**
-A: Ya, plugin ini memiliki multiple safety features seperti auto-backup dan validation. Namun, selalu test di staging environment dulu.
+Q: Does the performance bar slow down my site?
+A: It only appears for admin users and has minimal impact. Disable if needed.
 
-**Q: Bagaimana cara membaca debug logs?**
-A: Logs berisi timestamp, error level, dan pesan error. Gunakan filter untuk fokus pada error tertentu.
+Q: What if I'm confused about configuration?
+A: Start with "Basic" preset and enable debug mode. Read troubleshooting guide for common issues.
 
-**Q: Performance bar memperlambat situs saya?**
-A: Hanya terlihat untuk admin users dan impact minimal. Disable jika diperlukan.
-
-**Q: Bagaimana jika saya bingung dengan konfigurasi?**
-A: Mulai dengan preset "Basic" dan aktifkan debug mode. Baca troubleshooting guide untuk masalah umum.
-
-Advanced Log Manager adalah solusi all-in-one untuk WordPress site yang robust dan well-maintained. Explore bagian wiki lainnya untuk guides lebih mendalam dan tutorials tentang setiap fitur.
+Advanced Log Manager is an all-in-one solution for robust and well-maintained WordPress sites. Explore other wiki sections for more in-depth guides and tutorials on each feature.

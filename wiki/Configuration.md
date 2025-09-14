@@ -2,34 +2,34 @@
 
 This guide will walk you through the essential configuration steps for the Advanced Log Manager plugin, ensuring you can effectively monitor and manage your WordPress site. We'll cover enabling debug mode, understanding the basic debug settings, and managing PHP configuration presets.
 
-## 1. 🚀 Setup Mudah dengan Dashboard (Recommended untuk Pemula)
+## 1. Easy Dashboard Setup (Recommended for Beginners)
 
-**Advanced Log Manager** menyediakan cara termudah untuk mengaktifkan debug mode tanpa perlu edit file manual!
+Advanced Log Manager provides the easiest way to enable debug mode without manual file editing!
 
 ### Step-by-Step Guide:
 
-1.  **Akses Dashboard Plugin:**
-    *   Login ke WordPress Admin Dashboard
-    *   Klik **Tools** → **Advance Log Manager**
+1.  Access Plugin Dashboard:
+    *   Login to WordPress Admin Dashboard
+    *   Click Tools → Advance Log Manager
 
-2.  **Aktifkan Debug Mode:**
-    *   Di dashboard utama, cari tombol besar **"Enable Debug Mode"**
-    *   Klik tombol tersebut
-    *   Plugin akan otomatis mengkonfigurasi `wp-config.php`
+2.  Enable Debug Mode:
+    *   In the main dashboard, find the large "Enable Debug Mode" button
+    *   Click the button
+    *   Plugin will automatically configure wp-config.php
 
-3.  **Verifikasi Setup:**
-    *   Status **Debug Mode** akan berubah menjadi **"Active"**
-    *   Anda akan melihat indikator hijau di **"Error Logging"** dan **"Error Display"**
+3.  Verify Setup:
+    *   Debug Mode status will change to "Active"
+    *   You will see green indicators in "Error Logging" and "Error Display"
 
-**Keuntungan metode ini:**
-- ✅ Tidak perlu FTP access
-- ✅ Auto-backup `wp-config.php`
-- ✅ Konfigurasi otomatis semua constants
-- ✅ Safe rollback jika ada masalah
+Advantages of this method:
+- No FTP access required
+- Auto-backup wp-config.php
+- Automatic configuration of all constants
+- Safe rollback if issues occur
 
-## 2. ⚙️ Manual Configuration (Advanced Users)
+## 2. Manual Configuration (Advanced Users)
 
-Jika Anda lebih suka kontrol manual atau memiliki server khusus, ikuti langkah-langkah berikut.
+If you prefer manual control or have a special server setup, follow these steps.
 
 ### Step-by-Step Guide to Edit `wp-config.php`:
 
@@ -56,25 +56,25 @@ Jika Anda lebih suka kontrol manual atau memiliki server khusus, ikuti langkah-l
 4.  **Save the file:**
     *   Save changes and re-upload `wp-config.php` if using an FTP client.
 
-## 3. 📍 Mengakses Plugin Settings
+## 3. Accessing Plugin Settings
 
-Setelah install dan aktivasi, settings Advanced Log Manager dapat diakses dari dashboard WordPress admin.
+After installation and activation, Advanced Log Manager settings can be accessed from the WordPress admin dashboard.
 
 ### Step-by-Step Guide:
 
-1.  **Log in to your WordPress Admin Dashboard:**
-    *   Navigate to `yourwebsite.com/wp-admin` and enter your credentials.
+1.  Log in to your WordPress Admin Dashboard:
+    *   Navigate to yourwebsite.com/wp-admin and enter your credentials.
 
-2.  **Locate the Plugin Menu Item:**
-    *   In the left-hand sidebar, find **"Advanced Log Manager"** under **Tools** menu.
+2.  Locate the Plugin Menu Item:
+    *   In the left-hand sidebar, find "Advanced Log Manager" under Tools menu.
 
-3.  **Explore the Interface:**
-    *   Dashboard utama menampilkan overview sistem dengan cards:
-        *   **Debug Mode Status** - Active/Inactive indicator
-        *   **Performance Monitor** - Monitoring status
-        *   **Debug Log** - File size dan status logging
-        *   **Query Log** - Database query monitoring
-        *   **SMTP Logs** - Email logging status
+3.  Explore the Interface:
+    *   Main dashboard displays system overview with cards:
+        *   Debug Mode Status - Active/Inactive indicator
+        *   Performance Monitor - Monitoring status
+        *   Debug Log - File size and logging status
+        *   Query Log - Database query monitoring
+        *   SMTP Logs - Email logging status
 
 ## 3. Understanding the Settings Panel
 

@@ -2,38 +2,38 @@
 
 This comprehensive guide provides detailed solutions to common problems you might encounter while using the Advanced Log Manager plugin. We aim to help you quickly diagnose and resolve issues to ensure a smooth experience.
 
-## 🛠️ Panduan Troubleshooting Lengkap
+## Comprehensive Troubleshooting Guide
 
-Dokumen ini memberikan solusi lengkap untuk masalah umum yang mungkin Anda temui saat menggunakan Advanced Log Manager. Kami fokus pada step-by-step solutions yang mudah diikuti.
+This document provides complete solutions to common problems you might encounter while using Advanced Log Manager. We focus on step-by-step solutions that are easy to follow.
 
-## 1. 🔧 Debug Mode Tidak Aktif / Invalid Debug Constant
+## 1. Debug Mode Not Active / Invalid Debug Constant
 
-**Gejala:** Error "invalid debug constant" atau fitur plugin tidak berfungsi dengan baik.
+Symptoms: "invalid debug constant" error or plugin features not working properly.
 
-**Penyebab:** Constant `WP_DEBUG` tidak didefinisikan atau diset `false` di `wp-config.php`.
+Cause: WP_DEBUG constant not defined or set to false in wp-config.php.
 
-**Solusi Mudah (Recommended):**
-1. **Gunakan Dashboard Plugin:**
-   - Pergi ke **Tools** → **Advance Log Manager**
-   - Klik tombol **"Enable Debug Mode"**
-   - Plugin akan auto-konfigurasi semua constants
+Easy Solution (Recommended):
+1. Use Plugin Dashboard:
+   - Go to Tools → Advance Log Manager
+   - Click the "Enable Debug Mode" button
+   - Plugin will auto-configure all constants
 
-2. **Verifikasi:**
-   - Status Debug Mode berubah ke **"Active"**
-   - Indicator hijau muncul di Error Logging
+2. Verify:
+   - Debug Mode status changes to "Active"
+   - Green indicators appear in Error Logging
 
-**Solusi Manual (Advanced):**
-1. **Akses `wp-config.php`** via FTP atau File Manager hosting
-2. **Edit file** dan tambahkan sebelum `/* That's all, stop editing! Happy publishing. */`:
+Manual Solution (Advanced):
+1. Access wp-config.php via FTP or hosting File Manager
+2. Edit file and add before /* That's all, stop editing! Happy publishing. */:
    ```php
    define( 'WP_DEBUG', true );
    define( 'WP_DEBUG_LOG', true );
    define( 'WP_DEBUG_DISPLAY', false );
    ```
-3. **Save dan upload** kembali file
-4. **Test** dengan refresh dashboard
+3. Save and upload file back
+4. Test by refreshing dashboard
 
-**Tips:** Selalu backup `wp-config.php` sebelum edit manual!
+Tip: Always backup wp-config.php before manual editing!
 
 ## 2. Debug Mode Toggle Button Not Clickable
 
