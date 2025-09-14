@@ -5,6 +5,57 @@ All notable changes to Advanced Log Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.32] - 2025-01-15
+
+### Changed
+- **Performance Panel UI Redesign:** Complete overhaul of Performance Panel interface
+  - Replaced card-based layout with clean table design using WordPress admin dashboard color scheme
+  - Updated all performance tables (queries, scripts, styles, images, hooks) with consistent styling
+  - Implemented proper content structure with header and body sections for better organization
+  - Enhanced visual hierarchy with WordPress native colors (#0073aa, #005177, #f1f1f1)
+  - Improved table readability with alternating row colors and hover effects
+  - Added status indicators with WordPress-standard color coding (success, warning, error, info)
+
+### Added
+- **Responsive Design:** Enhanced mobile compatibility for Performance Panel
+  - Added responsive breakpoints for tablets (1024px), mobile (768px), and small mobile (480px)
+  - Implemented horizontal scrolling for tables on smaller screens
+  - Optimized tab layout and spacing for touch interfaces
+  - Adjusted font sizes and padding for better mobile readability
+
+### Documentation
+- **Design Documentation:** Created comprehensive Performance Panel redesign specification
+  - Added detailed UI/UX guidelines in docs/performance-panel-redesign.md
+  - Documented color scheme, layout structure, and responsive design principles
+  - Included accessibility improvements and implementation strategy
+
+## [1.2.31] - 2024-12-19
+
+### Fixed
+- **Front-end Click Handlers:** Resolved missing event listeners for performance bar toggle buttons
+  - Fixed "toggle-domain-panel" button functionality in performance-tabs.js
+  - Fixed "toggle-bootstrap-details" button functionality in performance-tabs.js
+  - Fixed real-time monitoring toggle buttons for all performance tabs
+- **JavaScript Initialization:** Added proper initialization for window.mtHookMonitor object
+- **Localization Support:** Added wp_localize_script calls for almgr-performance-tabs in class-plugin.php
+  - Added mtQueryMonitorL10n with translation strings for front-end
+  - Added mtHookMonitor with AJAX URL, nonce, and initial state data
+
+### Changed
+- **Event Handling:** Migrated from inline onclick handlers to proper addEventListener approach
+- **Code Organization:** Consolidated event listeners in DOMContentLoaded for better performance
+- **Security Enhancement:** Implemented nonce verification for AJAX requests in front-end
+
+### Documentation
+- **Updated future-update.md:** Marked completed features and updated implementation status
+  - Updated "Fitur Yang Sudah Diimplementasikan" section with detailed progress
+  - Marked UI/UX improvements and performance monitoring features as completed
+  - Updated status of partially completed features with remaining tasks
+
+### Known Issues
+- **Linter Errors:** ReflectionClass type errors persist in class-plugin.php (lines 806, 852, 891)
+  - These errors do not affect functionality but should be addressed in future updates
+
 ## [1.2.30] - 2025-01-15
 
 ### Security

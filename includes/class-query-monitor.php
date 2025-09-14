@@ -811,30 +811,42 @@ class ALMGR_Perf_Monitor {
                     </div>
                     <!-- Queries Tab -->
                     <div id="almgr-perf-tab-queries" class="almgr-perf-tab-content">
-                        <h4><?php
-                        /* translators: %d: number of database queries */
-                        printf(__('Database Queries (%d)', 'advanced-log-manager'), $tab_query_count);
-                        ?></h4>
-                        <div class="almgr-queries-container">
-                            <?php $this->render_queries_tab(); ?>
+                        <div class="almgr-perf-content-header">
+                            <h4><?php
+                            /* translators: %d: number of database queries */
+                            printf(__('Database Queries (%d)', 'advanced-log-manager'), $tab_query_count);
+                            ?></h4>
+                        </div>
+                        <div class="almgr-perf-content-body">
+                            <div class="almgr-queries-container">
+                                <?php $this->render_queries_tab(); ?>
+                            </div>
                         </div>
                     </div>
                     <!-- Scripts Tab -->
                     <div id="almgr-perf-tab-scripts" class="almgr-perf-tab-content">
-                        <h4><?php
-                        esc_html_e('Loaded Scripts', 'advanced-log-manager');
-                        ?></h4>
-                        <div class="almgr-scripts-container">
-                            <?php $this->render_scripts_tab(); ?>
+                        <div class="almgr-perf-content-header">
+                            <h4><?php
+                            esc_html_e('Loaded Scripts', 'advanced-log-manager');
+                            ?></h4>
+                        </div>
+                        <div class="almgr-perf-content-body">
+                            <div class="almgr-scripts-container">
+                                <?php $this->render_scripts_tab(); ?>
+                            </div>
                         </div>
                     </div>
                     <!-- Styles Tab -->
                     <div id="almgr-perf-tab-styles" class="almgr-perf-tab-content">
-                        <h4><?php
-                        esc_html_e('Loaded Styles', 'advanced-log-manager');
-                        ?></h4>
-                        <div class="almgr-styles-container">
-                            <?php $this->render_styles_tab(); ?>
+                        <div class="almgr-perf-content-header">
+                            <h4><?php
+                            esc_html_e('Loaded Styles', 'advanced-log-manager');
+                            ?></h4>
+                        </div>
+                        <div class="almgr-perf-content-body">
+                            <div class="almgr-styles-container">
+                                <?php $this->render_styles_tab(); ?>
+                            </div>
                         </div>
                     </div>
                     <!-- Images Tab -->
@@ -1066,7 +1078,7 @@ class ALMGR_Perf_Monitor {
         echo '<label>Search: <input type="search" id="almgr-queries-search" placeholder="' . __('Search SQL...', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table almgr-queries-table">';
+        echo '<table class="almgr-perf-table almgr-queries-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1106,6 +1118,7 @@ class ALMGR_Perf_Monitor {
             echo '</button>';
             echo '</div>';
             echo '</td>';
+            // Parse and format the caller stack with proper HTML structure
             $formatted_stack = $this->format_enhanced_caller_stack($stack);
             echo '<td class="query-caller">' . $formatted_stack . '</td>';
             echo '</tr>';
@@ -1113,6 +1126,193 @@ class ALMGR_Perf_Monitor {
 
         echo '</tbody>';
         echo '</table>';
+    }
+
+    /**
+     * Format enhanced caller stack with improved readability and ordering
+     *
+     * @param string $stack Raw comma-separated caller stack
+     * @return string Formatted HTML with proper hierarchy and structure
+     */
+    private function format_enhanced_caller_stack($stack) {
+        if (empty($stack)) {
+            return '<div class="enhanced-caller-stack"><div class="no-caller">No caller information available</div></div>';
+        }
+
+        // Parse and clean the stack trace
+        $parsed_stack = $this->parse_caller_stack($stack);
+        
+        if (empty($parsed_stack)) {
+            return '<div class="enhanced-caller-stack"><div class="raw-stack">' . esc_html($stack) . '</div></div>';
+        }
+
+        // Build hierarchical HTML structure
+        $html_parts = array();
+        $stack_count = count($parsed_stack);
+        
+        foreach ($parsed_stack as $index => $item) {
+            $depth_class = 'depth-' . min($index, 5); // Limit visual depth to 5 levels
+            $position_class = $index === 0 ? 'first' : ($index === $stack_count - 1 ? 'last' : 'middle');
+            
+            $html_parts[] = sprintf(
+                '<div class="stack-frame %s %s" data-depth="%d">%s</div>',
+                esc_attr($depth_class),
+                esc_attr($position_class),
+                $index,
+                $this->format_stack_item($item, $index)
+            );
+        }
+
+        return '<div class="enhanced-caller-stack">' . implode('', $html_parts) . '</div>';
+    }
+
+    /**
+     * Parse caller stack into structured array
+     *
+     * @param string $stack Raw caller stack
+     * @return array Parsed stack items
+     */
+    private function parse_caller_stack($stack) {
+        $items = array();
+        
+        // Handle different stack formats
+        if (strpos($stack, '\n') !== false) {
+            // Multi-line format
+            $lines = explode('\n', $stack);
+        } else {
+            // Comma-separated format
+            $lines = explode(',', $stack);
+        }
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            $parsed_item = $this->parse_stack_line($line);
+            if ($parsed_item) {
+                $items[] = $parsed_item;
+            }
+        }
+        
+        // Reverse to show call order (most recent first)
+        return array_reverse($items);
+    }
+    
+    /**
+     * Parse individual stack line
+     *
+     * @param string $line Stack trace line
+     * @return array|null Parsed item or null if invalid
+     */
+    private function parse_stack_line($line) {
+        $line = trim($line);
+        
+        // Skip empty lines and file includes in parentheses
+        if (empty($line) || preg_match("/^\(['\"](.+?)['\"]?\)$/", $line)) {
+            return null;
+        }
+        
+        $item = array(
+            'raw' => $line,
+            'function' => '',
+            'file' => '',
+            'line' => '',
+            'type' => 'unknown'
+        );
+        
+        // Parse file:line format (e.g., "wp-includes/plugin.php:465")
+        if (preg_match('/^(.+?):(\d+)$/', $line, $matches)) {
+            $item['file'] = $matches[1];
+            $item['line'] = $matches[2];
+            $item['type'] = 'file';
+        }
+        // Parse function calls with parentheses
+        elseif (preg_match('/^([^(]+)\(\)$/', $line, $matches)) {
+            $item['function'] = $matches[1];
+            $item['type'] = $this->classify_function_type($matches[1]);
+        }
+        // Parse class::method format
+        elseif (strpos($line, '::') !== false) {
+            $item['function'] = $line;
+            $item['type'] = 'method';
+        }
+        // Parse hook names and other functions
+        else {
+            $item['function'] = $line;
+            $item['type'] = $this->classify_function_type($line);
+        }
+        
+        return $item;
+    }
+    
+    /**
+     * Classify function type for styling
+     *
+     * @param string $func Function name
+     * @return string Function type
+     */
+    private function classify_function_type($func) {
+        // WordPress core functions
+        if (in_array($func, array('require_once', 'include_once', 'wp_not_installed', 'is_blog_installed', 'wp_load_alloptions'))) {
+            return 'core';
+        }
+        
+        // WordPress hooks
+        if (strpos($func, '_') !== false && (strpos($func, 'wp_') === 0 || strpos($func, 'init') !== false || strpos($func, 'action') !== false || strpos($func, 'filter') !== false)) {
+            return 'hook';
+        }
+        
+        // Class methods
+        if (strpos($func, '::') !== false) {
+            return 'method';
+        }
+        
+        // Plugin/theme functions (contain underscores or namespaces)
+        if (strpos($func, '_') !== false || strpos($func, '\\') !== false) {
+            return 'plugin';
+        }
+        
+        return 'function';
+    }
+    
+    /**
+     * Format individual stack item with enhanced styling
+     *
+     * @param array $item Parsed stack item
+     * @param int $index Stack position
+     * @return string Formatted HTML
+     */
+    private function format_stack_item($item, $index) {
+        $parts = array();
+        
+        // Add stack number
+        $parts[] = '<span class="stack-number">' . ($index + 1) . '.</span>';
+        
+        if ($item['type'] === 'file' && !empty($item['file'])) {
+            // File with line number
+            $file_parts = explode('/', $item['file']);
+            $filename = end($file_parts);
+            $directory = str_replace('/' . $filename, '', $item['file']);
+            
+            $parts[] = '<span class="file-info">';
+            if (!empty($directory)) {
+                $parts[] = '<span class="file-dir">' . esc_html($directory) . '/</span>';
+            }
+            $parts[] = '<span class="file-name">' . esc_html($filename) . '</span>';
+            if (!empty($item['line'])) {
+                $parts[] = '<span class="line-number">:' . esc_html($item['line']) . '</span>';
+            }
+            $parts[] = '</span>';
+        } elseif (!empty($item['function'])) {
+            // Function call
+            $type_class = 'func-' . $item['type'];
+            $parts[] = '<span class="function-call ' . esc_attr($type_class) . '">' . esc_html($item['function']) . '</span>';
+        } else {
+            // Fallback to raw content
+            $parts[] = '<span class="raw-item">' . esc_html($item['raw']) . '</span>';
+        }
+        
+        return implode('', $parts);
     }
 
     /**
@@ -1344,7 +1544,7 @@ class ALMGR_Perf_Monitor {
         echo '<label>Search: <input type="search" id="almgr-scripts-search" placeholder="' . esc_attr__( 'Search handle/source…', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table almgr-scripts-table">';
+        echo '<table class="almgr-perf-table almgr-scripts-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1490,7 +1690,7 @@ class ALMGR_Perf_Monitor {
         echo '<label>Search: <input type="search" id="almgr-styles-search" placeholder="' . esc_attr__( 'Search handle/source…', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table almgr-styles-table">';
+        echo '<table class="almgr-perf-table almgr-styles-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1621,89 +1821,9 @@ class ALMGR_Perf_Monitor {
         return 'OTHER';
     }
 
-    /**
-     * Format enhanced caller stack using ALMGR_Debug functionality
-     */
-    private function format_enhanced_caller_stack($stack) {
-        if (empty($stack)) {
-            return '<span style="color: #999; font-style: italic;">No stack trace available</span>';
-        }
 
-        // Get or create ALMGR_Debug instance to use enhanced formatting
-        if (class_exists('ALMGR_Debug')) {
-            static $debug_instance = null;
-            if ($debug_instance === null) {
-                $debug_instance = new ALMGR_Debug();
-            }
 
-            // Use reflection to access the private format_caller_stack method
-            try {
-                if (class_exists('\ReflectionClass')) {
-                    /** @var \ReflectionClass $reflection */
-                    // @phpstan-ignore-next-line
-                    /** @phpstan-ignore-next-line */
-                    $reflection = new \ReflectionClass($debug_instance);
-                    $method = $reflection->getMethod('format_caller_stack');
-                    $method->setAccessible(true);
-                    $formatted = $method->invokeArgs($debug_instance, array($stack));
 
-                    // Convert ANSI color codes to HTML styling for web display
-                    $formatted = $this->convert_ansi_to_html($formatted);
-
-                    // Add HTML wrapper for query monitor display
-                    return '<div class="enhanced-caller-stack">' . $formatted . '</div>';
-                }
-                // Fallback if ReflectionClass not available
-                return esc_html($stack);
-            } catch (\Exception $e) {
-                // Fallback to simple display if reflection fails
-                return esc_html($stack);
-            }
-        }
-
-        // Fallback to simple display if ALMGR_Debug is not available
-        return esc_html($stack);
-    }
-
-    /**
-     * Convert ANSI color codes to HTML styling
-     */
-    private function convert_ansi_to_html($text) {
-        // Handle both escaped strings (\033) and actual ANSI escape codes (\x1b[)
-        $html = $text;
-
-        // First pass: Handle literal \033 strings (from string output)
-        $html = preg_replace('/\\\\033\[1;32m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry plugin">$1</span>', $html);
-        $html = preg_replace('/\\\\033\[0;37m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry core">$1</span>', $html);
-        $html = preg_replace('/\\\\033\[1;34m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry user">$1</span>', $html);
-        $html = preg_replace('/\\\\033\[0;33m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry hook">$1</span>', $html);
-        $html = preg_replace('/\\\\033\[0;90m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry bootstrap">$1</span>', $html);
-        $html = preg_replace('/\\\\033\[0;36m([^\\\\]+?)\\\\033\[0m/', '<span class="caller-entry vendor">$1</span>', $html);
-
-        // Second pass: Handle actual ANSI escape codes (\x1b[)
-        $html = preg_replace('/\x1b\[1;32m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry plugin">$1</span>', $html);
-        $html = preg_replace('/\x1b\[0;37m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry core">$1</span>', $html);
-        $html = preg_replace('/\x1b\[1;34m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry user">$1</span>', $html);
-        $html = preg_replace('/\x1b\[0;33m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry hook">$1</span>', $html);
-        $html = preg_replace('/\x1b\[0;90m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry bootstrap">$1</span>', $html);
-        $html = preg_replace('/\x1b\[0;36m([^\x1b]+?)\x1b\[0m/', '<span class="caller-entry vendor">$1</span>', $html);
-
-        // Clean up any remaining ANSI codes
-        $html = preg_replace('/\\\\033\[[0-9;]*m/', '', $html);
-        $html = preg_replace('/\x1b\[[0-9;]*m/', '', $html);
-
-        // Remove any remaining decorative borders
-        $html = preg_replace('/={50,}/', '', $html);
-        $html = preg_replace('/^\s*CALLER STACK TRACE\s*$/m', '', $html);
-        $html = trim($html);
-
-        // Handle entry prefixes and file info
-        $html = preg_replace('/^(>>>\s+)(\d+\.)/m', '<span class="entry-prefix">$1</span>$2', $html);
-        $html = preg_replace('/(\[ENTRY\])/', '<span class="entry-tag">$1</span>', $html);
-        $html = preg_replace('/(-> [^\n]+)/', '<span class="file-info">$1</span>', $html);
-
-        return $html;
-    }
 
     /**
      * Render images tab content
@@ -1728,7 +1848,7 @@ class ALMGR_Perf_Monitor {
         echo '<label>Search: <input type="search" id="almgr-images-search" placeholder="' . __('Search Alt/Source...', 'advanced-log-manager') . '"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table almgr-images-table">';
+        echo '<table class="almgr-perf-table almgr-images-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No</th>';
@@ -1872,7 +1992,7 @@ class ALMGR_Perf_Monitor {
         echo '<label>Min Priority: <input type="number" id="almgr-hooks-min-priority" min="0" step="1" placeholder="0"></label>';
         echo '</div>';
 
-        echo '<table class="query-log-table almgr-hooks-table">';
+        echo '<table class="almgr-perf-table almgr-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>No.</th>';
@@ -2029,17 +2149,7 @@ class ALMGR_Perf_Monitor {
         echo '</div>';
         echo '</div>';
 
-        echo '<div id="almgr-realtime-summary" class="almgr-realtime-summary">';
-        echo '<h5>Strategic Hook Monitoring Summary</h5>';
-        echo '<ul>';
-        echo '<li>Strategic hooks captured: <span id="hooks-count">' . count($this->real_time_hooks) . '</span> (vs. 21,000+ with "all" hook)</li>';
-        echo '<li>Monitoring approach: <span class="status-good">Selective strategic hooks</span> (Performance optimized)</li>';
-        echo '<li>Memory usage: <span id="memory-usage">' . $this->almgr_format_bytes(memory_get_usage()) . '</span></li>';
-        echo '<li>Resource impact: <span class="status-good">Minimal</span> (No "all action" warning)</li>';
-        echo '</ul>';
-        echo '</div>';
-
-        echo '<table class="query-log-table almgr-realtime-hooks-table" id="realtime-hooks-table">';
+        echo '<table class="almgr-perf-table almgr-realtime-hooks-table" id="realtime-hooks-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="order">Order</th>';
@@ -2110,7 +2220,7 @@ class ALMGR_Perf_Monitor {
             return;
         }
 
-        echo '<table class="query-log-table almgr-bootstrap-table">';
+        echo '<table class="almgr-perf-table almgr-bootstrap-table">';
         echo '<thead>';
         echo '<tr>';
         echo '<th class="sortable" data-column="phase">Bootstrap Phase</th>';
@@ -2199,7 +2309,7 @@ class ALMGR_Perf_Monitor {
             echo '<div class="domain-panel-content" id="domain-content-' . esc_attr($domain) . '" style="display:none;">';
 
             // Domain-specific hook analysis
-            echo '<table class="query-log-table domain-hooks-table">';
+            echo '<table class="almgr-perf-table domain-hooks-table">';
             echo '<thead><tr><th class="sortable" data-column="hook">Hook</th><th class="sortable" data-column="time">Execution Time</th><th class="sortable" data-column="phase">Phase</th><th class="sortable" data-column="context">Context</th></tr></thead>';
             echo '<tbody>';
 
@@ -2269,7 +2379,7 @@ class ALMGR_Perf_Monitor {
 
             echo '<div class="env-category-section">';
             echo '<h5 class="env-category-title">' . esc_html($category_title) . '</h5>';
-            echo '<table class="query-log-table env-category-table">';
+            echo '<table class="almgr-perf-table env-category-table">';
             echo '<thead>';
             echo '<tr>';
             echo '<th>Setting</th>';
@@ -2546,24 +2656,35 @@ class ALMGR_Perf_Monitor {
 
         // Get current user and group information
         $user_info = 'Unknown';
-        if (extension_loaded('posix')) {
-            // @phpstan-ignore-next-line
-            if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
-                // @phpstan-ignore-next-line
-                /** @phpstan-ignore-next-line */
-                $user_data = function_exists('posix_getpwuid') ? @posix_getpwuid(@posix_geteuid()) : null;
-                if ($user_data && is_array($user_data) && isset($user_data['name'])) {
-                    $user_info = $user_data['name'];
-                    // @phpstan-ignore-next-line
-                    if (function_exists('posix_getgrgid') && function_exists('posix_getegid')) {
-                        // @phpstan-ignore-next-line
-                        /** @phpstan-ignore-next-line */
-                        $group_data = function_exists('posix_getgrgid') ? @posix_getgrgid(@posix_getegid()) : null;
-                        if ($group_data && is_array($group_data) && isset($group_data['name'])) {
-                            $user_info .= ':' . $group_data['name'];
+        
+        // @phpstan-ignore-next-line - POSIX functions are checked for existence
+        if (extension_loaded('posix') && function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
+            try {
+                // @phpstan-ignore-next-line - Function existence verified above
+                $uid = @posix_geteuid();
+                if ($uid !== false) {
+                    // @phpstan-ignore-next-line - Function existence verified above
+                    $user_data = @posix_getpwuid($uid);
+                    if ($user_data && is_array($user_data) && isset($user_data['name'])) {
+                        $user_info = $user_data['name'];
+                        
+                        if (function_exists('posix_getgrgid') && function_exists('posix_getegid')) {
+                            // @phpstan-ignore-next-line - Function existence verified above
+                            $gid = @posix_getegid();
+                            if ($gid !== false) {
+                                // @phpstan-ignore-next-line - Function existence verified above
+                                $group_data = @posix_getgrgid($gid);
+                                if ($group_data && is_array($group_data) && isset($group_data['name'])) {
+                                    $user_info .= ':' . $group_data['name'];
+                                }
+                            }
                         }
                     }
                 }
+            } catch (Exception $e) {
+                // Fallback to get_current_user if POSIX functions fail
+                $user_info = function_exists('get_current_user') ? get_current_user() : 'Unknown';
+                $user_info = $user_info ?: 'Unknown';
             }
         } elseif (function_exists('get_current_user')) {
             $user_info = get_current_user();

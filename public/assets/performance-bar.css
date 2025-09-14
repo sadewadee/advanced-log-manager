@@ -7,21 +7,28 @@
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    background: #23282d !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: #1d2327 !important;
     z-index: 99999 !important;
-    border-top: 2px solid #0073aa !important;
+    border-top: 3px solid #0073aa !important;
     font-size: 13px !important;
     line-height: 1.4 !important;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+    transition: all 0.3s ease !important;
+    border-bottom: 1px solid #c3c4c7 !important;
 }
 
 .almgr-perf-container {
     display: flex !important;
     align-items: center !important;
-    padding: 8px 20px !important;
+    padding: 10px 20px !important;
     max-width: 1200px !important;
     margin: 0 auto !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f1f1 !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
 }
 
 .almgr-perf-item {
@@ -29,6 +36,10 @@
     align-items: center !important;
     margin-right: 20px !important;
     white-space: nowrap !important;
+    color: #646970 !important;
+    transition: color 0.2s ease !important;
+    padding: 4px 8px !important;
+    border-radius: 3px !important;
 }
 
 .almgr-perf-icon {
@@ -72,15 +83,18 @@
 }
 
 .almgr-perf-details {
-    background: #32373c !important;
-    border-top: 1px solid #464b50 !important;
+    background: #ffffff !important;
+    border-top: 1px solid #c3c4c7 !important;
+    border-bottom: 1px solid #c3c4c7 !important;
     padding: 0 !important;
     position: fixed;
     z-index: 99999;
     bottom: 0;
     width: 100%;
-    max-height: 50vh;
+    max-height: 70vh;
     height: 100%;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1) !important;
+    color: #1d2327 !important;
 }
 
 #wp-admin-bar-almgr-performance-monitor .ab-icon {
@@ -91,22 +105,42 @@
     margin: 0 auto !important;
     display: flex !important;
     height: 100%;
+    background: #ffffff !important;
+    border-radius: 0 !important;
 }
 
 /* Sidebar Tabs */
 .almgr-perf-sidebar {
     width: 25% !important;
     background: #23282d !important;
-    border-right: 1px solid #464b50 !important;
+    color: #fff !important;
+    border-right: 1px solid #c3c4c7 !important;
     flex-shrink: 0 !important;
     overflow-y: scroll;
     overflow-x: hidden;
 }
 
+.almgr-perf-sidebar h4,
+.almgr-perf-sidebar h5,
+.almgr-perf-sidebar p,
+.almgr-perf-sidebar span,
+.almgr-perf-sidebar div {
+    color: #fff !important;
+}
+
+.almgr-perf-sidebar a {
+    color: #72aee6 !important;
+}
+
+.almgr-perf-sidebar a:hover {
+    color: #9ec2e6 !important;
+}
+
 .almgr-perf-tabs {
     list-style: none !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 8px 0 !important;
+    background: #23282d !important;
 }
 
 .almgr-perf-tab {
@@ -114,21 +148,28 @@
     align-items: center !important;
     padding: 12px 15px !important;
     cursor: pointer !important;
-    border-bottom: 1px solid #464b50 !important;
-    color: #a0a5aa !important;
-    transition: all 0.3s ease !important;
+    border-bottom: 1px solid #dcdcde !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
     font-size: 13px !important;
+    border-left: 3px solid transparent !important;
+    background: #23282d !important;
+    font-weight: 400 !important;
 }
 
 .almgr-perf-tab:hover {
-    background: #2c3338 !important;
-    color: #ffffff !important;
+    background: #32373c !important;
+    color: #72aee6 !important;
+    border-left-color: #0073aa !important;
 }
 
 .almgr-perf-tab.active {
     background: #0073aa !important;
     color: #ffffff !important;
-    border-left: 3px solid #00a0d2 !important;
+    font-weight: 600 !important;
+    border-left-color: #0073aa !important;
+    box-shadow: inset 0 0 0 1px #c3c4c7 !important;
 }
 
 .almgr-perf-tab .dashicons {
@@ -141,7 +182,7 @@
 /* Content Area */
 .almgr-perf-content {
     flex: 1 !important;
-    padding: 15px 20px !important;
+    padding: 0 !important;
     overflow-y: auto !important;
 }
 
@@ -162,25 +203,51 @@
 
 .almgr-perf-table {
     width: 100% !important;
-    max-width: 400px !important;
     border-collapse: collapse !important;
+    background: #ffffff !important;
+    border: 1px solid #c3c4c7 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 .almgr-perf-table td {
-    padding: 3px 0 !important;
-    color: #a0a5aa !important;
+    padding: 12px 15px !important;
+    border-bottom: 1px solid #f0f0f1 !important;
+    border-right: 1px solid #f0f0f1 !important;
+    color: #1d2327 !important;
+    background: #fff !important;
     font-size: 13px !important;
-    border: none !important;
+    vertical-align: top !important;
 }
 
-.almgr-perf-table td:first-child {
-    width: 40% !important;
-    font-weight: 500 !important;
+.almgr-perf-table th {
+    background: #f6f7f7 !important;
+    color: #1d2327 !important;
+    font-weight: 600 !important;
+    padding: 12px 15px !important;
+    text-align: left !important;
+    border-bottom: 1px solid #c3c4c7 !important;
+    border-right: 1px solid #c3c4c7 !important;
+    font-size: 13px !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 
 .almgr-perf-table td:last-child {
-    color: #ffffff !important;
+    color: #1d2327 !important;
     font-weight: 600 !important;
+}
+
+.almgr-perf-table tr:nth-child(even) {
+    background: #f9f9f9 !important;
+}
+
+.almgr-perf-table tr:hover {
+    background: #f0f6fc !important;
+}
+
+.almgr-perf-table tbody tr:hover {
+    background: #f0f6fc !important;
 }
 
 /* Performance status colors */
@@ -378,19 +445,6 @@ body.admin-bar.almgr-perf-active {
     border-left: 3px solid #2271b1 !important;
     border-radius: 0 3px 3px 0 !important;
     font-style: italic !important;
-}
-
-/* Scripts and Styles Tab Content */
-.almgr-scripts-container,
-.almgr-styles-container {
-    padding: 15px !important;
-    max-height: 400px !important;
-    overflow-y: auto !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1) !important;
-    transition: all 0.3s ease !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    border-radius: 4px !important;
-    background: #32373c !important;
 }
 
 /* Table styling for Scripts and Styles */
@@ -663,12 +717,157 @@ body.admin-bar.almgr-perf-active {
     color: #a0a5aa !important;
 }
 
-/* Enhanced Caller Stack Styling */
+/* Enhanced Caller Stack Styling - Improved Hierarchy */
 .enhanced-caller-stack {
+    background: #f8f9fa !important;
+    border: 1px solid #e1e5e9 !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    margin: 4px 0 !important;
     font-family: 'SFMono-Regular', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace !important;
-    white-space: pre-line !important;
-    line-height: 1.4 !important;
+    font-size: 11px !important;
+    line-height: 1.5 !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+.enhanced-caller-stack .no-caller,
+.enhanced-caller-stack .raw-stack {
+    color: #646970 !important;
+    font-style: italic !important;
+    padding: 4px !important;
+}
+
+/* Stack Frame Styling */
+.enhanced-caller-stack .stack-frame {
+    display: flex !important;
+    align-items: center !important;
+    padding: 3px 0 !important;
+    margin: 1px 0 !important;
+    border-left: 2px solid transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+.enhanced-caller-stack .stack-frame:hover {
+    background: rgba(0, 115, 170, 0.05) !important;
+    border-left-color: #0073aa !important;
+}
+
+/* Depth-based indentation */
+.enhanced-caller-stack .stack-frame.depth-0 { padding-left: 4px !important; }
+.enhanced-caller-stack .stack-frame.depth-1 { padding-left: 12px !important; }
+.enhanced-caller-stack .stack-frame.depth-2 { padding-left: 20px !important; }
+.enhanced-caller-stack .stack-frame.depth-3 { padding-left: 28px !important; }
+.enhanced-caller-stack .stack-frame.depth-4 { padding-left: 36px !important; }
+.enhanced-caller-stack .stack-frame.depth-5 { padding-left: 44px !important; }
+
+/* Position indicators */
+.enhanced-caller-stack .stack-frame.first {
+    border-top: 1px solid #e1e5e9 !important;
+    margin-top: 2px !important;
+}
+
+.enhanced-caller-stack .stack-frame.last {
+    border-bottom: 1px solid #e1e5e9 !important;
+    margin-bottom: 2px !important;
+}
+
+/* Stack number styling */
+.enhanced-caller-stack .stack-number {
+    color: #646970 !important;
+    font-weight: 600 !important;
+    min-width: 20px !important;
+    margin-right: 6px !important;
     font-size: 10px !important;
+}
+
+/* File information styling */
+.enhanced-caller-stack .file-info {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: rgba(214, 54, 56, 0.08) !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+    margin-left: 4px !important;
+}
+
+.enhanced-caller-stack .file-dir {
+    color: #8c8f94 !important;
+    font-size: 0.9em !important;
+}
+
+.enhanced-caller-stack .file-name {
+    color: #d63638 !important;
+    font-weight: 600 !important;
+}
+
+.enhanced-caller-stack .line-number {
+    color: #0073aa !important;
+    font-weight: 700 !important;
+    margin-left: 2px !important;
+}
+
+/* Function call styling by type */
+.enhanced-caller-stack .function-call {
+    display: inline-block !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    margin-left: 4px !important;
+    font-weight: 600 !important;
+}
+
+.enhanced-caller-stack .func-core {
+    background: rgba(0, 115, 170, 0.1) !important;
+    color: #0073aa !important;
+}
+
+.enhanced-caller-stack .func-hook {
+    background: rgba(0, 163, 42, 0.1) !important;
+    color: #00a32a !important;
+}
+
+.enhanced-caller-stack .func-method {
+    background: rgba(156, 39, 176, 0.1) !important;
+    color: #9c27b0 !important;
+}
+
+.enhanced-caller-stack .func-plugin {
+    background: rgba(255, 152, 0, 0.1) !important;
+    color: #ff9800 !important;
+}
+
+.enhanced-caller-stack .func-function {
+    background: rgba(96, 125, 139, 0.1) !important;
+    color: #607d8b !important;
+}
+
+.enhanced-caller-stack .raw-item {
+    color: #646970 !important;
+    font-style: italic !important;
+    margin-left: 4px !important;
+    font-weight: 500 !important;
+}
+
+.enhanced-caller-stack .class-name {
+    color: #8c5e00 !important;
+    font-weight: 600 !important;
+    background: rgba(140, 94, 0, 0.1) !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+    margin-right: 8px !important;
+}
+
+.enhanced-caller-stack .stack-depth {
+    color: #72aee6 !important;
+    font-weight: 500 !important;
+    margin-right: 8px !important;
+    font-size: 0.9em !important;
+}
+
+.enhanced-caller-stack .arrow {
+    color: #8c8f94 !important;
+    margin: 0 6px !important;
+    font-weight: bold !important;
 }
 
 .enhanced-caller-stack .caller-header {
@@ -774,6 +973,19 @@ body.admin-bar.almgr-perf-active {
     border: 1px dashed #464b50 !important;
 }
 
+/* Content Header */
+.almgr-perf-content-header {
+    padding: 15px 20px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #c3c4c7 !important;
+    margin: 0 !important;
+}
+
+.almgr-perf-content-body {
+    padding: 0 !important;
+    background: #ffffff !important;
+}
+
 /* Mobile responsive for tabs */
 @media screen and (max-width: 782px) {
     .almgr-perf-details-content {
@@ -783,21 +995,23 @@ body.admin-bar.almgr-perf-active {
     .almgr-perf-sidebar {
         width: 100% !important;
         border-right: none !important;
-        border-bottom: 1px solid #464b50 !important;
+        border-bottom: 1px solid #c3c4c7 !important;
     }
 
     .almgr-perf-tabs {
         display: flex !important;
         overflow-x: auto !important;
+        padding: 4px 0 !important;
     }
 
     .almgr-perf-tab {
         white-space: nowrap !important;
         border-bottom: none !important;
-        border-right: 1px solid #464b50 !important;
+        border-right: 1px solid #dcdcde !important;
         min-width: 80px !important;
         justify-content: center !important;
         padding: 8px 10px !important;
+        flex-shrink: 0 !important;
     }
 
     .almgr-perf-tab:last-child {
@@ -807,6 +1021,11 @@ body.admin-bar.almgr-perf-active {
     .almgr-perf-content {
         max-height: 250px !important;
         padding: 10px 15px !important;
+    }
+
+    .almgr-perf-tab-link {
+        padding: 8px 12px !important;
+        font-size: 12px !important;
     }
 }
 
@@ -843,11 +1062,110 @@ body.admin-bar.almgr-perf-active {
     }
 }
 
+/* Additional Responsive Design */
+@media (max-width: 1024px) {
+    .almgr-perf-table {
+        font-size: 13px !important;
+    }
+
+    .almgr-perf-table th,
+    .almgr-perf-table td {
+        padding: 8px 10px !important;
+    }
+
+    .almgr-perf-details-content {
+        flex-direction: column !important;
+    }
+
+    .almgr-perf-sidebar {
+        width: 100% !important;
+        max-height: 150px !important;
+        overflow-y: auto !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .almgr-perf-tabs {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 0 !important;
+    }
+
+    .almgr-perf-tab {
+        flex: 1 !important;
+        min-width: 80px !important;
+        text-align: center !important;
+        border-radius: 0 !important;
+    }
+
+    .almgr-perf-content {
+        padding: 15px !important;
+    }
+
+    .almgr-perf-table {
+        font-size: 12px !important;
+        overflow-x: auto !important;
+        display: block !important;
+        white-space: nowrap !important;
+    }
+
+    .almgr-perf-table thead,
+    .almgr-perf-table tbody,
+    .almgr-perf-table tr {
+        display: table !important;
+        width: 100% !important;
+        table-layout: fixed !important;
+    }
+
+    .almgr-perf-table th,
+    .almgr-perf-table td {
+        padding: 6px 8px !important;
+        min-width: 80px !important;
+    }
+
+    .almgr-perf-table th:first-child,
+    .almgr-perf-table td:first-child {
+        min-width: 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .almgr-perf-container {
+        margin: 10px 0 !important;
+        padding: 6px 8px !important;
+    }
+
+    .almgr-perf-content {
+        padding: 10px !important;
+    }
+
+    .almgr-perf-table {
+        font-size: 11px !important;
+    }
+
+    .almgr-perf-table th,
+    .almgr-perf-table td {
+        padding: 4px 6px !important;
+        min-width: 60px !important;
+    }
+
+    .almgr-perf-tab {
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+    }
+
+    .almgr-perf-tab .dashicons {
+        font-size: 12px !important;
+        width: 12px !important;
+        height: 12px !important;
+    }
+}
+
 /* --- Consolidated: Moved from admin/assets/css/query-monitor.css --- */
 /* Tab Filters (used within Performance Panel) */
-.almgr-tab-filters { margin-bottom: 15px; padding: 10px; background: #2c3338; border-radius: 4px; }
-.almgr-tab-filters label { display: inline-block; margin-right: 20px; color: #a0a5aa; font-size: 12px; }
-.almgr-tab-filters select { margin-left: 8px; padding: 4px 8px; background: #32373c; border: 1px solid #555; color: #ffffff; border-radius: 3px; font-size: 12px; }
+.almgr-tab-filters { margin-bottom: 15px; padding: 10px; background: #f1f1f1; color: #23282d; border: 1px solid #ccd0d4; border-radius: 4px; }
+.almgr-tab-filters label { display: inline-block; margin-right: 20px; color: #23282d; font-size: 12px; }
+.almgr-tab-filters select { margin-left: 8px; padding: 4px 8px; background: #fff; border: 1px solid #8c8f94; color: #23282d; border-radius: 3px; font-size: 12px; }
 
 /* Sortable Column Headers (used across panel tables) */
 .sortable { cursor: pointer; position: relative; padding-right: 20px !important; user-select: none; transition: background-color 0.2s ease; }
@@ -914,9 +1232,24 @@ body.admin-bar.almgr-perf-active {
 #almgr-status-text { font-weight: bold; }
 #almgr-status-text.active { color: #28a745; }
 #almgr-status-text.error { color: #dc3545; }
-.status-good { color: #28a745; font-weight: bold; }
-.status-warning { color: #ffc107; font-weight: bold; }
-.status-danger { color: #dc3545; font-weight: bold; }
+/* Status Colors - WordPress Admin Style */
+.status-good {
+    color: #00a32a !important;
+    font-weight: 500 !important;
+}
+.status-warning {
+    color: #dba617 !important;
+    font-weight: 500 !important;
+}
+.status-error {
+    color: #d63638 !important;
+    font-weight: 500 !important;
+}
+.status-info {
+    color: #0073aa !important;
+    font-weight: 500 !important;
+}
+.status-danger { color: #d63638; font-weight: bold; }
 
 /* Bootstrap Tab */
 .bootstrap-phase { font-weight: 500; }
@@ -954,6 +1287,36 @@ body.admin-bar.almgr-perf-active {
   .almgr-realtime-controls { flex-direction: column; align-items: stretch; gap: 10px; }
   .almgr-tab-filters { display: flex; flex-wrap: wrap; gap: 10px; }
   .almgr-realtime-actions { justify-content: center; }
+}
+
+/* Table Column Width Adjustments */
+.almgr-perf-table th:first-child,
+.almgr-perf-table td:first-child {
+    width: 20px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Query Number Column - Make it wider */
+
+/* Optimize other column widths */
+.almgr-perf-table th:nth-child(2),
+.almgr-perf-table td:nth-child(2) {
+    width: 120px;
+    min-width: 40px;
+}
+
+.almgr-perf-table th:nth-child(3),
+.almgr-perf-table td:nth-child(3) {
+    width: 140px;
+    min-width: 140px;
+}
+
+.almgr-perf-table th:last-child,
+.almgr-perf-table td:last-child {
+    width: 100px;
+    min-width: 100px;
+    text-align: right;
 }
 
 /* Utility */

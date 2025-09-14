@@ -723,11 +723,11 @@ function initializeRealTimeMonitoring() {
         window.mtHookMonitor.isActive = true;
         var stopText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.stopRealTimeUpdates) ? window.mtQueryMonitorL10n.stopRealTimeUpdates : 'Stop Real-time Updates';
         var statusActiveText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusActive) ? window.mtQueryMonitorL10n.statusActive : 'Active';
-        
+
         toggleButton.textContent = stopText;
         toggleButton.classList.remove('button-primary');
         toggleButton.classList.add('button-secondary');
-        
+
         if (statusText) {
             statusText.textContent = statusActiveText;
             statusText.classList.add('active');
@@ -753,11 +753,11 @@ function initializeRealTimeMonitoring() {
 
         var enableText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.enableRealTimeUpdates) ? window.mtQueryMonitorL10n.enableRealTimeUpdates : 'Enable Real-time Updates';
         var statusStaticText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusStatic) ? window.mtQueryMonitorL10n.statusStatic : 'Static';
-        
+
         toggleButton.textContent = enableText;
         toggleButton.classList.add('button-primary');
         toggleButton.classList.remove('button-secondary');
-        
+
         if (statusText) {
             statusText.textContent = statusStaticText;
             statusText.classList.remove('active');
@@ -771,7 +771,7 @@ function initializeRealTimeMonitoring() {
 
         var refreshingText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusRefreshing) ? window.mtQueryMonitorL10n.statusRefreshing : 'Refreshing...';
         var originalText = statusText ? statusText.textContent : '';
-        
+
         if (statusText) {
             statusText.textContent = refreshingText;
         }
@@ -791,7 +791,7 @@ function initializeRealTimeMonitoring() {
                 updateHookDisplay(data);
                 var statusActiveText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusActive) ? window.mtQueryMonitorL10n.statusActive : 'Active';
                 var statusUpdatedText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusUpdated) ? window.mtQueryMonitorL10n.statusUpdated : 'Updated';
-                
+
                 if (statusText) {
                     statusText.textContent = window.mtHookMonitor.isActive ? statusActiveText : statusUpdatedText;
                     statusText.classList.remove('error');
@@ -799,7 +799,7 @@ function initializeRealTimeMonitoring() {
             } else {
                 console.error('Failed to fetch hook data:', data);
                 var errorText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusError) ? window.mtQueryMonitorL10n.statusError : 'Error';
-                
+
                 if (statusText) {
                     statusText.textContent = errorText;
                     statusText.classList.add('error');
@@ -809,7 +809,7 @@ function initializeRealTimeMonitoring() {
         .catch(error => {
             console.error('AJAX error:', error);
             var errorText = (window.mtQueryMonitorL10n && window.mtQueryMonitorL10n.statusError) ? window.mtQueryMonitorL10n.statusError : 'Error';
-            
+
             if (statusText) {
                 statusText.textContent = errorText;
                 statusText.classList.add('error');
